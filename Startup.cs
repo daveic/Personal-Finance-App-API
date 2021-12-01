@@ -55,7 +55,7 @@ namespace PersonalFinance
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI V2"); c.RoutePrefix = "swagger"; });
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI V3"); c.RoutePrefix = "swagger"; });
 
                 
             }
