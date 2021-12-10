@@ -3,10 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PersonalFinanceAPI.Migrations
 {
-    public partial class InitialDB : Migration
+    public partial class InitiaDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Balance",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BalDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ActBalance = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Balance", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Bank",
                 columns: table => new
@@ -133,6 +147,9 @@ namespace PersonalFinanceAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Balance");
+
             migrationBuilder.DropTable(
                 name: "Bank");
 

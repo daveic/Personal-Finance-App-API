@@ -19,7 +19,7 @@ namespace PersonalFinance.Services.EntityFramework
         public DbSet<Bank> Bank { get; set; }
         public DbSet<Deposit> Deposit { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
-
+        public DbSet<Balance> Balance { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

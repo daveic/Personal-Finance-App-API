@@ -19,6 +19,24 @@ namespace PersonalFinanceAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("PersonalFinance.Models.Balance", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ActBalance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BalDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Balance");
+                });
+
             modelBuilder.Entity("PersonalFinance.Models.Bank", b =>
                 {
                     b.Property<int>("ID")
