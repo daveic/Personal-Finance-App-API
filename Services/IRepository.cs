@@ -33,6 +33,7 @@ namespace PersonalFinance.Services
 		Task<bool> AddBankAsync(Bank p);
 		Task<bool> AddDepositAsync(Deposit p);
 		Task<bool> AddTicketAsync(Ticket p);
+		Task<bool> AddBalanceAsync(Balance p);
 
 		//IRepository interfaces for UPDATE-by-ID api call
 		Task<bool> UpdateCreditAsync(Credit p);

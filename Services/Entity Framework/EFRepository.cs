@@ -90,7 +90,11 @@ namespace PersonalFinance.Services.EntityFramework
             this.PersonalFinanceContext.Add(t);
             return Task.FromResult(true);
         }
-
+        public virtual Task<bool> AddBalanceAsync(Balance b)
+        {
+            this.PersonalFinanceContext.Add(b);
+            return Task.FromResult(true);
+        }
 
         //DELETE Methods
         public virtual Task<bool> DeleteCreditAsync(Credit c)

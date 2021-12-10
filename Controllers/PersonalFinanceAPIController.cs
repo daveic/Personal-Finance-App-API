@@ -191,6 +191,14 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllTickets));
         }
+        [HttpPost]
+        [Route("AddBalance")]
+        public async Task<IActionResult> AddBalance([FromBody] Balance b)
+        {
+            var detections = await repo.AddBalanceAsync(b);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(AllBalances));
+        }
 
         //HTTP DELETE METHODS
         [HttpDelete]
