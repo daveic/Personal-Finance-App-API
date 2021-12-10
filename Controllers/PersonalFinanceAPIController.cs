@@ -75,6 +75,13 @@ namespace PersonalFinance.Controllers
             var tickets = await repo.GetAllTicketsAsync();
             return Ok(tickets);
         }
+        [HttpGet]
+        [Route("GetAllBalances")]
+        public async Task<IActionResult> AllBalances()
+        {
+            var balances = await repo.GetAllBalancesAsync();
+            return Ok(balances);
+        }
 
         //HTTP GET BY ID METHODS
         [HttpGet]
