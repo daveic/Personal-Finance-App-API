@@ -28,51 +28,58 @@ namespace PersonalFinance.Controllers
         //HTTP GET ALL METHODS
         [HttpGet]
         [Route("GetAllCredits")]
-        public async Task<IActionResult> AllCredits()
+        public async Task<IActionResult> AllCredits(string User_OID)
         {
             var credits = await repo.GetAllCreditsAsync();
+            credits = credits.Where(x => x.Usr_OID == User_OID);
             return Ok(credits);
         }
         [HttpGet]
         [Route("GetAllDebits")]
-        public async Task<IActionResult> AllDebits()
+        public async Task<IActionResult> AllDebits(string User_OID)
         {
             var debits = await repo.GetAllDebitsAsync();
+            debits = debits.Where(x => x.Usr_OID == User_OID);
             return Ok(debits);
         }
         [HttpGet]
         [Route("GetAllKnownMovements")]
-        public async Task<IActionResult> AllKnownMovements()
+        public async Task<IActionResult> AllKnownMovements(string User_OID)
         {
             var knownMovements = await repo.GetAllKnownMovementsAsync();
+            knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
             return Ok(knownMovements);
         }
         [HttpGet]
         [Route("GetAllTransactions")]
-        public async Task<IActionResult> AllTransactions()
+        public async Task<IActionResult> AllTransactions(string User_OID)
         {
             var transactions = await repo.GetAllTransactionsAsync();
+            transactions = transactions.Where(x => x.Usr_OID == User_OID);
             return Ok(transactions);
         }
         [HttpGet]
         [Route("GetAllBanks")]
-        public async Task<IActionResult> AllBanks()
+        public async Task<IActionResult> AllBanks(string User_OID)
         {
             var banks = await repo.GetAllBanksAsync();
+            banks = banks.Where(x => x.Usr_OID == User_OID);
             return Ok(banks);
         }
         [HttpGet]
         [Route("GetAllDeposits")]
-        public async Task<IActionResult> AllDeposits()
+        public async Task<IActionResult> AllDeposits(string User_OID)
         {
             var deposits = await repo.GetAllDepositsAsync();
+            deposits = deposits.Where(x => x.Usr_OID == User_OID);
             return Ok(deposits);
         }
         [HttpGet]
         [Route("GetAllTickets")]
-        public async Task<IActionResult> AllTickets()
+        public async Task<IActionResult> AllTickets(string User_OID)
         {
             var tickets = await repo.GetAllTicketsAsync();
+            tickets = tickets.Where(x => x.Usr_OID == User_OID);
             return Ok(tickets);
         }
         [HttpGet]
@@ -101,9 +108,9 @@ namespace PersonalFinance.Controllers
         [HttpGet]
         [Route("GetTransactionId")]
         public async Task<IActionResult> Transaction_Details(int id)
-        {
-            var transaction = await repo.GetTransactionAsync(id);
-            return Ok(transaction);
+          {
+              var transaction = await repo.GetTransactionAsync(id);
+              return Ok(transaction);
         }
         [HttpGet]
         [Route("GetKnownMovementId")]
