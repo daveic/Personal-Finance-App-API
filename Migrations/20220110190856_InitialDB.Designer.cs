@@ -10,7 +10,7 @@ using PersonalFinance.Services.EntityFramework;
 namespace PersonalFinanceAPI.Migrations
 {
     [DbContext(typeof(PersonalFinanceContext))]
-    [Migration("20211130140919_InitialDB")]
+    [Migration("20220110190856_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace PersonalFinanceAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Iban")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Usr_OID")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -68,6 +71,9 @@ namespace PersonalFinanceAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DebName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Usr_OID")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -112,6 +118,9 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<int>("RtPaid")
                         .HasColumnType("int");
 
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Debit");
@@ -142,6 +151,9 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<int>("PercGrow")
                         .HasColumnType("int");
 
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Deposit");
@@ -166,6 +178,9 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<int>("KMValue")
                         .HasColumnType("int");
 
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("KnownMovement");
@@ -189,6 +204,9 @@ namespace PersonalFinanceAPI.Migrations
 
                     b.Property<int>("TicketValue")
                         .HasColumnType("int");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -216,6 +234,9 @@ namespace PersonalFinanceAPI.Migrations
 
                     b.Property<int>("TrsValue")
                         .HasColumnType("int");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

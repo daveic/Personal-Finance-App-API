@@ -13,6 +13,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Iban = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankValue = table.Column<int>(type: "int", nullable: false),
@@ -29,6 +30,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CredCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CredTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DebName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -47,6 +49,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DebCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DebTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CredName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -69,6 +72,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InitDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -87,6 +91,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     KMType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     KMTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     KMValue = table.Column<int>(type: "int", nullable: false),
@@ -103,6 +108,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TicketName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NumTicket = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TicketValue = table.Column<int>(type: "int", nullable: false),
@@ -119,6 +125,7 @@ namespace PersonalFinanceAPI.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Usr_OID = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrsCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrsTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrsDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
