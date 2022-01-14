@@ -82,6 +82,14 @@ namespace PersonalFinance.Controllers
             tickets = tickets.Where(x => x.Usr_OID == User_OID);
             return Ok(tickets);
         }
+        [HttpGet]
+        [Route("GetAllBalances")]
+        public async Task<IActionResult> AllBalances(string User_OID)
+        {
+            var balancess = await repo.GetAllBalancesAsync();
+            balancess = balancess.Where(x => x.Usr_OID == User_OID);
+            return Ok(balancess);
+        }
 
         //HTTP GET BY ID METHODS
         [HttpGet]
@@ -190,6 +198,14 @@ namespace PersonalFinance.Controllers
             var detections = await repo.AddTicketAsync(t);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllTickets));
+        }
+        [HttpPost]
+        [Route("AddBalance")]
+        public async Task<IActionResult> AddBalance([FromBody] Balance b)
+        {
+            var detections = await repo.AddBalanceAsync(b);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(AllBalances));
         }
 
         //HTTP DELETE METHODS

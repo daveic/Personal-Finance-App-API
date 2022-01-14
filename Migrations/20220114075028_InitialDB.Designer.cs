@@ -10,7 +10,7 @@ using PersonalFinance.Services.EntityFramework;
 namespace PersonalFinanceAPI.Migrations
 {
     [DbContext(typeof(PersonalFinanceContext))]
-    [Migration("20220110190856_InitialDB")]
+    [Migration("20220114075028_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,27 @@ namespace PersonalFinanceAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("PersonalFinance.Models.Balance", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ActBalance")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BalDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Balance");
+                });
 
             modelBuilder.Entity("PersonalFinance.Models.Bank", b =>
                 {

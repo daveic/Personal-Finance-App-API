@@ -49,7 +49,10 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable());
         }
-
+        public virtual Task<IQueryable<Balance>> GetAllBalancesAsync()
+        {
+            return Task.FromResult(PersonalFinanceContext.Set<Balance>().AsNoTracking().AsQueryable());
+        }
 
         //ADD NEW Methods
         public virtual Task<bool> AddCreditAsync(Credit c)
@@ -85,6 +88,11 @@ namespace PersonalFinance.Services.EntityFramework
         public virtual Task<bool> AddTicketAsync(Ticket t)
         {
             this.PersonalFinanceContext.Add(t);
+            return Task.FromResult(true);
+        }
+        public virtual Task<bool> AddBalanceAsync(Balance b)
+        {
+            this.PersonalFinanceContext.Add(b);
             return Task.FromResult(true);
         }
 
