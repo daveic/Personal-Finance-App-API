@@ -86,9 +86,9 @@ namespace PersonalFinance.Controllers
         [Route("GetAllBalances")]
         public async Task<IActionResult> AllBalances(string User_OID)
         {
-            var balancess = await repo.GetAllBalancesAsync();
-            balancess = balancess.Where(x => x.Usr_OID == User_OID);
-            return Ok(balancess);
+            var balances = await repo.GetAllBalancesAsync();
+            balances = balances.Where(x => x.Usr_OID == User_OID);
+            return Ok(balances);
         }
 
         //HTTP GET BY ID METHODS
