@@ -32,6 +32,9 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<DateTime>("BalDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Balance");
