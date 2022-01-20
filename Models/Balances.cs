@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace PersonalFinance.Models
@@ -11,4 +11,3 @@ namespace PersonalFinance.Models
         public int ActBalance { get; set; }
     }
 }
-

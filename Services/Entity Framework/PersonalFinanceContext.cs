@@ -21,7 +21,6 @@ namespace PersonalFinance.Services.EntityFramework
         public DbSet<Ticket> Ticket { get; set; }
         public DbSet<Balance> Balance { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

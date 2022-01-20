@@ -96,7 +96,6 @@ namespace PersonalFinance.Services.EntityFramework
             return Task.FromResult(true);
         }
 
-
         //DELETE Methods
         public virtual Task<bool> DeleteCreditAsync(Credit c)
         {
