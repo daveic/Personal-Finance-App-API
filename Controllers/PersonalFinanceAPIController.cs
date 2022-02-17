@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
 
@@ -90,6 +83,14 @@ namespace PersonalFinance.Controllers
             balances = balances.Where(x => x.Usr_OID == User_OID);
             return Ok(balances);
         }
+        [HttpGet]
+        [Route("GetAllExpirations")]
+        public async Task<IActionResult> AllExpirations(string User_OID)
+        {
+            var expirations = await repo.GetAllExpirationsAsync();
+            expirations = expirations.Where(x => x.Usr_OID == User_OID);
+            return Ok(expirations);
+        }
 
         //HTTP GET BY ID METHODS
         [HttpGet]
@@ -140,6 +141,13 @@ namespace PersonalFinance.Controllers
         {
             var ticket = await repo.GetTicketAsync(id);
             return Ok(ticket);
+        }
+        [HttpGet]
+        [Route("GetExpirationId")]
+        public async Task<IActionResult> Expiration_Details(int id)
+        {
+            var expiration = await repo.GetExpirationAsync(id);
+            return Ok(expiration);
         }
 
         //HTTP ADD METHODS
@@ -207,6 +215,14 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllBalances));
         }
+        [HttpPost]
+        [Route("AddExpiration")]
+        public async Task<IActionResult> AddExpiration([FromBody] Expiration e)
+        {
+            var detections = await repo.AddExpirationAsync(e);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(AllExpirations));
+        }
 
         //HTTP DELETE METHODS
         [HttpDelete]
@@ -269,6 +285,15 @@ namespace PersonalFinance.Controllers
         {
             var t = await repo.GetTicketAsync(id);
             await repo.DeleteTicketAsync(t);
+            await repo.SaveChangesAsync();
+            return Ok(t);
+        }
+        [HttpDelete]
+        [Route("DeleteExpiration")]
+        public async Task<IActionResult> Expiration_Delete(int id)
+        {
+            var t = await repo.GetExpirationAsync(id);
+            await repo.DeleteExpirationAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
         }

@@ -20,6 +20,7 @@ namespace PersonalFinance.Services.EntityFramework
         public DbSet<Deposit> Deposit { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
         public DbSet<Balance> Balance { get; set; }
+        public DbSet<Expiration> Expiration { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

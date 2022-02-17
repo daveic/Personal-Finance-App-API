@@ -15,6 +15,7 @@ namespace PersonalFinance.Services
 		Task<IQueryable<Deposit>> GetAllDepositsAsync();
 		Task<IQueryable<Ticket>> GetAllTicketsAsync();
 		Task<IQueryable<Balance>> GetAllBalancesAsync();
+		Task<IQueryable<Expiration>> GetAllExpirationsAsync();
 
 		//IRepository interfaces for GET-by-ID api call
 		Task<Credit> GetCreditAsync(int id);
@@ -24,6 +25,7 @@ namespace PersonalFinance.Services
 		Task<Bank> GetBankAsync(int id);
 		Task<Deposit> GetDepositAsync(int id);
 		Task<Ticket> GetTicketAsync(int id);
+		Task<Expiration> GetExpirationAsync(int id);
 
 		//IRepository interfaces for ADD-by-ID api call
 		Task<bool> AddCreditAsync(Credit p);
@@ -34,6 +36,7 @@ namespace PersonalFinance.Services
 		Task<bool> AddDepositAsync(Deposit p);
 		Task<bool> AddTicketAsync(Ticket p);
 		Task<bool> AddBalanceAsync(Balance b);
+		Task<bool> AddExpirationAsync(Expiration e);
 
 		//IRepository interfaces for UPDATE-by-ID api call
 		Task<bool> UpdateCreditAsync(Credit p);
@@ -52,6 +55,7 @@ namespace PersonalFinance.Services
 		Task<bool> DeleteBankAsync(Bank p);
 		Task<bool> DeleteDepositAsync(Deposit p);
 		Task<bool> DeleteTicketAsync(Ticket p);
+		Task<bool> DeleteExpirationAsync(Expiration e);
 
 		//IRepository interfaces for SAVE api call
 		Task<bool> SaveChangesAsync();
