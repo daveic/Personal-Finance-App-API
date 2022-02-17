@@ -10,5 +10,6 @@ namespace PersonalFinance.Models
         public string ExpDescription { get; set; }
         public double ExpValue { get; set; } //Diffenziato In - Out
         public DateTime ExpDateTime { get; set; } //Data scadenza
+        public string ColorLabel { get; set; }
     }
 }
