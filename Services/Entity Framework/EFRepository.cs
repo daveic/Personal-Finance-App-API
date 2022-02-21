@@ -53,6 +53,10 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Balance>().AsNoTracking().AsQueryable());
         }
+        public virtual Task<IQueryable<Expiration>> GetAllExpirationsAsync()
+        {
+            return Task.FromResult(PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable());
+        }
 
         //ADD NEW Methods
         public virtual Task<bool> AddCreditAsync(Credit c)
@@ -95,6 +99,11 @@ namespace PersonalFinance.Services.EntityFramework
             this.PersonalFinanceContext.Add(b);
             return Task.FromResult(true);
         }
+        public virtual Task<bool> AddExpirationAsync(Expiration e)
+        {
+            this.PersonalFinanceContext.Add(e);
+            return Task.FromResult(true);
+        }
 
         //DELETE Methods
         public virtual Task<bool> DeleteCreditAsync(Credit c)
@@ -132,6 +141,11 @@ namespace PersonalFinance.Services.EntityFramework
             this.PersonalFinanceContext.Remove(t);
             return Task.FromResult(true);
         }
+        public virtual Task<bool> DeleteExpirationAsync(Expiration e)
+        {
+            this.PersonalFinanceContext.Remove(e);
+            return Task.FromResult(true);
+        }
 
 
         //GET BY ID Methods
@@ -162,6 +176,10 @@ namespace PersonalFinance.Services.EntityFramework
         public virtual async Task<Ticket> GetTicketAsync(int id)
         {
             return (await GetAllTicketsAsync()).FirstOrDefault(x => x.ID == id);
+        }
+        public virtual async Task<Expiration> GetExpirationAsync(int id)
+        {
+            return (await GetAllExpirationsAsync()).FirstOrDefault(x => x.ID == id);
         }
 
 
