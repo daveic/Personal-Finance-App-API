@@ -14,5 +14,6 @@ namespace PersonalFinance.Models
         public DateTime PrevDateTime { get; set; } //Data prevista di rientro credito
         public double CredValue { get; set; }
         public string CredNote { get; set; }
+        public int Exp_ID { get; set; }
     }
 }

@@ -18,5 +18,6 @@ namespace PersonalFinance.Models
         public string RtFreq { get; set; } //Frequenza rate - Possibile: Settimana, Mese, Anno
         public double DebValue { get; set; }
         public string DebNote { get; set; }
+        public int Exp_ID { get; set; }
     }
 }
