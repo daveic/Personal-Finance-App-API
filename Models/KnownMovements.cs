@@ -10,5 +10,6 @@ namespace PersonalFinance.Models
         public string KMTitle { get; set; }
         public double KMValue { get; set; }
         public string KMNote { get; set; }
+        public int Exp_ID { get; set; }
     }
 }

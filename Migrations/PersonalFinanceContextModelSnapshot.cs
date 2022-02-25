@@ -26,11 +26,14 @@ namespace PersonalFinanceAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ActBalance")
-                        .HasColumnType("int");
+                    b.Property<double>("ActBalance")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("BalDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -50,10 +53,13 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("BankNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("BankValue")
-                        .HasColumnType("int");
+                    b.Property<double>("BankValue")
+                        .HasColumnType("float");
 
                     b.Property<string>("Iban")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Usr_OID")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -80,10 +86,19 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("CredTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CredValue")
-                        .HasColumnType("int");
+                    b.Property<double>("CredValue")
+                        .HasColumnType("float");
 
                     b.Property<string>("DebName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Exp_ID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PrevDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Usr_OID")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -116,17 +131,29 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("DebTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DebValue")
+                    b.Property<double>("DebValue")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Exp_ID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RemainToPay")
+                    b.Property<int>("Multiplier")
                         .HasColumnType("int");
 
-                    b.Property<int>("RtNum")
-                        .HasColumnType("int");
+                    b.Property<double>("RemainToPay")
+                        .HasColumnType("float");
 
-                    b.Property<int>("RtPaid")
-                        .HasColumnType("int");
+                    b.Property<string>("RtFreq")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RtNum")
+                        .HasColumnType("float");
+
+                    b.Property<double>("RtPaid")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -146,8 +173,8 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("BankNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepValue")
-                        .HasColumnType("int");
+                    b.Property<double>("DepValue")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -155,12 +182,45 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<DateTime>("InitDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PercGrow")
-                        .HasColumnType("int");
+                    b.Property<double>("PercGrow")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.ToTable("Deposit");
+                });
+
+            modelBuilder.Entity("PersonalFinance.Models.Expiration", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ColorLabel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExpDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ExpValue")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Expiration");
                 });
 
             modelBuilder.Entity("PersonalFinance.Models.KnownMovement", b =>
@@ -169,6 +229,9 @@ namespace PersonalFinanceAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Exp_ID")
+                        .HasColumnType("int");
 
                     b.Property<string>("KMNote")
                         .HasColumnType("nvarchar(max)");
@@ -179,8 +242,11 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("KMType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("KMValue")
-                        .HasColumnType("int");
+                    b.Property<double>("KMValue")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -203,8 +269,11 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("TicketNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TicketValue")
-                        .HasColumnType("int");
+                    b.Property<double>("TicketValue")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -230,8 +299,11 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("TrsTitle")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TrsValue")
-                        .HasColumnType("int");
+                    b.Property<double>("TrsValue")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Usr_OID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
