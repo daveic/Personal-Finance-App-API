@@ -12,6 +12,10 @@ namespace PersonalFinance.Models
         public string KMNote { get; set; }
         public int Exp_ID { get; set; }
         public string input_value { get; set; }
+    }
+
+    public class KnownMovement_Exp : KnownMovement
+    {
         public bool On_Exp { get; set; }
     }
 

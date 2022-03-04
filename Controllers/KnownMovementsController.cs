@@ -35,7 +35,7 @@ namespace PersonalFinance.Controllers
         //HTTP ADD METHODS
         [HttpPost]
         [Route("AddKnownMovement")]
-        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
+        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement_Exp k)
         {
             k.input_value = k.input_value.Replace(".", ",");
             k.KMValue = Convert.ToDouble(k.input_value);
