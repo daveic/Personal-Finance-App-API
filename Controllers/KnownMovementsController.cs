@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
@@ -31,38 +32,19 @@ namespace PersonalFinance.Controllers
             return Ok(knownMovements_Main);
         }
 
-        ////HTTP GET ALL METHODS
-
-        //[Route("GetAllKnownMovements")]
-        //public async Task<IActionResult> AllKnownMovements(string User_OID)
-        //{
-        //    var knownMovements = await repo.GetAllKnownMovementsAsync();
-        //    knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
-        //    return Ok(knownMovements);
-        //}
-
-
-        ////HTTP GET BY ID METHODS
-
-        //[HttpGet]
-        //[Route("GetKnownMovementId")]
-        //public async Task<IActionResult> KnownMovement_Details(int id)
-        //{
-        //    var knownMovement = await repo.GetKnownMovementAsync(id);
-        //    return Ok(knownMovement);
-        //}
-
-
-        ////HTTP ADD METHODS
-
-        //[HttpPost]
-        //[Route("AddKnownMovement")]
-        //public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
-        //{
-        //    var detections = await repo.AddKnownMovementAsync(k);
-        //    await repo.SaveChangesAsync();
-        //    return RedirectToAction(nameof(AllKnownMovements));
-        //}
+        //HTTP ADD METHODS
+        [HttpPost]
+        [Route("AddKnownMovement")]
+        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
+        {
+            k.input_value = k.input_value.Replace(".", ",");
+            k.KMValue = Convert.ToDouble(k.input_value);
+            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
+            if (k.On_Exp) k.Exp_ID = -1;
+            await repo.AddKnownMovementAsync(k);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(KnownMovements_Main));
+        }
 
 
         ////HTTP DELETE METHODS
@@ -88,6 +70,6 @@ namespace PersonalFinance.Controllers
         //    await repo.SaveChangesAsync();
         //    return Ok(k);
         //}
-        
+
     }
 }
