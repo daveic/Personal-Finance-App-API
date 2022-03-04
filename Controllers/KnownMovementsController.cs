@@ -25,7 +25,7 @@ namespace PersonalFinance.Controllers
             KnownMovements_API knownMovements_Main = new KnownMovements_API();
             knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync();
             knownMovements_Main.KnownMovements = knownMovements_Main.KnownMovements.Where(x => x.Usr_OID == User_OID);
-            knownMovements_Main.Expirations = (System.Collections.Generic.List<Expiration>)await repo.GetAllExpirationsAsync();
+            knownMovements_Main.Expirations = await repo.GetAllExpirationsAsync();
             knownMovements_Main.Expirations = knownMovements_Main.Expirations.OrderBy(x => x.ExpDateTime.Month).Take(5).ToList(); //Fetch imminent expirations
             knownMovements_Main.KnownMovement = new KnownMovement();
             return Ok(knownMovements_Main);
