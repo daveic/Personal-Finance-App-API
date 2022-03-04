@@ -32,10 +32,9 @@ namespace PersonalFinance.Controllers
         //HTTP ADD METHODS
         [HttpPost]
         [Route("AddKnownMovement")]
-        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement_Exp k)
+        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
         {
-            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp) k.Exp_ID = -1;
+
             await repo.AddKnownMovementAsync(k);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(KnownMovements_Main));
@@ -59,7 +58,7 @@ namespace PersonalFinance.Controllers
 
         [HttpPut]
         [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement_Exp k)
+        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
         {
             //if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             //if (k.On_Exp is true) k.Exp_ID = -1;

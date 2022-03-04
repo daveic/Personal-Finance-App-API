@@ -13,12 +13,6 @@ namespace PersonalFinance.Models
         public int Exp_ID { get; set; }
     }
 
-    public class KnownMovement_Exp : KnownMovement
-    {
-        public string input_value { get; set; }
-        public bool On_Exp { get; set; }
-    }
-
     public class KnownMovements_API
     {
         public IEnumerable<KnownMovement> KnownMovements { get; set; }
