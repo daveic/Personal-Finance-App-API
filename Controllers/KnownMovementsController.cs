@@ -9,15 +9,16 @@ namespace PersonalFinance.Controllers
 {        
     [ApiController]
     [Route("api/[Controller]")]
-    public class KnownMovementsController : ControllerBase
+    public class KnownMovementsController : Controller
     {
 
         private readonly IRepository repo;
         public KnownMovementsController(IRepository repo)
-        {
+        { 
             this.repo = repo;
         }
 
+        [HttpGet]
         [Route("GetAllKnownMovementsMain")]
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
         {
@@ -30,63 +31,63 @@ namespace PersonalFinance.Controllers
             return Ok(knownMovements_Main);
         }
 
-        //HTTP GET ALL METHODS
+        ////HTTP GET ALL METHODS
 
-        [Route("GetAllKnownMovements")]
-        public async Task<IActionResult> AllKnownMovements(string User_OID)
-        {
-            var knownMovements = await repo.GetAllKnownMovementsAsync();
-            knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
-            return Ok(knownMovements);
-        }
-
-
-        //HTTP GET BY ID METHODS
-
-        [HttpGet]
-        [Route("GetKnownMovementId")]
-        public async Task<IActionResult> KnownMovement_Details(int id)
-        {
-            var knownMovement = await repo.GetKnownMovementAsync(id);
-            return Ok(knownMovement);
-        }
+        //[Route("GetAllKnownMovements")]
+        //public async Task<IActionResult> AllKnownMovements(string User_OID)
+        //{
+        //    var knownMovements = await repo.GetAllKnownMovementsAsync();
+        //    knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
+        //    return Ok(knownMovements);
+        //}
 
 
-        //HTTP ADD METHODS
+        ////HTTP GET BY ID METHODS
 
-        [HttpPost]
-        [Route("AddKnownMovement")]
-        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
-        {
-            var detections = await repo.AddKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllKnownMovements));
-        }
-
-
-        //HTTP DELETE METHODS
-
-        [HttpDelete]
-        [Route("DeleteKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Delete(int id)
-        {
-            var t = await repo.GetKnownMovementAsync(id);
-            await repo.DeleteKnownMovementAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+        //[HttpGet]
+        //[Route("GetKnownMovementId")]
+        //public async Task<IActionResult> KnownMovement_Details(int id)
+        //{
+        //    var knownMovement = await repo.GetKnownMovementAsync(id);
+        //    return Ok(knownMovement);
+        //}
 
 
-        //HTTP UPDATE METHODS
+        ////HTTP ADD METHODS
 
-        [HttpPut]
-        [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
-        {
-            await repo.UpdateKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
-            return Ok(k);
-        }
+        //[HttpPost]
+        //[Route("AddKnownMovement")]
+        //public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
+        //{
+        //    var detections = await repo.AddKnownMovementAsync(k);
+        //    await repo.SaveChangesAsync();
+        //    return RedirectToAction(nameof(AllKnownMovements));
+        //}
+
+
+        ////HTTP DELETE METHODS
+
+        //[HttpDelete]
+        //[Route("DeleteKnownMovement")]
+        //public async Task<IActionResult> KnownMovement_Delete(int id)
+        //{
+        //    var t = await repo.GetKnownMovementAsync(id);
+        //    await repo.DeleteKnownMovementAsync(t);
+        //    await repo.SaveChangesAsync();
+        //    return Ok(t);
+        //}
+
+
+        ////HTTP UPDATE METHODS
+
+        //[HttpPut]
+        //[Route("UpdateKnownMovement")]
+        //public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
+        //{
+        //    await repo.UpdateKnownMovementAsync(k);
+        //    await repo.SaveChangesAsync();
+        //    return Ok(k);
+        //}
         
     }
 }

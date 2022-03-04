@@ -9,7 +9,7 @@ namespace PersonalFinance.Controllers
 {        
     [ApiController]
     [Route("api/[Controller]")]
-    public class PersonalFinanceAPIController : ControllerBase
+    public class PersonalFinanceAPIController : Controller
     {
 
         private readonly IRepository repo;
