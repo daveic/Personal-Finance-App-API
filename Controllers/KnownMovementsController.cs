@@ -34,13 +34,9 @@ namespace PersonalFinance.Controllers
         [Route("AddKnownMovement")]
         public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement_Exp k)
         {
-           
-            k.KMValue = Convert.ToDouble(k.input_value.Replace(".", ","));
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.On_Exp) k.Exp_ID = -1;
-            KnownMovement km = new KnownMovement();
-            km = k;
-            await repo.AddKnownMovementAsync(km);
+            await repo.AddKnownMovementAsync(k);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(KnownMovements_Main));
         }
@@ -68,10 +64,7 @@ namespace PersonalFinance.Controllers
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.On_Exp is true) k.Exp_ID = -1;
             if (k.On_Exp is false) k.Exp_ID = 0;
-            KnownMovement km = new KnownMovement();
-            km = k;
-
-            await repo.UpdateKnownMovementAsync(km);
+            await repo.UpdateKnownMovementAsync(k);
             await repo.SaveChangesAsync();
             return Ok(k);
         }
