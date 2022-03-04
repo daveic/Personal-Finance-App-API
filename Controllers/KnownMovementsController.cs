@@ -61,9 +61,9 @@ namespace PersonalFinance.Controllers
         [Route("UpdateKnownMovement")]
         public async Task<IActionResult> KnownMovement_Edit(KnownMovement_Exp k)
         {
-            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp is true) k.Exp_ID = -1;
-            if (k.On_Exp is false) k.Exp_ID = 0;
+            //if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
+            //if (k.On_Exp is true) k.Exp_ID = -1;
+            //if (k.On_Exp is false) k.Exp_ID = 0;
             await repo.UpdateKnownMovementAsync(k);
             await repo.SaveChangesAsync();
             return Ok(k);
