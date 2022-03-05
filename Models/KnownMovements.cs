@@ -17,4 +17,10 @@ namespace PersonalFinance.Models
     {
         public IEnumerable<KnownMovement> KnownMovements { get; set; }
     }
+
+    public class KnownMovement_Ext : KnownMovement
+    {
+        public bool On_Exp { get; set; }
+    }
+    
 }
