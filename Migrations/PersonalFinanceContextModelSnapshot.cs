@@ -92,6 +92,9 @@ namespace PersonalFinanceAPI.Migrations
                     b.Property<string>("DebName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Exp_ID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PrevDateTime")
                         .HasColumnType("datetime2");
 
@@ -130,6 +133,9 @@ namespace PersonalFinanceAPI.Migrations
 
                     b.Property<double>("DebValue")
                         .HasColumnType("float");
+
+                    b.Property<int>("Exp_ID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Multiplier")
                         .HasColumnType("int");
@@ -223,6 +229,9 @@ namespace PersonalFinanceAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Exp_ID")
+                        .HasColumnType("int");
 
                     b.Property<string>("KMNote")
                         .HasColumnType("nvarchar(max)");

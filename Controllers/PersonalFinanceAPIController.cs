@@ -7,10 +7,25 @@ using PersonalFinance.Services;
 //Main API controller
 namespace PersonalFinance.Controllers
 {        
+
+
+
+
+
+
+
+
+
+
+
+
+
     [ApiController]
     [Route("api/[Controller]")]
-    public class PersonalFinanceAPIController : ControllerBase
+    public class PersonalFinanceAPIController : Controller
     {
+
+
 
         private readonly IRepository repo;
         public PersonalFinanceAPIController(IRepository repo)
@@ -35,14 +50,14 @@ namespace PersonalFinance.Controllers
             debits = debits.Where(x => x.Usr_OID == User_OID);
             return Ok(debits);
         }
-        [HttpGet]
-        [Route("GetAllKnownMovements")]
-        public async Task<IActionResult> AllKnownMovements(string User_OID)
-        {
-            var knownMovements = await repo.GetAllKnownMovementsAsync();
-            knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
-            return Ok(knownMovements);
-        }
+        //[HttpGet]
+        //[Route("GetAllKnownMovements")]
+        //public async Task<IActionResult> AllKnownMovements(string User_OID)
+        //{
+        //    var knownMovements = await repo.GetAllKnownMovementsAsync();
+        //    knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
+        //    return Ok(knownMovements);
+        //}
         [HttpGet]
         [Route("GetAllTransactions")]
         public async Task<IActionResult> AllTransactions(string User_OID)
@@ -175,14 +190,14 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllTransactions));
         }
-        [HttpPost]
-        [Route("AddKnownMovement")]
-        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
-        {
-            var detections = await repo.AddKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllKnownMovements));
-        }
+        //[HttpPost]
+        //[Route("AddKnownMovement")]
+        //public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
+        //{
+        //    var detections = await repo.AddKnownMovementAsync(k);
+        //    await repo.SaveChangesAsync();
+        //    return RedirectToAction(nameof(AllKnownMovements));
+        //}
         [HttpPost]
         [Route("AddBank")]
         public async Task<IActionResult> AddBank([FromBody] Bank b)
@@ -323,14 +338,19 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        [HttpPut]
-        [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
-        {
-            await repo.UpdateKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
-            return Ok(k);
-        }
+        //[HttpPut]
+        //[Route("UpdateKnownMovement")]
+        //public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
+        //{
+        //    await EditKnownMovement(k);
+        //    return Ok(k);
+        //}
+        //public async Task<bool> EditKnownMovement(KnownMovement k)
+        //{
+        //    await repo.UpdateKnownMovementAsync(k);
+        //    await repo.SaveChangesAsync();
+        //    return true;
+        //}
         [HttpPut]
         [Route("UpdateBank")]
         public async Task<IActionResult> Bank_Edit(Bank b)
