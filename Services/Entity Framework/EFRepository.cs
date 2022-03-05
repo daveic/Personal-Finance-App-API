@@ -29,9 +29,11 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable());
         }
-        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync()
+        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable());
+            var result = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable();
+            result = result.Where(x => x.Usr_OID == User_OID);
+            return Task.FromResult(result);
         }
         public virtual Task<IQueryable<Transaction>> GetAllTransactionsAsync()
         {

@@ -26,8 +26,8 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
         {
             KnownMovements_API knownMovements_Main = new KnownMovements_API();
-            knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync();
-            knownMovements_Main.KnownMovements = knownMovements_Main.KnownMovements.Where(x => x.Usr_OID == User_OID);
+            knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync(User_OID);
+            //knownMovements_Main.KnownMovements = knownMovements_Main.KnownMovements.Where(x => x.Usr_OID == User_OID);
             return Ok(knownMovements_Main);
         }
 
@@ -70,8 +70,8 @@ namespace PersonalFinance.Controllers
         [Route("UpdateExpOnKnownMovement")]
         public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
         {
-            var KnownMovements = await repo.GetAllKnownMovementsAsync();
-            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
+            var KnownMovements = await repo.GetAllKnownMovementsAsync(KM_Exp.Usr_OID);
+            //KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
             foreach (var item in KnownMovements)
             {
                 if (item.Exp_ID != 0)
