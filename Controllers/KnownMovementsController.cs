@@ -71,7 +71,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
         {
             var KnownMovements = await repo.GetAllKnownMovementsAsync();
-            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
+            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
             foreach (var item in KnownMovements)
             {
                 if (item.Exp_ID != 0)
