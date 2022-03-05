@@ -71,7 +71,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
         {
             var KnownMovements = await repo.GetAllKnownMovementsAsync();
-            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
+            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
             foreach (var item in KnownMovements)
             {
                 if (item.Exp_ID != 0)
@@ -103,6 +103,7 @@ namespace PersonalFinance.Controllers
         public async Task ExpToRemoveAsync(string titleToMatch, string Usr_OID, int ID)
         {
             var expirations = await repo.GetAllExpirationsAsync();
+            expirations = (IQueryable<Expiration>)expirations.ToList();
             int maxExp = expirations.Where(x => x.Usr_OID == Usr_OID).OrderBy(x => x.ID).Last().ID;
             int i = 0;
             bool is_equal = true;
