@@ -21,7 +21,7 @@ namespace PersonalFinance.Services
 		Task<Credit> GetCreditAsync(int id);
 		Task<Debit> GetDebitAsync(int id);
 		Task<Transaction> GetTransactionAsync(int id);
-		Task<KnownMovement> GetKnownMovementAsync(int id);
+		Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID);
 		Task<Bank> GetBankAsync(int id);
 		Task<Deposit> GetDepositAsync(int id);
 		Task<Ticket> GetTicketAsync(int id);

@@ -163,9 +163,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllTransactionsAsync()).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id)
+        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID)
         {
-            return (await GetAllKnownMovementsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllKnownMovementsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<Bank> GetBankAsync(int id)
         {

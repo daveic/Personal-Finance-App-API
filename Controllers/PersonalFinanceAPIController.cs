@@ -131,9 +131,9 @@ namespace PersonalFinance.Controllers
         }
         [HttpGet]
         [Route("GetKnownMovementId")]
-        public async Task<IActionResult> KnownMovement_Details(int id)
+        public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
         {
-            var knownMovement = await repo.GetKnownMovementAsync(id);
+            var knownMovement = await repo.GetKnownMovementAsync(id, User_OID);
             return Ok(knownMovement);
         }
         [HttpGet]
@@ -269,9 +269,9 @@ namespace PersonalFinance.Controllers
         }
         [HttpDelete]
         [Route("DeleteKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Delete(int id)
+        public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
         {
-            var t = await repo.GetKnownMovementAsync(id);
+            var t = await repo.GetKnownMovementAsync(id, User_OID);
             await repo.DeleteKnownMovementAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
