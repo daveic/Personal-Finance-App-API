@@ -61,7 +61,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovement_Edit(KnownMovement_Ext k)
         {
             var expirations = await repo.GetAllExpirationsAsync();
-            int maxExp = expirations.Where(x => x.Usr_OID == k.Usr_OID).Last().ID;
+            int maxExp = expirations.Where(x => x.Usr_OID == k.Usr_OID).OrderBy(x => x.ID).Last().ID;
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.On_Exp is true) k.Exp_ID = -1;
             if (k.On_Exp is false)
