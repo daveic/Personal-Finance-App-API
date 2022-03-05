@@ -338,19 +338,19 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        [HttpPut]
-        [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
-        {
-            await EditKnownMovement(k);
-            return Ok(k);
-        }
-        public async Task<bool> EditKnownMovement(KnownMovement k)
-        {
-            await repo.UpdateKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
-            return true;
-        }
+        //[HttpPut]
+        //[Route("UpdateKnownMovement")]
+        //public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
+        //{
+        //    await EditKnownMovement(k);
+        //    return Ok(k);
+        //}
+        //public async Task<bool> EditKnownMovement(KnownMovement k)
+        //{
+        //    await repo.UpdateKnownMovementAsync(k);
+        //    await repo.SaveChangesAsync();
+        //    return true;
+        //}
         [HttpPut]
         [Route("UpdateBank")]
         public async Task<IActionResult> Bank_Edit(Bank b)
