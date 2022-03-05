@@ -7,10 +7,25 @@ using PersonalFinance.Services;
 //Main API controller
 namespace PersonalFinance.Controllers
 {        
+
+
+
+
+
+
+
+
+
+
+
+
+
     [ApiController]
     [Route("api/[Controller]")]
     public class PersonalFinanceAPIController : Controller
     {
+
+
 
         private readonly IRepository repo;
         public PersonalFinanceAPIController(IRepository repo)
@@ -327,9 +342,14 @@ namespace PersonalFinance.Controllers
         [Route("UpdateKnownMovement")]
         public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
         {
+            await EditKnownMovement(k);
+            return Ok(k);
+        }
+        public async Task<bool> EditKnownMovement(KnownMovement k)
+        {
             await repo.UpdateKnownMovementAsync(k);
             await repo.SaveChangesAsync();
-            return Ok(k);
+            return true;
         }
         [HttpPut]
         [Route("UpdateBank")]

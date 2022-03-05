@@ -12,15 +12,17 @@ namespace PersonalFinance.Models
         public string KMNote { get; set; }
         public int Exp_ID { get; set; }
     }
-
     public class KnownMovements_API
     {
         public IEnumerable<KnownMovement> KnownMovements { get; set; }
     }
-
     public class KnownMovement_Ext : KnownMovement
     {
         public bool On_Exp { get; set; }
     }
-    
+    public class KnownMovement_Exp
+    {
+        public string Usr_OID { get; set; }
+        public int Month_Num { get; set; }
+    }
 }

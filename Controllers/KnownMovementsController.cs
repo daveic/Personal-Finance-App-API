@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,18 +8,57 @@ using PersonalFinance.Services;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
-{        
+{
     [ApiController]
     [Route("api/[Controller]")]
-    public class KnownMovementsController : Controller
+    public class KnownMovementsController : Controller//: PersonalFinanceAPIController
     {
 
         private readonly IRepository repo;
         public KnownMovementsController(IRepository repo)
-        { 
+        {
             this.repo = repo;
         }
-
+         public async Task ExpToRemoveAsync (string titleToMatch, string Usr_OID, int ID)
+        {
+            var expirations = await repo.GetAllExpirationsAsync();
+            int maxExp = expirations.Where(x => x.Usr_OID == Usr_OID).OrderBy(x => x.ID).Last().ID;
+            int i = 0;
+            bool is_equal = true;
+            while (is_equal)
+            {
+                Expiration e = await repo.GetExpirationAsync(ID + i);
+                if (e != null && e.ExpTitle == titleToMatch)
+                {
+                    var t = await repo.GetExpirationAsync(e.ID);
+                    await repo.DeleteExpirationAsync(t);
+                    await repo.SaveChangesAsync();
+                }
+                else if (e != null && e.ExpTitle != titleToMatch)
+                {
+                    is_equal = false;
+                }
+                else if (ID + i >= maxExp)
+                {
+                    is_equal = false;
+                }
+                i++;
+            }
+        }
+        public async Task<KnownMovement> EditKnownMovement(KnownMovement_Ext k)
+        {
+            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
+            if (k.On_Exp is true) k.Exp_ID = -1;
+            if (k.On_Exp is false)
+            {
+                string titleToMatch = k.KMTitle;
+                await ExpToRemoveAsync(titleToMatch, k.Usr_OID, k.Exp_ID);                
+                k.Exp_ID = 0;
+            }
+            await repo.UpdateKnownMovementAsync(k);
+            await repo.SaveChangesAsync();
+            return k;
+        }        
         [HttpGet]
         [Route("GetAllKnownMovementsMain")]
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
@@ -32,7 +72,7 @@ namespace PersonalFinance.Controllers
         //HTTP ADD METHODS
         [HttpPost]
         [Route("AddKnownMovement")]
-        public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
+        public async Task<IActionResult> KnownMovement_Add([FromBody] KnownMovement k)
         {
 
             await repo.AddKnownMovementAsync(k);
@@ -60,39 +100,40 @@ namespace PersonalFinance.Controllers
         [Route("UpdateKnownMovement")]
         public async Task<IActionResult> KnownMovement_Edit(KnownMovement_Ext k)
         {
-            var expirations = await repo.GetAllExpirationsAsync();
-            int maxExp = expirations.Where(x => x.Usr_OID == k.Usr_OID).OrderBy(x => x.ID).Last().ID;
-            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp is true) k.Exp_ID = -1;
-            if (k.On_Exp is false)
-            {
-                string titleToMatch = k.KMTitle;
-                int i = 0;
-                bool is_equal = true;
-                while (is_equal)
-                {
-                    Expiration e = await repo.GetExpirationAsync(k.Exp_ID + i);
-                    if (e != null && e.ExpTitle == titleToMatch)
-                    {
-                        var t = await repo.GetExpirationAsync(e.ID);
-                        await repo.DeleteExpirationAsync(t);
-                        await repo.SaveChangesAsync();
-                    }
-                    else if (e != null && e.ExpTitle != titleToMatch)
-                    {
-                        is_equal = false;
-                    }
-                    else if (k.Exp_ID + i >= maxExp)
-                    {
-                        is_equal = false;
-                    }
-                    i++;
-                }
-                k.Exp_ID = 0;
-            }
-            await repo.UpdateKnownMovementAsync(k);
-            await repo.SaveChangesAsync();
+            await EditKnownMovement(k);
             return Ok(k);
+        }
+
+        [HttpPut]
+        [Route("UpdateExpOnKnownMovement")]
+        public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
+        {
+            var KnownMovements = await repo.GetAllKnownMovementsAsync();
+            KnownMovements = KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
+            foreach (var item in KnownMovements)
+            {
+                if (item.Exp_ID != 0)
+                {
+                    if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
+                    for (int k = 0; k < KM_Exp.Month_Num; k++)
+                    {
+                        Expiration exp = new Expiration();
+                        exp.Usr_OID = item.Usr_OID;
+                        exp.ExpTitle = item.KMTitle;
+                        exp.ExpDescription = item.KMTitle;
+                        exp.ExpDateTime = DateTime.Today.AddMonths(k);
+                        exp.ColorLabel = "orange";
+                        exp.ExpValue = item.KMValue;
+                        await repo.AddExpirationAsync(exp);
+                        await repo.SaveChangesAsync();             
+                    }
+                        var exps = await repo.GetAllExpirationsAsync();
+                       IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
+                    item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
+                    await EditKnownMovement((KnownMovement_Ext)item);                  
+                } 
+            }
+            return Ok(1);
         }
     }
 }
