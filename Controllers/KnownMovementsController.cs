@@ -74,7 +74,7 @@ namespace PersonalFinance.Controllers
             //KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
             foreach (var item in KnownMovements)
             {
-                if (item.Exp_ID != 0)
+               /* if (item.Exp_ID != 0)
                 {
                     if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
                     for (int k = 0; k < KM_Exp.Month_Num; k++)
@@ -93,7 +93,7 @@ namespace PersonalFinance.Controllers
                        IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
                     item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
                     await EditKnownMovement((KnownMovement_Ext)item);                  
-                } 
+                } */
             }
             return Ok(1);
         }
