@@ -267,15 +267,15 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        [HttpDelete]
-        [Route("DeleteKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
-        {
-            var t = await repo.GetKnownMovementAsync(id);
-            await repo.DeleteKnownMovementAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+        //[HttpDelete]
+        //[Route("DeleteKnownMovement")]
+        //public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
+        //{
+        //    var t = await repo.GetKnownMovementAsync(id);
+        //    await repo.DeleteKnownMovementAsync(t);
+        //    await repo.SaveChangesAsync();
+        //    return Ok(t);
+        //}
         [HttpDelete]
         [Route("DeleteBank")]
         public async Task<IActionResult> Bank_Delete(int id)

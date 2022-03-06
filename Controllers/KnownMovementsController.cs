@@ -42,7 +42,8 @@ namespace PersonalFinance.Controllers
         [Route("AddKnownMovement")]
         public async Task<IActionResult> KnownMovement_Add([FromBody] KnownMovement k)
         {
-
+            if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
+            if (k.On_Exp is true) k.Exp_ID = -1;
             await repo.AddKnownMovementAsync(k);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(KnownMovements_Main));
@@ -51,15 +52,16 @@ namespace PersonalFinance.Controllers
 
         ////HTTP DELETE METHODS
 
-        //[HttpDelete]
-        //[Route("DeleteKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Delete(int id)
-        //{
-        //    var t = await repo.GetKnownMovementAsync(id);
-        //    await repo.DeleteKnownMovementAsync(t);
-        //    await repo.SaveChangesAsync();
-        //    return Ok(t);
-        //}
+        [HttpDelete]
+        [Route("DeleteKnownMovement")]
+        public async Task<IActionResult> KnownMovement_Delete(int id)
+        {
+            var km = await repo.GetKnownMovementAsync(id);
+            await ExpToRemoveAsync(km.KMTitle, km.Usr_OID, id);
+            await repo.DeleteKnownMovementAsync(km);
+            await repo.SaveChangesAsync();
+            return Ok(km);
+        }
 
 
         //HTTP UPDATE METHODS
@@ -135,10 +137,7 @@ namespace PersonalFinance.Controllers
                 Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID + i);
                 if (e != null && e.ExpTitle == titleToMatch)
                 {
-                    //var t = await repo.GetExpirationAsync(e.ID);
                     this.PersonalFinanceContext.Remove(e);
-                    //await repo.DeleteExpirationAsync(e);
-                  
                 }
                 else if (e != null && e.ExpTitle != titleToMatch)
                 {
