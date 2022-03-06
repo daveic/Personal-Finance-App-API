@@ -66,7 +66,7 @@ namespace PersonalFinance.Controllers
 
         [HttpPut]
         [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement_Ext k)
+        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
         {
             await EditKnownMovement(k);
             return Ok(k);
@@ -108,8 +108,8 @@ namespace PersonalFinance.Controllers
                       // IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
                     item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
 
-                  //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
-                    await EditKnownMovement((KnownMovement_Ext)item);                  
+                    //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
+                    await EditKnownMovement(item);                  
                 } 
             }
             return Ok(1);
@@ -151,11 +151,11 @@ namespace PersonalFinance.Controllers
         }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public async Task<KnownMovement> EditKnownMovement(KnownMovement_Ext k)
+        public async Task<KnownMovement> EditKnownMovement(KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp is true) k.Exp_ID = -1;
-            if (k.On_Exp is false)
+            if (k.On_Exp == 1) k.Exp_ID = -1;
+            if (k.On_Exp == 0)
             {
                 string titleToMatch = k.KMTitle;
                 ExpToRemove(titleToMatch, k.Usr_OID, k.Exp_ID);
