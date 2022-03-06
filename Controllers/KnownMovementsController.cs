@@ -102,7 +102,7 @@ namespace PersonalFinance.Controllers
                         //await repo.AddExpirationAsync(exp);
                                     
                     }
-                       await repo.SaveChangesAsync(); 
+                       //await repo.SaveChangesAsync(); 
 
                       // var exps = await repo.GetAllExpirationsAsync();
                       // IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
@@ -161,7 +161,10 @@ namespace PersonalFinance.Controllers
                 ExpToRemove(titleToMatch, k.Usr_OID, k.Exp_ID);
                 k.Exp_ID = 0;
             }
-            await repo.UpdateKnownMovementAsync(k);
+            //await repo.UpdateKnownMovementAsync(k);
+            PersonalFinanceContext.Attach(k);
+            PersonalFinanceContext.Entry(k).State =
+                Microsoft.EntityFrameworkCore.EntityState.Modified;
             await repo.SaveChangesAsync();
             return k;
         }
