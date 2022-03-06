@@ -57,7 +57,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovement_Delete(int id)
         {
             var km = await repo.GetKnownMovementAsync(id);
-            await ExpToRemoveAsync(km.KMTitle, km.Usr_OID, id);
+            await ExpToRemoveAsync(km.KMTitle, km.Usr_OID, km.Exp_ID);
             await repo.DeleteKnownMovementAsync(km);
             await repo.SaveChangesAsync();
             return Ok(km);
