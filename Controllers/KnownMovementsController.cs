@@ -71,7 +71,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
         {
             var KnownMovements = await repo.GetAllKnownMovementsAsync(KM_Exp.Usr_OID);
-          //  KnownMovements = (IQueryable<KnownMovement>)KnownMovements.ToList();
+            KnownMovements = (IQueryable<KnownMovement>)KnownMovements.ToList();
             //KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
             foreach (var item in KnownMovements)
             {
@@ -88,8 +88,9 @@ namespace PersonalFinance.Controllers
                         exp.ColorLabel = "orange";
                         exp.ExpValue = item.KMValue;
                         await repo.AddExpirationAsync(exp);
-                        await repo.SaveChangesAsync();             
+                                    
                     }
+await repo.SaveChangesAsync(); 
                        var exps = await repo.GetAllExpirationsAsync();
                        IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
                     item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
