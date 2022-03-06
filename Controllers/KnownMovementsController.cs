@@ -32,8 +32,8 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
         {
             KnownMovements_API knownMovements_Main = new KnownMovements_API();
-            knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync(User_OID);
-            //knownMovements_Main.KnownMovements = knownMovements_Main.KnownMovements.Where(x => x.Usr_OID == User_OID);
+            knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync();
+            knownMovements_Main.KnownMovements = knownMovements_Main.KnownMovements.Where(x => x.Usr_OID == User_OID);
             return Ok(knownMovements_Main);
         }
 

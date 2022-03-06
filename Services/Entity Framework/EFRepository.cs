@@ -29,11 +29,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable());
         }
-        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID)
+        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync()
         {
-            var result = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable();
-            result = result.Where(x => x.Usr_OID == User_OID);
-            return Task.FromResult(result);
+            return Task.FromResult(PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable());
         }
         public virtual Task<IQueryable<Transaction>> GetAllTransactionsAsync()
         {
@@ -163,9 +161,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllTransactionsAsync()).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID)
+        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id)
         {
-            return (await GetAllKnownMovementsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
+            return (await GetAllKnownMovementsAsync()).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<Bank> GetBankAsync(int id)
         {
