@@ -68,7 +68,7 @@ namespace PersonalFinance.Controllers
         [Route("UpdateKnownMovement")]
         public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
         {
-            EditKnownMovementAsync(k);
+            await EditKnownMovementAsync (k);
             _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
             return Ok(k);
         }
@@ -89,7 +89,7 @@ namespace PersonalFinance.Controllers
             {
                if (item.Exp_ID != 0)
                 {
-                    if (item.Exp_ID != -1) ExpToRemove(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
+                    if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
                     for (int k = 0; k < KM_Exp.Month_Num; k++)
                     {
                         Expiration exp = new Expiration();
@@ -111,7 +111,7 @@ namespace PersonalFinance.Controllers
                     item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
 
                     //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
-                    EditKnownMovementAsync(item);                  
+                    await EditKnownMovementAsync (item);                  
                 } 
             }
             _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
@@ -120,7 +120,7 @@ namespace PersonalFinance.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public int ExpToRemove(string titleToMatch, string Usr_OID, int ID)
+        public async Task<int> ExpToRemoveAsync(string titleToMatch, string Usr_OID, int ID)
         {
             int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).OrderBy(x => x.ID).Last().ID;
 
@@ -137,7 +137,7 @@ namespace PersonalFinance.Controllers
                     //var t = await repo.GetExpirationAsync(e.ID);
                     this.PersonalFinanceContext.Remove(e);
                     //await repo.DeleteExpirationAsync(e);
-                    repo.SaveChangesAsync();
+                    await repo.SaveChangesAsync();
                 }
                 else if (e != null && e.ExpTitle != titleToMatch)
                 {
@@ -154,14 +154,14 @@ namespace PersonalFinance.Controllers
         }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public KnownMovement EditKnownMovementAsync(KnownMovement k)
+        public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.On_Exp is true) k.Exp_ID = -1;
             if (k.On_Exp is false)
             {
                 string titleToMatch = k.KMTitle;
-                ExpToRemove(titleToMatch, k.Usr_OID, k.Exp_ID);
+                await ExpToRemoveAsync(titleToMatch, k.Usr_OID, k.Exp_ID);
                 k.Exp_ID = 0;
             }
             //await repo.UpdateKnownMovementAsync(k);
