@@ -66,15 +66,15 @@ namespace PersonalFinance.Controllers
 
         [HttpPut]
         [Route("UpdateKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
+        public IActionResult KnownMovement_Edit(KnownMovement k)
         {
-            await EditKnownMovement(k);
+            EditKnownMovementAsync(k);
             return Ok(k);
         }
 
         [HttpPut]
         [Route("UpdateExpOnKnownMovement")]
-        public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
+        public async Task<IActionResult> KnownMovement_Exp_UpdateAsync(KnownMovement_Exp KM_Exp)
         {
 
             var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID);
@@ -100,8 +100,9 @@ namespace PersonalFinance.Controllers
                         exp.ExpValue = item.KMValue;
                         this.PersonalFinanceContext.Add(exp);
                         //await repo.AddExpirationAsync(exp);
-                                    
+                       
                     }
+ //
                        //await repo.SaveChangesAsync(); 
 
                       // var exps = await repo.GetAllExpirationsAsync();
@@ -109,9 +110,10 @@ namespace PersonalFinance.Controllers
                     item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
 
                     //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
-                    await EditKnownMovement(item);                  
+                    EditKnownMovementAsync(item);                  
                 } 
             }
+            _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
             return Ok(1);
         }
 
@@ -134,7 +136,7 @@ namespace PersonalFinance.Controllers
                     //var t = await repo.GetExpirationAsync(e.ID);
                     this.PersonalFinanceContext.Remove(e);
                     //await repo.DeleteExpirationAsync(e);
-                    
+                    repo.SaveChangesAsync();
                 }
                 else if (e != null && e.ExpTitle != titleToMatch)
                 {
@@ -146,12 +148,12 @@ namespace PersonalFinance.Controllers
                 }
                 i++;
             }
-            repo.SaveChangesAsync();
+            
             return 1;
         }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public async Task<KnownMovement> EditKnownMovement(KnownMovement k)
+        public KnownMovement EditKnownMovementAsync(KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.On_Exp is true) k.Exp_ID = -1;
@@ -165,7 +167,7 @@ namespace PersonalFinance.Controllers
             PersonalFinanceContext.Attach(k);
             PersonalFinanceContext.Entry(k).State =
                 Microsoft.EntityFrameworkCore.EntityState.Modified;
-            await repo.SaveChangesAsync();
+           // await repo.SaveChangesAsync();
             return k;
         }
     }
