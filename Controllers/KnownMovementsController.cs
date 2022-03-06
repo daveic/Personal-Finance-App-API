@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -65,19 +66,25 @@ namespace PersonalFinance.Controllers
             await EditKnownMovement(k);
             return Ok(k);
         }
-
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<IEnumerable<KnownMovement>> AllKnownMovements(string User_OID)
+        {
+            IEnumerable knownMovements = await repo.GetAllKnownMovementsAsync(User_OID);
+            return (IEnumerable<KnownMovement>)knownMovements;
+        }
         [HttpPut]
         [Route("UpdateExpOnKnownMovement")]
         public async Task<IActionResult> KnownMovement_Exp_Update(KnownMovement_Exp KM_Exp)
         {
-            var KnownMovements = await repo.GetAllKnownMovementsAsync(KM_Exp.Usr_OID);
+            var KnownMovements = await AllKnownMovements(KM_Exp.Usr_OID);
             //KnownMovements = (IQueryable<KnownMovement>)KnownMovements.Where(x => x.Usr_OID == KM_Exp.Usr_OID);
             foreach (var item in KnownMovements)
             {
                if (item.Exp_ID != 0)
                 {
                     if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
-                   /*  for (int k = 0; k < KM_Exp.Month_Num; k++)
+                    for (int k = 0; k < KM_Exp.Month_Num; k++)
                     {
                         Expiration exp = new Expiration();
                         exp.Usr_OID = item.Usr_OID;
@@ -88,10 +95,10 @@ namespace PersonalFinance.Controllers
                         exp.ExpValue = item.KMValue;
                         await repo.AddExpirationAsync(exp);
                         await repo.SaveChangesAsync();             
-                    }*/
-                        var exps = await repo.GetAllExpirationsAsync();
-                       IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
-                    item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
+                    }
+                     //   var exps = await repo.GetAllExpirationsAsync();
+                      // IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
+                   // item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
                     await EditKnownMovement((KnownMovement_Ext)item);                  
                 } 
             }
