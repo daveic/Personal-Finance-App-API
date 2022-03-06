@@ -103,8 +103,9 @@ namespace PersonalFinance.Controllers
                         //await repo.AddExpirationAsync(exp);
                        
                     }
- //
-                       await repo.SaveChangesAsync(); 
+                    //
+                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
+                  //  await repo.SaveChangesAsync(); 
 
                       // var exps = await repo.GetAllExpirationsAsync();
                       // IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
@@ -131,13 +132,13 @@ namespace PersonalFinance.Controllers
             bool is_equal = true;
             while (is_equal)
             {
-                Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID);
+                Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID + i);
                 if (e != null && e.ExpTitle == titleToMatch)
                 {
                     //var t = await repo.GetExpirationAsync(e.ID);
                     this.PersonalFinanceContext.Remove(e);
                     //await repo.DeleteExpirationAsync(e);
-                    await repo.SaveChangesAsync();
+                  
                 }
                 else if (e != null && e.ExpTitle != titleToMatch)
                 {
@@ -149,7 +150,7 @@ namespace PersonalFinance.Controllers
                 }
                 i++;
             }
-            
+            await repo.SaveChangesAsync();
             return 1;
         }
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -157,7 +158,7 @@ namespace PersonalFinance.Controllers
         public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp is true) k.Exp_ID = -1;
+            if (k.On_Exp is true && k.Exp_ID==0) k.Exp_ID = -1;
             if (k.On_Exp is false)
             {
                 string titleToMatch = k.KMTitle;
