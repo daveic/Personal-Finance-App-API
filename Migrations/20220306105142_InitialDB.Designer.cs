@@ -10,7 +10,7 @@ using PersonalFinance.Services.EntityFramework;
 namespace PersonalFinanceAPI.Migrations
 {
     [DbContext(typeof(PersonalFinanceContext))]
-    [Migration("20220225083911_InitialDB")]
+    [Migration("20220306105142_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
