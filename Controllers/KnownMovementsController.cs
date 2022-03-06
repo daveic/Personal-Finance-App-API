@@ -66,9 +66,10 @@ namespace PersonalFinance.Controllers
 
         [HttpPut]
         [Route("UpdateKnownMovement")]
-        public IActionResult KnownMovement_Edit(KnownMovement k)
+        public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
         {
             EditKnownMovementAsync(k);
+            _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
             return Ok(k);
         }
 
