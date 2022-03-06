@@ -108,7 +108,7 @@ namespace PersonalFinance.Controllers
 
                       // var exps = await repo.GetAllExpirationsAsync();
                       // IEnumerable<Expiration> Expirations = exps.Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
-                    item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID + 1;
+                    item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
 
                     //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
                     await EditKnownMovementAsync (item);                  
