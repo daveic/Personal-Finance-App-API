@@ -154,8 +154,8 @@ namespace PersonalFinance.Controllers
         public async Task<KnownMovement> EditKnownMovement(KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if (k.On_Exp == 1) k.Exp_ID = -1;
-            if (k.On_Exp == 0)
+            if (k.On_Exp is true) k.Exp_ID = -1;
+            if (k.On_Exp is false)
             {
                 string titleToMatch = k.KMTitle;
                 ExpToRemove(titleToMatch, k.Usr_OID, k.Exp_ID);
