@@ -129,13 +129,13 @@ namespace PersonalFinance.Controllers
               var transaction = await repo.GetTransactionAsync(id);
               return Ok(transaction);
         }
-        [HttpGet]
-        [Route("GetKnownMovementId")]
-        public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
-        {
-            var knownMovement = await repo.GetKnownMovementAsync(id);
-            return Ok(knownMovement);
-        }
+        //[HttpGet]
+        //[Route("GetKnownMovementId")]
+        //public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
+        //{
+        //    var knownMovement = await repo.GetKnownMovementAsync(id);
+        //    return Ok(knownMovement);
+        //}
         [HttpGet]
         [Route("GetBankId")]
         public async Task<IActionResult> Bank_Details(int id)

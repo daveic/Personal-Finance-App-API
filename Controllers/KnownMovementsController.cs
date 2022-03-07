@@ -24,8 +24,15 @@ namespace PersonalFinance.Controllers
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;
         }
-        
 
+        [HttpGet]
+        [Route("GetKnownMovementId")]
+        public async Task<IActionResult> KnownMovement_Details(int id)
+        {
+            var knownMovement = await repo.GetKnownMovementAsync(id);
+            if (knownMovement.Exp_ID != 0) knownMovement.On_Exp = true;
+            return Ok(knownMovement);
+        }
 
         [HttpGet]
         [Route("GetAllKnownMovementsMain")]
