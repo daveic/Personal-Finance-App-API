@@ -103,8 +103,8 @@ namespace PersonalFinance.Controllers
                         exp.ExpDateTime = DateTime.Today.AddMonths(k);
                         exp.ColorLabel = "orange";
                         exp.ExpValue = item.KMValue;
-                        this.PersonalFinanceContext.Add(exp);
-                        //await repo.AddExpirationAsync(exp);
+                        //this.PersonalFinanceContext.Add(exp);
+                        await repo.AddExpirationAsync(exp);
                        
                     }
                     
