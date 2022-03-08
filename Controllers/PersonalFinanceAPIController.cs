@@ -34,14 +34,14 @@ namespace PersonalFinance.Controllers
         }
 
         //HTTP GET ALL METHODS
-        [HttpGet]
-        [Route("GetAllCredits")]
-        public async Task<IActionResult> AllCredits(string User_OID)
-        {
-            var credits = await repo.GetAllCreditsAsync();
-            credits = credits.Where(x => x.Usr_OID == User_OID);
-            return Ok(credits);
-        }
+        //[HttpGet]
+        //[Route("GetAllCredits")]
+        //public async Task<IActionResult> AllCredits(string User_OID)
+        //{
+        //    var credits = await repo.GetAllCreditsAsync();
+        //    credits = credits.Where(x => x.Usr_OID == User_OID);
+        //    return Ok(credits);
+        //}
         [HttpGet]
         [Route("GetAllDebits")]
         public async Task<IActionResult> AllDebits(string User_OID)
@@ -110,9 +110,9 @@ namespace PersonalFinance.Controllers
         //HTTP GET BY ID METHODS
         [HttpGet]
         [Route("GetCreditId")]
-        public async Task<IActionResult> Credit_Details (int id)
+        public async Task<IActionResult> Credit_Details (int id, string User_OID)
         {
-            var credit = await repo.GetCreditAsync(id);
+            var credit = await repo.GetCreditAsync(id, User_OID);
             return Ok(credit);
         }
         [HttpGet]
@@ -172,7 +172,7 @@ namespace PersonalFinance.Controllers
         {
             var credits = await repo.AddCreditAsync(c);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllCredits));
+            return RedirectToAction(nameof(AllDebits));
         }
         [HttpPost]
         [Route("AddDebit")]
@@ -242,9 +242,9 @@ namespace PersonalFinance.Controllers
         //HTTP DELETE METHODS
         [HttpDelete]
         [Route("DeleteCredit")]
-        public async Task<IActionResult> Credit_Delete(int id)
+        public async Task<IActionResult> Credit_Delete(int id, string User_OID)
         {
-            var t = await repo.GetCreditAsync(id);
+            var t = await repo.GetCreditAsync(id, User_OID);
             await repo.DeleteCreditAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);

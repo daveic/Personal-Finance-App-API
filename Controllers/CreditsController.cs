@@ -24,9 +24,9 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("Details")]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string User_OID)
         {
-            var knownMovement = await repo.GetKnownMovementAsync(id);
+            var knownMovement = await repo.GetKnownMovementAsync(id, User_OID);
             if (knownMovement.Exp_ID != 0) knownMovement.On_Exp = true;
             return Ok(knownMovement);
         }

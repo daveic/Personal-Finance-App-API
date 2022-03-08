@@ -18,10 +18,10 @@ namespace PersonalFinance.Services
 		Task<IQueryable<Expiration>> GetAllExpirationsAsync();
 
 		//IRepository interfaces for GET-by-ID api call
-		Task<Credit> GetCreditAsync(int id);
+		Task<Credit> GetCreditAsync(int id, string User_OID);
 		Task<Debit> GetDebitAsync(int id);
 		Task<Transaction> GetTransactionAsync(int id);
-		Task<KnownMovement> GetKnownMovementAsync(int id);
+		Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID);
 		Task<Bank> GetBankAsync(int id);
 		Task<Deposit> GetDepositAsync(int id);
 		Task<Ticket> GetTicketAsync(int id);

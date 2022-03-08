@@ -149,9 +149,9 @@ namespace PersonalFinance.Services.EntityFramework
 
 
         //GET BY ID Methods
-        public virtual async Task<Credit> GetCreditAsync(int id)
+        public virtual async Task<Credit> GetCreditAsync(int id, string User_OID)
         {
-            return (await GetAllCreditsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllCreditsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<Debit> GetDebitAsync(int id)
         {
@@ -161,9 +161,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllTransactionsAsync()).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id)
+        public virtual async Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID)
         {
-            return (await GetAllKnownMovementsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllKnownMovementsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<Bank> GetBankAsync(int id)
         {
