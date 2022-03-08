@@ -21,17 +21,17 @@ namespace PersonalFinance.Services.EntityFramework
 
 
         //GET ALL Methods
-        public virtual Task<IQueryable<Credit>> GetAllCreditsAsync()
+        public virtual Task<IQueryable<Credit>> GetAllCreditsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
         public virtual Task<IQueryable<Debit>> GetAllDebitsAsync()
         {
             return Task.FromResult(PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable());
         }
-        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync()
+        public virtual Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
         public virtual Task<IQueryable<Transaction>> GetAllTransactionsAsync()
         {

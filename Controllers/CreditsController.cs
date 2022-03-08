@@ -23,8 +23,8 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("GetKnownMovementId")]
-        public async Task<IActionResult> KnownMovement_Details(int id)
+        [Route("Details")]
+        public async Task<IActionResult> Details(int id)
         {
             var knownMovement = await repo.GetKnownMovementAsync(id);
             if (knownMovement.Exp_ID != 0) knownMovement.On_Exp = true;
@@ -32,12 +32,10 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("GetAll")]
-        public async Task<IActionResult> Get_All(string User_OID)
-        {
-            var credits = await repo.GetAllCreditsAsync();
-            credits = credits.Where(x => x.Usr_OID == User_OID);
-            return Ok(credits);            
+        [Route("Main")]
+        public async Task<IActionResult> Main(string User_OID)
+        {            
+            return Ok(await repo.GetAllCreditsAsync(User_OID));            
         }
 
         ////HTTP ADD METHODS

@@ -7,9 +7,9 @@ namespace PersonalFinance.Services
     public interface IRepository
     {
 		//IRepository interfaces for GET ALL api call
-		Task<IQueryable<Credit>> GetAllCreditsAsync();
+		Task<IQueryable<Credit>> GetAllCreditsAsync(string User_OID);
 		Task<IQueryable<Debit>> GetAllDebitsAsync();
-		Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync();
+		Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID);
 		Task<IQueryable<Transaction>> GetAllTransactionsAsync();
 		Task<IQueryable<Bank>> GetAllBanksAsync();
 		Task<IQueryable<Deposit>> GetAllDepositsAsync();
