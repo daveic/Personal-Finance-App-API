@@ -23,7 +23,7 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("GetKnownMovementId")]
+        [Route("Details")]
         public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
         {
             var knownMovement = await repo.GetKnownMovementAsync(id, User_OID);
@@ -35,9 +35,7 @@ namespace PersonalFinance.Controllers
         [Route("Main")]
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
         {
-            KnownMovements_API knownMovements_Main = new KnownMovements_API();
-            knownMovements_Main.KnownMovements = await repo.GetAllKnownMovementsAsync(User_OID);
-            return Ok(knownMovements_Main);
+            return Ok(await repo.GetAllKnownMovementsAsync(User_OID));
         }
 
         //HTTP ADD METHODS
