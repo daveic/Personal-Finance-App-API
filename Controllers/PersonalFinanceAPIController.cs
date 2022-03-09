@@ -108,13 +108,13 @@ namespace PersonalFinance.Controllers
         }
 
         //HTTP GET BY ID METHODS
-        [HttpGet]
-        [Route("GetCreditId")]
-        public async Task<IActionResult> Credit_Details (int id, string User_OID)
-        {
-            var credit = await repo.GetCreditAsync(id, User_OID);
-            return Ok(credit);
-        }
+        //[HttpGet]
+        //[Route("GetCreditId")]
+        //public async Task<IActionResult> Credit_Details (int id, string User_OID)
+        //{
+        //    var credit = await repo.GetCreditAsync(id, User_OID);
+        //    return Ok(credit);
+        //}
         [HttpGet]
         [Route("GetDebitId")]
         public async Task<IActionResult> Debit_Details(int id)
@@ -166,14 +166,7 @@ namespace PersonalFinance.Controllers
         }
 
         //HTTP ADD METHODS
-        [HttpPost]
-        [Route("AddCredit")]
-        public async Task<IActionResult> AddCredit([FromBody] Credit c)
-        {
-            var credits = await repo.AddCreditAsync(c);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllDebits));
-        }
+
         [HttpPost]
         [Route("AddDebit")]
         public async Task<IActionResult> AddDebit([FromBody] Debit d)

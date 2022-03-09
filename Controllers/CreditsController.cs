@@ -26,9 +26,8 @@ namespace PersonalFinance.Controllers
         [Route("Details")]
         public async Task<IActionResult> Credits_Details(int id, string User_OID)
         {
-            var knownMovement = await repo.GetKnownMovementAsync(id, User_OID);
-            if (knownMovement.Exp_ID != 0) knownMovement.On_Exp = true;
-            return Ok(knownMovement);
+            var credit = await repo.GetCreditAsync(id, User_OID);
+            return Ok(credit);
         }
 
         [HttpGet]
@@ -38,6 +37,14 @@ namespace PersonalFinance.Controllers
             return Ok(await repo.GetAllCreditsAsync(User_OID));            
         }
 
+        [HttpPost]
+        [Route("Add")]
+        public async Task<IActionResult> AddCredit([FromBody] Credit c)
+        {
+            var credits = await repo.AddCreditAsync(c);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(Credits_Main));
+        }
         ////HTTP ADD METHODS
         //[HttpPost]
         //[Route("AddKnownMovement")]
@@ -102,13 +109,13 @@ namespace PersonalFinance.Controllers
         //                exp.ExpValue = item.KMValue;
         //                //this.PersonalFinanceContext.Add(exp);
         //                await repo.AddExpirationAsync(exp);
-                       
+
         //            }
-                    
+
         //            _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
         //          //  await repo.SaveChangesAsync(); 
 
-          
+
         //            item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
 
         //            //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
@@ -132,11 +139,11 @@ namespace PersonalFinance.Controllers
         //    {
         //        Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID + i);
         //        if (e != null && e.ExpTitle == titleToMatch) this.PersonalFinanceContext.Remove(e);
-       
+
         //        else if (e != null && e.ExpTitle != titleToMatch) is_equal = false;
-            
+
         //        else if (ID + i >= maxExp) is_equal = false;
-         
+
         //        i++;
         //    }
         //    await repo.SaveChangesAsync();
@@ -158,7 +165,7 @@ namespace PersonalFinance.Controllers
         //    //PersonalFinanceContext.Attach(k);
         //    //PersonalFinanceContext.Entry(k).State =
         //    //    Microsoft.EntityFrameworkCore.EntityState.Modified;
-         
+
         //    return k;
         //}
     }
