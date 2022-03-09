@@ -40,7 +40,7 @@ namespace PersonalFinance.Controllers
 
         //HTTP ADD METHODS
         [HttpPost]
-        [Route("AddKnownMovement")]
+        [Route("Add")]
         public async Task<IActionResult> KnownMovement_Add([FromBody] KnownMovement k)
         {
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";

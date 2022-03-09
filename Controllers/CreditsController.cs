@@ -41,21 +41,24 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> AddCredit([FromBody] Credit c)
         {
+            Expiration exp = new Expiration();
+            exp.Usr_OID = c.Usr_OID;
+            exp.ExpTitle = c.CredTitle;
+            exp.ExpDescription = "Rientro previsto - " + c.CredTitle;
+            exp.ExpDateTime = c.PrevDateTime;
+            exp.ColorLabel = "green";
+            exp.ExpValue = c.CredValue;
+            await repo.AddExpirationAsync(exp);
+            await repo.SaveChangesAsync();
+            //await repo.GetAllExpirationsAsync(c.Usr_OID);
+            //IEnumerable<Expiration> Expirations = GetAllItems<Expiration>("PersonalFinanceAPI", nameof(Expirations), c.Usr_OID);
+            //c.Exp_ID = Expirations.Last().ID;
+            c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
             var credits = await repo.AddCreditAsync(c);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Credits_Main));
         }
-        ////HTTP ADD METHODS
-        //[HttpPost]
-        //[Route("AddKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Add([FromBody] KnownMovement k)
-        //{
-        //    if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-        //    if (k.On_Exp is true) k.Exp_ID = -1;
-        //    await repo.AddKnownMovementAsync(k);
-        //    await repo.SaveChangesAsync();
-        //    return RedirectToAction(nameof(KnownMovements_Main));
-        //}
+
 
 
         //////HTTP DELETE METHODS
