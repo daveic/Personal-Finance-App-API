@@ -148,18 +148,17 @@ namespace PersonalFinance.Controllers
         {
             Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if(k.Exp_ID != 0 || k.On_Exp is false)
+            if(k.KMTitle != e.ExpTitle || k.KMValue != e.ExpValue)
             {
                 await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
-                k.Exp_ID = 0;
+             
             }
             if (k.On_Exp is true && k.Exp_ID==0) k.Exp_ID = -1;
-            //if (k.On_Exp is false)
-            //{
-            //    string titleToMatch = k.KMTitle;
-            //    await ExpToRemoveAsync(titleToMatch, k.Usr_OID, k.Exp_ID);
-            //    k.Exp_ID = 0;
-            //}
+            if (k.On_Exp is false)
+            {
+                await ExpToRemoveAsync(k.KMTitle, k.Usr_OID, k.Exp_ID);
+                k.Exp_ID = 0;
+            }
 
             //dovrei riuscire a passare qui il vecchio titolo, cosi da cercare e rimuovere prima di fare la modifica
             await repo.UpdateKnownMovementAsync(k);
