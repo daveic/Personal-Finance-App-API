@@ -165,6 +165,10 @@ namespace PersonalFinance.Controllers
                             e.ExpTitle = k.KMTitle;
                             e.ExpValue = k.KMValue;
                             e.ExpDescription = k.KMTitle;
+                            PersonalFinanceContext.Attach(e);
+                            PersonalFinanceContext.Entry(e).State =
+                                Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            
                         } //this.PersonalFinanceContext.Remove(e);
 
                         else if (e != null && e.ExpDescription != exp.ExpTitle) is_equal = false;
