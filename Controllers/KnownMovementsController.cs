@@ -32,7 +32,7 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("Main")]
+        [Route("All")]
         public async Task<IActionResult> KnownMovements_Main(string User_OID)
         {
             return Ok(await repo.GetAllKnownMovementsAsync(User_OID));
@@ -54,7 +54,7 @@ namespace PersonalFinance.Controllers
         ////HTTP DELETE METHODS
 
         [HttpDelete]
-        [Route("DeleteKnownMovement")]
+        [Route("Delete")]
         public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
         {
             var km = await repo.GetKnownMovementAsync(id, User_OID);
@@ -68,7 +68,7 @@ namespace PersonalFinance.Controllers
         //HTTP UPDATE METHODS
 
         [HttpPut]
-        [Route("UpdateKnownMovement")]
+        [Route("Update")]
         public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
         {
             await EditKnownMovementAsync (k);

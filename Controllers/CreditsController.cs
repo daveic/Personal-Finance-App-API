@@ -31,7 +31,7 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("Main")]
+        [Route("All")]
         public async Task<IActionResult> Credits_Main(string User_OID)
         {            
             return Ok(await repo.GetAllCreditsAsync(User_OID));            
@@ -50,16 +50,38 @@ namespace PersonalFinance.Controllers
             exp.ExpValue = c.CredValue;
             await repo.AddExpirationAsync(exp);
             await repo.SaveChangesAsync();
-            //await repo.GetAllExpirationsAsync(c.Usr_OID);
-            //IEnumerable<Expiration> Expirations = GetAllItems<Expiration>("PersonalFinanceAPI", nameof(Expirations), c.Usr_OID);
-            //c.Exp_ID = Expirations.Last().ID;
             c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
-            var credits = await repo.AddCreditAsync(c);
+            await repo.AddCreditAsync(c);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Credits_Main));
         }
 
-
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> Credit_Edit(Credit c)
+        {
+            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();            
+            foreach (var exp in Expirations)
+            {
+                if (c.Exp_ID == exp.ID)
+                {
+                    await repo.DeleteExpirationAsync(exp);
+                    Expiration e = new Expiration();
+                    e.Usr_OID = c.Usr_OID;
+                    e.ExpTitle = c.CredTitle;
+                    e.ExpDescription = "Rientro previsto - " + c.CredTitle;
+                    e.ExpDateTime = c.PrevDateTime;
+                    e.ColorLabel = "green";
+                    e.ExpValue = c.CredValue;
+                    await repo.AddExpirationAsync(e);
+                    c.Exp_ID = Expirations.Last().ID + 1;
+                    break;
+                }
+            }
+            await repo.UpdateCreditAsync(c);
+            await repo.SaveChangesAsync();
+            return Ok(c);
+        }
 
         //////HTTP DELETE METHODS
 
@@ -87,89 +109,6 @@ namespace PersonalFinance.Controllers
         //    return Ok(k);
         //}
 
-        //[HttpPut]
-        //[Route("UpdateExpOnKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Exp_UpdateAsync(KnownMovement_Exp KM_Exp)
-        //{
 
-        //    var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).ToList();
-
-        //    // var KnownMovements = repo.GetAllKnownMovementsAsync(KM_Exp.Usr_OID);
-
-        //    foreach (var item in KnownMovements)
-        //    {
-        //       if (item.Exp_ID != 0)
-        //        {
-        //            if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
-        //            for (int k = 0; k < KM_Exp.Month_Num; k++)
-        //            {
-        //                Expiration exp = new Expiration();
-        //                exp.Usr_OID = item.Usr_OID;
-        //                exp.ExpTitle = item.KMTitle;
-        //                exp.ExpDescription = item.KMTitle;
-        //                exp.ExpDateTime = DateTime.Today.AddMonths(k);
-        //                exp.ColorLabel = "orange";
-        //                exp.ExpValue = item.KMValue;
-        //                //this.PersonalFinanceContext.Add(exp);
-        //                await repo.AddExpirationAsync(exp);
-
-        //            }
-
-        //            _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
-        //          //  await repo.SaveChangesAsync(); 
-
-
-        //            item.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == KM_Exp.Usr_OID).OrderBy(x => x.ID).Last().ID - KM_Exp.Month_Num + 1;
-
-        //            //  item.Exp_ID = Expirations.Last().ID - KM_Exp.Month_Num + 1;
-        //            await EditKnownMovementAsync (item);                  
-        //        } 
-        //    }
-        //    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
-        //    return Ok(1);
-        //}
-
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[NonAction]
-        //public async Task<int> ExpToRemoveAsync(string titleToMatch, string Usr_OID, int ID)
-        //{
-        //    int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).OrderBy(x => x.ID).Last().ID;
-
-
-        //    int i = 0;
-        //    bool is_equal = true;
-        //    while (is_equal)
-        //    {
-        //        Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID + i);
-        //        if (e != null && e.ExpTitle == titleToMatch) this.PersonalFinanceContext.Remove(e);
-
-        //        else if (e != null && e.ExpTitle != titleToMatch) is_equal = false;
-
-        //        else if (ID + i >= maxExp) is_equal = false;
-
-        //        i++;
-        //    }
-        //    await repo.SaveChangesAsync();
-        //    return 1;
-        //}
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[NonAction]
-        //public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
-        //{
-        //    if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-        //    if (k.On_Exp is true && k.Exp_ID==0) k.Exp_ID = -1;
-        //    if (k.On_Exp is false)
-        //    {
-        //        string titleToMatch = k.KMTitle;
-        //        await ExpToRemoveAsync(titleToMatch, k.Usr_OID, k.Exp_ID);
-        //        k.Exp_ID = 0;
-        //    }
-        //    await repo.UpdateKnownMovementAsync(k);
-        //    //PersonalFinanceContext.Attach(k);
-        //    //PersonalFinanceContext.Entry(k).State =
-        //    //    Microsoft.EntityFrameworkCore.EntityState.Modified;
-
-        //    return k;
-        //}
     }
 }

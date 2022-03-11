@@ -307,14 +307,14 @@ namespace PersonalFinance.Controllers
         }
 
         //HTTP UPDATE METHODS
-        [HttpPut]
-        [Route("UpdateCredit")]
-        public async Task<IActionResult> Credit_Edit(Credit c)
-        {
-           await repo.UpdateCreditAsync(c);
-           await repo.SaveChangesAsync();
-           return Ok(c);
-        }
+        //[HttpPut]
+        //[Route("UpdateCredit")]
+        //public async Task<IActionResult> Credit_Edit(Credit c)
+        //{
+        //   await repo.UpdateCreditAsync(c);
+        //   await repo.SaveChangesAsync();
+        //   return Ok(c);
+        //}
         [HttpPut]
         [Route("UpdateDebit")]
         public async Task<IActionResult> Debit_Edit(Debit d)
