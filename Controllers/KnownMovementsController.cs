@@ -146,13 +146,17 @@ namespace PersonalFinance.Controllers
         [NonAction]
         public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
         {
-            Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
-            if(k.KMTitle != e.ExpTitle || k.KMValue != e.ExpValue)
+            if (k.Exp_ID != 0)
             {
-                await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
+                Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
+                if(k.KMTitle != e.ExpTitle || k.KMValue != e.ExpValue)
+                {
+                    await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
              
+                }
             }
+
             if (k.On_Exp is true && k.Exp_ID==0) k.Exp_ID = -1;
             if (k.On_Exp is false)
             {
