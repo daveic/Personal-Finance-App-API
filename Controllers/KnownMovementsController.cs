@@ -175,7 +175,7 @@ namespace PersonalFinance.Controllers
                     }
                     //
                     //await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
-             
+                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
                 }
             }
 
