@@ -146,13 +146,35 @@ namespace PersonalFinance.Controllers
         [NonAction]
         public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
         {
+
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.Exp_ID != 0)
             {
-                Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
-                if(k.KMTitle != e.ExpTitle || k.KMValue != e.ExpValue)
-                {
-                    await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
+                Expiration exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
+                if(k.KMTitle != exp.ExpTitle || k.KMValue != exp.ExpValue)
+                { //
+                    int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).OrderBy(x => x.ID).Last().ID;
+
+                    int i = 0;
+                    bool is_equal = true;
+                    while (is_equal)
+                    {
+                        Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID + i);
+                        if (e != null && e.ExpDescription == exp.ExpTitle) 
+                        {
+                            e.ExpTitle = k.KMTitle;
+                            e.ExpValue = k.KMValue;
+                            e.ExpDescription = k.KMTitle;
+                        } //this.PersonalFinanceContext.Remove(e);
+
+                        else if (e != null && e.ExpDescription != exp.ExpTitle) is_equal = false;
+
+                        else if (k.Exp_ID + i >= maxExp) is_equal = false;
+
+                        i++;
+                    }
+                    //
+                    //await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
              
                 }
             }
