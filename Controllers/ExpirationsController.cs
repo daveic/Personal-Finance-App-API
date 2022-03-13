@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +34,13 @@ namespace PersonalFinance.Controllers
             var UniqueYear = expirations.ExpirationList.GroupBy(item => item.ExpDateTime.Year)
                     .Select(group => group.First())
                     .Select(item => item.ExpDateTime.Year)
-                    .ToList();
-            foreach (var year in UniqueYear.Skip(1)) expirations.ItemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
+                    .ToList()
+                    .Skip(1);
+            List<SelectListItem> itemlistYear = new();
+            foreach (var year in UniqueYear.Skip(1)) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
+            
+            //foreach (var year in UniqueYear) expirations.ItemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
+expirations.ItemlistYear = itemlistYear;
             expirations.UniqueMonth = expirations.ExpirationList.GroupBy(item => item.ExpDateTime.Month)
                                             .Select(group => group.First())
                                             .Select(item => item.ExpDateTime.Month)
