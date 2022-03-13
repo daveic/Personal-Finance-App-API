@@ -35,7 +35,6 @@ namespace PersonalFinance.Controllers
                     .Select(group => group.First())
                     .Select(item => item.ExpDateTime.Year)
                     .ToList()
-                    .Skip(1);
             List<SelectListItem> itemlistYear = new();
             foreach (var year in UniqueYear.Skip(1)) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
             
