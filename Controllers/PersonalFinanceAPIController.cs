@@ -98,14 +98,7 @@ namespace PersonalFinance.Controllers
             balances = balances.Where(x => x.Usr_OID == User_OID);
             return Ok(balances);
         }
-        [HttpGet]
-        [Route("GetAllExpirations")]
-        public async Task<IActionResult> AllExpirations(string User_OID)
-        {
-            var expirations = await repo.GetAllExpirationsAsync();
-            expirations = expirations.Where(x => x.Usr_OID == User_OID);
-            return Ok(expirations);
-        }
+
 
         //HTTP GET BY ID METHODS
         //[HttpGet]
@@ -159,9 +152,9 @@ namespace PersonalFinance.Controllers
         }
         [HttpGet]
         [Route("GetExpirationId")]
-        public async Task<IActionResult> Expiration_Details(int id)
+        public async Task<IActionResult> Expiration_Details(int id, string User_OID)
         {
-            var expiration = await repo.GetExpirationAsync(id);
+            var expiration = await repo.GetExpirationAsync(id, User_OID);
             return Ok(expiration);
         }
 
@@ -223,25 +216,10 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllBalances));
         }
-        [HttpPost]
-        [Route("AddExpiration")]
-        public async Task<IActionResult> AddExpiration([FromBody] Expiration e)
-        {
-            var detections = await repo.AddExpirationAsync(e);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllExpirations));
-        }
+
 
         //HTTP DELETE METHODS
-        [HttpDelete]
-        [Route("DeleteCredit")]
-        public async Task<IActionResult> Credit_Delete(int id, string User_OID)
-        {
-            var t = await repo.GetCreditAsync(id, User_OID);
-            await repo.DeleteCreditAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+
         [HttpDelete]
         [Route("DeleteDebit")]
         public async Task<IActionResult> Debit_Delete(int id)
@@ -298,9 +276,9 @@ namespace PersonalFinance.Controllers
         }
         [HttpDelete]
         [Route("DeleteExpiration")]
-        public async Task<IActionResult> Expiration_Delete(int id)
+        public async Task<IActionResult> Expiration_Delete(int id, string User_OID)
         {
-            var t = await repo.GetExpirationAsync(id);
+            var t = await repo.GetExpirationAsync(id, User_OID);
             await repo.DeleteExpirationAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);

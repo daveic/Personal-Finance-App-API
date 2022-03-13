@@ -53,9 +53,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Balance>().AsNoTracking().AsQueryable());
         }
-        public virtual Task<IQueryable<Expiration>> GetAllExpirationsAsync()
+        public virtual Task<IQueryable<Expiration>> GetAllExpirationsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
 
         //ADD NEW Methods
@@ -177,9 +177,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllTicketsAsync()).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<Expiration> GetExpirationAsync(int id)
+        public virtual async Task<Expiration> GetExpirationAsync(int id, string User_OID)
         {
-            return (await GetAllExpirationsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllExpirationsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
 
 

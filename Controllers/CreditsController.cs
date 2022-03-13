@@ -83,6 +83,23 @@ namespace PersonalFinance.Controllers
             return Ok(c);
         }
 
+
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Credit_Delete(int id, string User_OID)
+        {
+            var credit = await repo.GetCreditAsync(id, User_OID);
+            Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
+            this.PersonalFinanceContext.Remove(e);
+
+           // await repo.SaveChangesAsync();
+
+
+            var t = await repo.GetCreditAsync(id, User_OID);
+            await repo.DeleteCreditAsync(t);
+            await repo.SaveChangesAsync();
+            return Ok(t);
+        }
         //////HTTP DELETE METHODS
 
         //[HttpDelete]
