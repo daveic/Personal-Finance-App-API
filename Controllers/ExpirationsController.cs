@@ -36,7 +36,7 @@ namespace PersonalFinance.Controllers
                     .Select(item => item.ExpDateTime.Year)
                     .ToList();
             List<SelectListItem> itemlistYear = new();
-            foreach (var year in UniqueYear.Skip(1)) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
+            foreach (var year in UniqueYear) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
             expirations.ItemlistYear = itemlistYear;
             if (!String.IsNullOrEmpty(selectedYear)) expirations.ExpirationList = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Year.ToString() == selectedYear).OrderBy(item => item.ExpDateTime.Month);
             else expirations.ExpirationList = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Year.ToString() == DateTime.Now.Year.ToString()).OrderBy(item => item.ExpDateTime.Month);
