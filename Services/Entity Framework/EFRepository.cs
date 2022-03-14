@@ -37,17 +37,17 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable());
         }
-        public virtual Task<IQueryable<Bank>> GetAllBanksAsync()
+        public virtual Task<IQueryable<Bank>> GetAllBanksAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Bank>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Bank>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
-        public virtual Task<IQueryable<Deposit>> GetAllDepositsAsync()
+        public virtual Task<IQueryable<Deposit>> GetAllDepositsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Deposit>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Deposit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
-        public virtual Task<IQueryable<Ticket>> GetAllTicketsAsync()
+        public virtual Task<IQueryable<Ticket>> GetAllTicketsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
         public virtual Task<IQueryable<Balance>> GetAllBalancesAsync()
         {
@@ -165,17 +165,17 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllKnownMovementsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<Bank> GetBankAsync(int id)
+        public virtual async Task<Bank> GetBankAsync(int id, string User_OID)
         {
-            return (await GetAllBanksAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllBanksAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<Deposit> GetDepositAsync(int id)
+        public virtual async Task<Deposit> GetDepositAsync(int id, string User_OID)
         {
-            return (await GetAllDepositsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllDepositsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<Ticket> GetTicketAsync(int id)
+        public virtual async Task<Ticket> GetTicketAsync(int id, string User_OID)
         {
-            return (await GetAllTicketsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllTicketsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<Expiration> GetExpirationAsync(int id, string User_OID)
         {

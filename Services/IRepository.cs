@@ -11,9 +11,9 @@ namespace PersonalFinance.Services
 		Task<IQueryable<Debit>> GetAllDebitsAsync();
 		Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID);
 		Task<IQueryable<Transaction>> GetAllTransactionsAsync();
-		Task<IQueryable<Bank>> GetAllBanksAsync();
-		Task<IQueryable<Deposit>> GetAllDepositsAsync();
-		Task<IQueryable<Ticket>> GetAllTicketsAsync();
+		Task<IQueryable<Bank>> GetAllBanksAsync(string User_OID);
+		Task<IQueryable<Deposit>> GetAllDepositsAsync(string User_OID);
+		Task<IQueryable<Ticket>> GetAllTicketsAsync(string User_OID);
 		Task<IQueryable<Balance>> GetAllBalancesAsync();
 		Task<IQueryable<Expiration>> GetAllExpirationsAsync(string User_OID);
 
@@ -22,9 +22,9 @@ namespace PersonalFinance.Services
 		Task<Debit> GetDebitAsync(int id);
 		Task<Transaction> GetTransactionAsync(int id);
 		Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID);
-		Task<Bank> GetBankAsync(int id);
-		Task<Deposit> GetDepositAsync(int id);
-		Task<Ticket> GetTicketAsync(int id);
+		Task<Bank> GetBankAsync(int id, string User_OID);
+		Task<Deposit> GetDepositAsync(int id, string User_OID);
+		Task<Ticket> GetTicketAsync(int id, string User_OID);
 		Task<Expiration> GetExpirationAsync(int id, string User_OID);
 
 		//IRepository interfaces for ADD-by-ID api call

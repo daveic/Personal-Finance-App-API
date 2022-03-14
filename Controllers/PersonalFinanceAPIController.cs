@@ -71,24 +71,24 @@ namespace PersonalFinance.Controllers
         [Route("GetAllBanks")]
         public async Task<IActionResult> AllBanks(string User_OID)
         {
-            var banks = await repo.GetAllBanksAsync();
-            banks = banks.Where(x => x.Usr_OID == User_OID);
+            var banks = await repo.GetAllBanksAsync(User_OID);
+            
             return Ok(banks);
         }
         [HttpGet]
         [Route("GetAllDeposits")]
         public async Task<IActionResult> AllDeposits(string User_OID)
         {
-            var deposits = await repo.GetAllDepositsAsync();
-            deposits = deposits.Where(x => x.Usr_OID == User_OID);
+            var deposits = await repo.GetAllDepositsAsync(User_OID);
+           
             return Ok(deposits);
         }
         [HttpGet]
         [Route("GetAllTickets")]
         public async Task<IActionResult> AllTickets(string User_OID)
         {
-            var tickets = await repo.GetAllTicketsAsync();
-            tickets = tickets.Where(x => x.Usr_OID == User_OID);
+            var tickets = await repo.GetAllTicketsAsync(User_OID);
+    
             return Ok(tickets);
         }
         [HttpGet]
@@ -132,23 +132,23 @@ namespace PersonalFinance.Controllers
         //}
         [HttpGet]
         [Route("GetBankId")]
-        public async Task<IActionResult> Bank_Details(int id)
+        public async Task<IActionResult> Bank_Details(int id, string User_OID)
         {
-            var bank = await repo.GetBankAsync(id);
+            var bank = await repo.GetBankAsync(id, User_OID);
             return Ok(bank);
         }
         [HttpGet]
         [Route("GetDepositId")]
-        public async Task<IActionResult> Deposit_Details(int id)
+        public async Task<IActionResult> Deposit_Details(int id, string User_OID)
         {
-            var deposit = await repo.GetDepositAsync(id);
+            var deposit = await repo.GetDepositAsync(id, User_OID);
             return Ok(deposit);
         }
         [HttpGet]
         [Route("GetTicketId")]
-        public async Task<IActionResult> Ticket_Details(int id)
+        public async Task<IActionResult> Ticket_Details(int id, string User_OID)
         {
-            var ticket = await repo.GetTicketAsync(id);
+            var ticket = await repo.GetTicketAsync(id, User_OID);
             return Ok(ticket);
         }
 
@@ -172,30 +172,7 @@ namespace PersonalFinance.Controllers
             return RedirectToAction(nameof(AllTransactions));
         }
 
-        [HttpPost]
-        [Route("AddBank")]
-        public async Task<IActionResult> AddBank([FromBody] Bank b)
-        {
-            var detections = await repo.AddBankAsync(b);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllBanks));
-        }
-        [HttpPost]
-        [Route("AddDeposit")]
-        public async Task<IActionResult> AddDeposit([FromBody] Deposit d)
-        {
-            var detections = await repo.AddDepositAsync(d);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllDeposits));
-        }
-        [HttpPost]
-        [Route("AddTicket")]
-        public async Task<IActionResult> AddTicket([FromBody] Ticket t)
-        {
-            var detections = await repo.AddTicketAsync(t);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllTickets));
-        }
+
         [HttpPost]
         [Route("AddBalance")]
         public async Task<IActionResult> AddBalance([FromBody] Balance b)
@@ -226,53 +203,10 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        //[HttpDelete]
-        //[Route("DeleteKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
-        //{
-        //    var t = await repo.GetKnownMovementAsync(id);
-        //    await repo.DeleteKnownMovementAsync(t);
-        //    await repo.SaveChangesAsync();
-        //    return Ok(t);
-        //}
-        [HttpDelete]
-        [Route("DeleteBank")]
-        public async Task<IActionResult> Bank_Delete(int id)
-        {
-            var t = await repo.GetBankAsync(id);
-            await repo.DeleteBankAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
-        [HttpDelete]
-        [Route("DeleteDeposit")]
-        public async Task<IActionResult> Deposit_Delete(int id)
-        {
-            var t = await repo.GetDepositAsync(id);
-            await repo.DeleteDepositAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
-        [HttpDelete]
-        [Route("DeleteTicket")]
-        public async Task<IActionResult> Ticket_Delete(int id)
-        {
-            var t = await repo.GetTicketAsync(id);
-            await repo.DeleteTicketAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
 
 
-        //HTTP UPDATE METHODS
-        //[HttpPut]
-        //[Route("UpdateCredit")]
-        //public async Task<IActionResult> Credit_Edit(Credit c)
-        //{
-        //   await repo.UpdateCreditAsync(c);
-        //   await repo.SaveChangesAsync();
-        //   return Ok(c);
-        //}
+
+
         [HttpPut]
         [Route("UpdateDebit")]
         public async Task<IActionResult> Debit_Edit(Debit d)
@@ -289,42 +223,7 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        //[HttpPut]
-        //[Route("UpdateKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Edit(KnownMovement k)
-        //{
-        //    await EditKnownMovement(k);
-        //    return Ok(k);
-        //}
-        //public async Task<bool> EditKnownMovement(KnownMovement k)
-        //{
-        //    await repo.UpdateKnownMovementAsync(k);
-        //    await repo.SaveChangesAsync();
-        //    return true;
-        //}
-        [HttpPut]
-        [Route("UpdateBank")]
-        public async Task<IActionResult> Bank_Edit(Bank b)
-        {
-            await repo.UpdateBankAsync(b);
-            await repo.SaveChangesAsync();
-            return Ok(b);
-        }
-        [HttpPut]
-        [Route("UpdateDeposit")]
-        public async Task<IActionResult> Deposit_Edit(Deposit d)
-        {
-            await repo.UpdateDepositAsync(d);
-            await repo.SaveChangesAsync();
-            return Ok(d);
-        }
-        [HttpPut]
-        [Route("UpdateTicket")]
-        public async Task<IActionResult> Ticket_Edit(Ticket t)
-        {
-            await repo.UpdateTicketAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+
+
     }
 }
