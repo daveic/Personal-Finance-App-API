@@ -151,13 +151,7 @@ namespace PersonalFinance.Controllers
             var ticket = await repo.GetTicketAsync(id);
             return Ok(ticket);
         }
-        [HttpGet]
-        [Route("GetExpirationId")]
-        public async Task<IActionResult> Expiration_Details(int id, string User_OID)
-        {
-            var expiration = await repo.GetExpirationAsync(id, User_OID);
-            return Ok(expiration);
-        }
+
 
         //HTTP ADD METHODS
 
@@ -177,14 +171,7 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllTransactions));
         }
-        //[HttpPost]
-        //[Route("AddKnownMovement")]
-        //public async Task<IActionResult> AddKnownMovement([FromBody] KnownMovement k)
-        //{
-        //    var detections = await repo.AddKnownMovementAsync(k);
-        //    await repo.SaveChangesAsync();
-        //    return RedirectToAction(nameof(AllKnownMovements));
-        //}
+
         [HttpPost]
         [Route("AddBank")]
         public async Task<IActionResult> AddBank([FromBody] Bank b)
@@ -275,15 +262,7 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        [HttpDelete]
-        [Route("DeleteExpiration")]
-        public async Task<IActionResult> Expiration_Delete(int id, string User_OID)
-        {
-            var t = await repo.GetExpirationAsync(id, User_OID);
-            await repo.DeleteExpirationAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+
 
         //HTTP UPDATE METHODS
         //[HttpPut]

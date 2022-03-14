@@ -79,7 +79,21 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Expirations_Main));
         }
-
-
+        [HttpGet]
+        [Route("Details")]
+        public async Task<IActionResult> Expiration_Details(int id, string User_OID)
+        {
+            var expiration = await repo.GetExpirationAsync(id, User_OID);
+            return Ok(expiration);
+        }
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Expiration_Delete(int id, string User_OID)
+        {
+            var t = await repo.GetExpirationAsync(id, User_OID);
+            await repo.DeleteExpirationAsync(t);
+            await repo.SaveChangesAsync();
+            return Ok(t);
+        }
     }
 }
