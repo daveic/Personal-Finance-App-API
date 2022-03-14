@@ -24,6 +24,7 @@ namespace PersonalFinance.Models
         public IEnumerable<Expiration> ExpirationList { get; set; }
         public List<SelectListItem> ItemlistYear { get; set; }
         public List<int> UniqueMonth { get; set; }
+        public List<string> UniqueMonthNames { get; set; }
         public List<ExpMonth> ExpMonth { get; set;}
        
     }

@@ -26,7 +26,7 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("All")]
-        public async Task<IActionResult> Expirations_Main(string User_OID)
+        public async Task<IActionResult> Expirations_Main(string User_OID, string selectedYear)
         {
             Expirations expirations = new();
             expirations.ExpirationList = await repo.GetAllExpirationsAsync(User_OID);
@@ -38,10 +38,30 @@ namespace PersonalFinance.Controllers
             List<SelectListItem> itemlistYear = new();
             foreach (var year in UniqueYear.Skip(1)) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
             expirations.ItemlistYear = itemlistYear;
+            if (!String.IsNullOrEmpty(selectedYear)) expirations.ExpirationList = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Year.ToString() == selectedYear).OrderBy(item => item.ExpDateTime.Month);
+            else expirations.ExpirationList = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Year.ToString() == DateTime.Now.Year.ToString()).OrderBy(item => item.ExpDateTime.Month);
+
             expirations.UniqueMonth = expirations.ExpirationList.GroupBy(item => item.ExpDateTime.Month)
                                             .Select(group => group.First())
                                             .Select(item => item.ExpDateTime.Month)
-                                            .ToList();            
+                                            .ToList();
+
+            List<string> UniqueMonthNames = new();
+            List<ExpMonth> expMonth = new();
+            foreach (var month in expirations.UniqueMonth)
+            {
+                UniqueMonthNames.Add(MonthConverter(month));
+                var singleMonthExp = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Month.ToString() == month.ToString());
+                foreach (var exp in singleMonthExp)
+                {
+                    ExpMonth item = new();
+                    item.Month = MonthConverter(month);
+                    item.ExpItem = exp;
+                    expMonth.Add(item);
+                }
+            }
+            expirations.UniqueMonthNames = UniqueMonthNames;
+            expirations.ExpMonth = expMonth;
             return Ok(expirations);
         }
         [HttpGet]
