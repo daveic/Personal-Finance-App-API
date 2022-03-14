@@ -31,7 +31,9 @@ namespace PersonalFinance.Controllers
             Expirations expirations = new();
             expirations.ExpirationList = await repo.GetAllExpirationsAsync(User_OID);
             //Trovo gli anni "unici"
-            var UniqueYear = expirations.ExpirationList.GroupBy(item => item.ExpDateTime.Year)
+            var expOtherYears = expirations.ExpirationList.Where(x => x.ExpDateTime.Year != DateTime.Now.Year);
+            var UniqueYear = expOtherYears
+                    .GroupBy(item => item.ExpDateTime.Year)
                     .Select(group => group.First())
                     .Select(item => item.ExpDateTime.Year)
                     .ToList();
