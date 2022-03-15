@@ -21,8 +21,8 @@ namespace PersonalFinance.Controllers
 
 
         [HttpGet]
-        [Route("GetAllBalances")]
-        public async Task<IActionResult> AllBalances(string User_OID)
+        [Route("All")]
+        public async Task<IActionResult> Balances_Main(string User_OID)
         {
             return Ok(await repo.GetAllBalancesAsync(User_OID));
         }
@@ -34,12 +34,12 @@ namespace PersonalFinance.Controllers
 
 
         [HttpPost]
-        [Route("AddBalance")]
+        [Route("Add")]
         public async Task<IActionResult> AddBalance([FromBody] Balance b)
         {
-            var detections = await repo.AddBalanceAsync(b);
+            await repo.AddBalanceAsync(b);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllBalances));
+            return RedirectToAction(nameof(Balances_Main));
         }
 
 
