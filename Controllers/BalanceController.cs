@@ -1,31 +1,23 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
+using PersonalFinance.Services.EntityFramework;
 
-//Main API controller
+//Known Movements Controller
 namespace PersonalFinance.Controllers
-{        
-
+{
     [ApiController]
     [Route("api/[Controller]")]
-    public class PersonalFinanceAPIController : Controller
+    public class BalanceController : PFA_APIController
     {
-
-
-
+        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public PersonalFinanceAPIController(IRepository repo)
+        public BalanceController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
         {
             this.repo = repo;
+            this.PersonalFinanceContext = PersonalFinanceContext;
         }
-
-
-
-
-
-
 
 
         [HttpGet]
@@ -49,18 +41,6 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(AllBalances));
         }
-
-
-   
-
-
-
-
-
-
-
-
-
 
 
     }

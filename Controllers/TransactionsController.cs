@@ -13,11 +13,11 @@ namespace PersonalFinance.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class TrabsactionsController : PFA_APIController
+    public class TransactionsController : PFA_APIController
     {
         private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public TrabsactionsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public TransactionsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
         {
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;
