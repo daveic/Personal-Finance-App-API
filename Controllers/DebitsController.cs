@@ -84,10 +84,12 @@ namespace PersonalFinance.Controllers
                 }
                 for (int j = 0; j < dexp.Debit.RtNum; j++)
                 {
-                    Expiration exp = new Expiration();
-                    exp.Usr_OID = dexp.Debit.Usr_OID;
-                    exp.ExpTitle = dexp.Debit.DebTitle;
-                    exp.ExpDescription = dexp.Debit.DebTitle + " - rata: " + (j + 1);
+                    Expiration exp = new()
+                    {
+                        Usr_OID = dexp.Debit.Usr_OID,
+                        ExpTitle = dexp.Debit.DebTitle,
+                        ExpDescription = dexp.Debit.DebTitle + " - rata: " + (j + 1)
+                    };
                     if (dexp.Debit.RtFreq == "Mesi")
                     {
                         exp.ExpDateTime = dexp.Debit.DebInsDate.AddMonths(j * dexp.Debit.Multiplier);

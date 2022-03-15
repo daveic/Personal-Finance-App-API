@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
 
 namespace PersonalFinance.Models
 {
@@ -11,5 +13,11 @@ namespace PersonalFinance.Models
         public DateTime TrsDateTime { get; set; }
         public double TrsValue { get; set; }
         public string TrsNote { get; set; }
+    }
+    public class TransactionDetailsEdit
+    {
+        public int ID { get; set; }
+        public string User_OID { get; set; }
+        public List<SelectListItem> Codes { get; set; }
     }
 }
