@@ -84,24 +84,8 @@ namespace PersonalFinance.Controllers
 
         //HTTP DELETE METHODS
 
-        [HttpDelete]
-        [Route("DeleteDebit")]
-        public async Task<IActionResult> Debit_Delete(int id, string User_OID)
-        {
-            var t = await repo.GetDebitAsync(id, User_OID);
-            await repo.DeleteDebitAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
-        [HttpDelete]
-        [Route("DeleteTransaction")]
-        public async Task<IActionResult> Transaction_Delete(int id)
-        {
-            var t = await repo.GetTransactionAsync(id);
-            await repo.DeleteTransactionAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+
+
 
 
 
