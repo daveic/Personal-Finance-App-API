@@ -23,6 +23,12 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> KnownMovements_Main(string User_OID)
+        {
+            return Ok(await repo.GetAllKnownMovementsAsync(User_OID));
+        }
+        [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
         {
@@ -30,15 +36,6 @@ namespace PersonalFinance.Controllers
             if (knownMovement.Exp_ID != 0) knownMovement.On_Exp = true;
             return Ok(knownMovement);
         }
-
-        [HttpGet]
-        [Route("All")]
-        public async Task<IActionResult> KnownMovements_Main(string User_OID)
-        {
-            return Ok(await repo.GetAllKnownMovementsAsync(User_OID));
-        }
-
-        //HTTP ADD METHODS
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> KnownMovement_Add([FromBody] KnownMovement k)
@@ -49,10 +46,15 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(KnownMovements_Main));
         }
-
-
-        ////HTTP DELETE METHODS
-
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
+        {
+            await EditKnownMovementAsync (k);
+            await repo.SaveChangesAsync();
+           // _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
+            return Ok(k);
+        }
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> KnownMovement_Delete(int id, string User_OID)
@@ -65,17 +67,9 @@ namespace PersonalFinance.Controllers
         }
 
 
-        //HTTP UPDATE METHODS
 
-        [HttpPut]
-        [Route("Update")]
-        public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
-        {
-            await EditKnownMovementAsync (k);
-            await repo.SaveChangesAsync();
-           // _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
-            return Ok(k);
-        }
+
+
 
         [HttpPut]
         [Route("UpdateExpOnKnownMovement")]
@@ -93,13 +87,15 @@ namespace PersonalFinance.Controllers
                     if (item.Exp_ID != -1) await ExpToRemoveAsync(item.KMTitle, KM_Exp.Usr_OID, item.Exp_ID);
                     for (int k = 0; k < KM_Exp.Month_Num; k++)
                     {
-                        Expiration exp = new Expiration();
-                        exp.Usr_OID = item.Usr_OID;
-                        exp.ExpTitle = item.KMTitle;
-                        exp.ExpDescription = item.KMTitle;
-                        exp.ExpDateTime = DateTime.Today.AddMonths(k);
-                        exp.ColorLabel = "orange";
-                        exp.ExpValue = item.KMValue;
+                        Expiration exp = new()
+                        {
+                            Usr_OID = item.Usr_OID,
+                            ExpTitle = item.KMTitle,
+                            ExpDescription = item.KMTitle,
+                            ExpDateTime = DateTime.Today.AddMonths(k),
+                            ColorLabel = "orange",
+                            ExpValue = item.KMValue
+                        };
                         //this.PersonalFinanceContext.Add(exp);
                         await repo.AddExpirationAsync(exp);
                        

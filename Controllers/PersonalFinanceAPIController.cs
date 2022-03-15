@@ -8,18 +8,6 @@ using PersonalFinance.Services;
 namespace PersonalFinance.Controllers
 {        
 
-
-
-
-
-
-
-
-
-
-
-
-
     [ApiController]
     [Route("api/[Controller]")]
     public class PersonalFinanceAPIController : Controller
@@ -33,16 +21,7 @@ namespace PersonalFinance.Controllers
             this.repo = repo;
         }
 
-        
-        //HTTP GET ALL METHODS
-        //[HttpGet]
-        //[Route("GetAllCredits")]
-        //public async Task<IActionResult> AllCredits(string User_OID)
-        //{
-        //    var credits = await repo.GetAllCreditsAsync();
-        //    credits = credits.Where(x => x.Usr_OID == User_OID);
-        //    return Ok(credits);
-        //}
+
         [HttpGet]
         [Route("GetAllDebits")]
         public async Task<IActionResult> AllDebits(string User_OID)
@@ -51,14 +30,7 @@ namespace PersonalFinance.Controllers
             debits = debits.Where(x => x.Usr_OID == User_OID);
             return Ok(debits);
         }
-        //[HttpGet]
-        //[Route("GetAllKnownMovements")]
-        //public async Task<IActionResult> AllKnownMovements(string User_OID)
-        //{
-        //    var knownMovements = await repo.GetAllKnownMovementsAsync();
-        //    knownMovements = knownMovements.Where(x => x.Usr_OID == User_OID);
-        //    return Ok(knownMovements);
-        //}
+
         [HttpGet]
         [Route("GetAllTransactions")]
         public async Task<IActionResult> AllTransactions(string User_OID)
@@ -67,30 +39,9 @@ namespace PersonalFinance.Controllers
             transactions = transactions.Where(x => x.Usr_OID == User_OID);
             return Ok(transactions);
         }
-        [HttpGet]
-        [Route("GetAllBanks")]
-        public async Task<IActionResult> AllBanks(string User_OID)
-        {
-            var banks = await repo.GetAllBanksAsync(User_OID);
-            
-            return Ok(banks);
-        }
-        [HttpGet]
-        [Route("GetAllDeposits")]
-        public async Task<IActionResult> AllDeposits(string User_OID)
-        {
-            var deposits = await repo.GetAllDepositsAsync(User_OID);
-           
-            return Ok(deposits);
-        }
-        [HttpGet]
-        [Route("GetAllTickets")]
-        public async Task<IActionResult> AllTickets(string User_OID)
-        {
-            var tickets = await repo.GetAllTicketsAsync(User_OID);
-    
-            return Ok(tickets);
-        }
+
+
+
         [HttpGet]
         [Route("GetAllBalances")]
         public async Task<IActionResult> AllBalances(string User_OID)
@@ -101,14 +52,6 @@ namespace PersonalFinance.Controllers
         }
 
 
-        //HTTP GET BY ID METHODS
-        //[HttpGet]
-        //[Route("GetCreditId")]
-        //public async Task<IActionResult> Credit_Details (int id, string User_OID)
-        //{
-        //    var credit = await repo.GetCreditAsync(id, User_OID);
-        //    return Ok(credit);
-        //}
         [HttpGet]
         [Route("GetDebitId")]
         public async Task<IActionResult> Debit_Details(int id)
@@ -123,34 +66,10 @@ namespace PersonalFinance.Controllers
               var transaction = await repo.GetTransactionAsync(id);
               return Ok(transaction);
         }
-        //[HttpGet]
-        //[Route("GetKnownMovementId")]
-        //public async Task<IActionResult> KnownMovement_Details(int id, string User_OID)
-        //{
-        //    var knownMovement = await repo.GetKnownMovementAsync(id);
-        //    return Ok(knownMovement);
-        //}
-        [HttpGet]
-        [Route("GetBankId")]
-        public async Task<IActionResult> Bank_Details(int id, string User_OID)
-        {
-            var bank = await repo.GetBankAsync(id, User_OID);
-            return Ok(bank);
-        }
-        [HttpGet]
-        [Route("GetDepositId")]
-        public async Task<IActionResult> Deposit_Details(int id, string User_OID)
-        {
-            var deposit = await repo.GetDepositAsync(id, User_OID);
-            return Ok(deposit);
-        }
-        [HttpGet]
-        [Route("GetTicketId")]
-        public async Task<IActionResult> Ticket_Details(int id, string User_OID)
-        {
-            var ticket = await repo.GetTicketAsync(id, User_OID);
-            return Ok(ticket);
-        }
+
+
+
+
 
 
         //HTTP ADD METHODS

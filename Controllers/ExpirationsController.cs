@@ -75,7 +75,7 @@ namespace PersonalFinance.Controllers
         }
         [HttpPost]
         [Route("Add")]
-        public async Task<IActionResult> AddExpiration([FromBody] Expiration e)
+        public async Task<IActionResult> Expiration_Add([FromBody] Expiration e)
         {
             var detections = await repo.AddExpirationAsync(e);
             await repo.SaveChangesAsync();

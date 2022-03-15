@@ -9,7 +9,7 @@ using PersonalFinance.Services;
 //Known Movements Controller
 namespace PersonalFinance.Controllers
 {
-    public class PFA_APIController : Controller//: PersonalFinanceAPIController
+    public class PFA_APIController : Controller
     {
 
         private readonly IRepository repo;
