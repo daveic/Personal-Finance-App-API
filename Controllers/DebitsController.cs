@@ -28,6 +28,12 @@ namespace PersonalFinance.Controllers
         {
             return Ok(await repo.GetAllDebitsAsync(User_OID));
         }
+        [HttpGet]
+        [Route("Details")]
+        public async Task<IActionResult> Debit_Details(int id, string User_OID)
+        {
+            return Ok(await repo.GetDebitAsync(id, User_OID));
+        }
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Debit_Add([FromBody] Debit d)

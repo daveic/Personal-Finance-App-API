@@ -45,13 +45,7 @@ namespace PersonalFinance.Controllers
         }
 
 
-        [HttpGet]
-        [Route("GetDebitId")]
-        public async Task<IActionResult> Debit_Details(int id, string User_OID)
-        {
-            var debit = await repo.GetDebitAsync(id, User_OID);
-            return Ok(debit);
-        }
+
         [HttpGet]
         [Route("GetTransactionId")]
         public async Task<IActionResult> Transaction_Details(int id)
