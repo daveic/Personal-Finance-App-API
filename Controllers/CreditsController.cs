@@ -41,13 +41,15 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> AddCredit([FromBody] Credit c)
         {
-            Expiration exp = new Expiration();
-            exp.Usr_OID = c.Usr_OID;
-            exp.ExpTitle = c.CredTitle;
-            exp.ExpDescription = "Rientro previsto - " + c.CredTitle;
-            exp.ExpDateTime = c.PrevDateTime;
-            exp.ColorLabel = "green";
-            exp.ExpValue = c.CredValue;
+            Expiration exp = new()
+            {
+                Usr_OID = c.Usr_OID,
+                ExpTitle = c.CredTitle,
+                ExpDescription = "Rientro previsto - " + c.CredTitle,
+                ExpDateTime = c.PrevDateTime,
+                ColorLabel = "green",
+                ExpValue = c.CredValue
+            };
             await repo.AddExpirationAsync(exp);
             await repo.SaveChangesAsync();
             c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
@@ -66,13 +68,15 @@ namespace PersonalFinance.Controllers
                 if (c.Exp_ID == exp.ID)
                 {
                     await repo.DeleteExpirationAsync(exp);
-                    Expiration e = new Expiration();
-                    e.Usr_OID = c.Usr_OID;
-                    e.ExpTitle = c.CredTitle;
-                    e.ExpDescription = "Rientro previsto - " + c.CredTitle;
-                    e.ExpDateTime = c.PrevDateTime;
-                    e.ColorLabel = "green";
-                    e.ExpValue = c.CredValue;
+                    Expiration e = new()
+                    {
+                        Usr_OID = c.Usr_OID,
+                        ExpTitle = c.CredTitle,
+                        ExpDescription = "Rientro previsto - " + c.CredTitle,
+                        ExpDateTime = c.PrevDateTime,
+                        ColorLabel = "green",
+                        ExpValue = c.CredValue
+                    };
                     await repo.AddExpirationAsync(e);
                     c.Exp_ID = Expirations.Last().ID + 1;
                     break;

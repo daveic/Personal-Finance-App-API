@@ -8,7 +8,7 @@ namespace PersonalFinance.Services
     {
 		//IRepository interfaces for GET ALL api call
 		Task<IQueryable<Credit>> GetAllCreditsAsync(string User_OID);
-		Task<IQueryable<Debit>> GetAllDebitsAsync();
+		Task<IQueryable<Debit>> GetAllDebitsAsync(string User_OID);
 		Task<IQueryable<KnownMovement>> GetAllKnownMovementsAsync(string User_OID);
 		Task<IQueryable<Transaction>> GetAllTransactionsAsync();
 		Task<IQueryable<Bank>> GetAllBanksAsync(string User_OID);
@@ -19,7 +19,7 @@ namespace PersonalFinance.Services
 
 		//IRepository interfaces for GET-by-ID api call
 		Task<Credit> GetCreditAsync(int id, string User_OID);
-		Task<Debit> GetDebitAsync(int id);
+		Task<Debit> GetDebitAsync(int id, string User_OID);
 		Task<Transaction> GetTransactionAsync(int id);
 		Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID);
 		Task<Bank> GetBankAsync(int id, string User_OID);

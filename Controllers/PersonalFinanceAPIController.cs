@@ -22,14 +22,7 @@ namespace PersonalFinance.Controllers
         }
 
 
-        [HttpGet]
-        [Route("GetAllDebits")]
-        public async Task<IActionResult> AllDebits(string User_OID)
-        {
-            var debits = await repo.GetAllDebitsAsync();
-            debits = debits.Where(x => x.Usr_OID == User_OID);
-            return Ok(debits);
-        }
+
 
         [HttpGet]
         [Route("GetAllTransactions")]
@@ -54,9 +47,9 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("GetDebitId")]
-        public async Task<IActionResult> Debit_Details(int id)
+        public async Task<IActionResult> Debit_Details(int id, string User_OID)
         {
-            var debit = await repo.GetDebitAsync(id);
+            var debit = await repo.GetDebitAsync(id, User_OID);
             return Ok(debit);
         }
         [HttpGet]
@@ -74,14 +67,7 @@ namespace PersonalFinance.Controllers
 
         //HTTP ADD METHODS
 
-        [HttpPost]
-        [Route("AddDebit")]
-        public async Task<IActionResult> AddDebit([FromBody] Debit d)
-        {
-            var detections = await repo.AddDebitAsync(d);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllDebits));
-        }
+
         [HttpPost]
         [Route("AddTransaction")]
         public async Task<IActionResult> AddTransaction([FromBody] Transaction t)
@@ -106,9 +92,9 @@ namespace PersonalFinance.Controllers
 
         [HttpDelete]
         [Route("DeleteDebit")]
-        public async Task<IActionResult> Debit_Delete(int id)
+        public async Task<IActionResult> Debit_Delete(int id, string User_OID)
         {
-            var t = await repo.GetDebitAsync(id);
+            var t = await repo.GetDebitAsync(id, User_OID);
             await repo.DeleteDebitAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
