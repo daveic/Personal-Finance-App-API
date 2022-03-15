@@ -24,14 +24,7 @@ namespace PersonalFinance.Controllers
 
 
 
-        [HttpGet]
-        [Route("GetAllTransactions")]
-        public async Task<IActionResult> AllTransactions(string User_OID)
-        {
-            var transactions = await repo.GetAllTransactionsAsync();
-            transactions = transactions.Where(x => x.Usr_OID == User_OID);
-            return Ok(transactions);
-        }
+
 
 
 
@@ -39,37 +32,13 @@ namespace PersonalFinance.Controllers
         [Route("GetAllBalances")]
         public async Task<IActionResult> AllBalances(string User_OID)
         {
-            var balances = await repo.GetAllBalancesAsync();
-            balances = balances.Where(x => x.Usr_OID == User_OID);
-            return Ok(balances);
-        }
-
-
-
-        [HttpGet]
-        [Route("GetTransactionId")]
-        public async Task<IActionResult> Transaction_Details(int id)
-          {
-              var transaction = await repo.GetTransactionAsync(id);
-              return Ok(transaction);
+            return Ok(await repo.GetAllBalancesAsync(User_OID));
         }
 
 
 
 
 
-
-        //HTTP ADD METHODS
-
-
-        [HttpPost]
-        [Route("AddTransaction")]
-        public async Task<IActionResult> AddTransaction([FromBody] Transaction t)
-        {
-            var detections = await repo.AddTransactionAsync(t);
-            await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(AllTransactions));
-        }
 
 
         [HttpPost]
@@ -82,7 +51,7 @@ namespace PersonalFinance.Controllers
         }
 
 
-        //HTTP DELETE METHODS
+   
 
 
 
@@ -91,14 +60,7 @@ namespace PersonalFinance.Controllers
 
 
 
-        [HttpPut]
-        [Route("UpdateTransaction")]
-        public async Task<IActionResult> Transaction_Edit(Transaction t)
-        {
-            await repo.UpdateTransactionAsync(t);
-            await repo.SaveChangesAsync();
-            return Ok(t);
-        }
+
 
 
     }

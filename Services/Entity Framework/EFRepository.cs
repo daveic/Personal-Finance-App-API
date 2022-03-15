@@ -33,9 +33,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
-        public virtual Task<IQueryable<Transaction>> GetAllTransactionsAsync()
+        public virtual Task<IQueryable<Transaction>> GetAllTransactionsAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
         public virtual Task<IQueryable<Bank>> GetAllBanksAsync(string User_OID)
         {
@@ -49,9 +49,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return Task.FromResult(PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
-        public virtual Task<IQueryable<Balance>> GetAllBalancesAsync()
+        public virtual Task<IQueryable<Balance>> GetAllBalancesAsync(string User_OID)
         {
-            return Task.FromResult(PersonalFinanceContext.Set<Balance>().AsNoTracking().AsQueryable());
+            return Task.FromResult(PersonalFinanceContext.Set<Balance>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID));
         }
         public virtual Task<IQueryable<Expiration>> GetAllExpirationsAsync(string User_OID)
         {
@@ -157,9 +157,9 @@ namespace PersonalFinance.Services.EntityFramework
         {
             return (await GetAllDebitsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
-        public virtual async Task<Transaction> GetTransactionAsync(int id)
+        public virtual async Task<Transaction> GetTransactionAsync(int id, string User_OID)
         {
-            return (await GetAllTransactionsAsync()).FirstOrDefault(x => x.ID == id);
+            return (await GetAllTransactionsAsync(User_OID)).FirstOrDefault(x => x.ID == id);
         }
         public virtual async Task<KnownMovement> GetKnownMovementAsync(int id, string User_OID)
         {

@@ -22,11 +22,26 @@ namespace PersonalFinance.Controllers
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;
         }
+
+        [HttpGet]
+        [Route("All")]
+        public async Task<IActionResult> Transactions_Main(string User_OID)
+        {
+            return Ok(await repo.GetAllTransactionsAsync(User_OID));
+        }
         [HttpGet]
         [Route("Details")]
-        public async Task<IActionResult> Transaction_Details(int id)
+        public async Task<IActionResult> Transaction_Details(int id, string User_OID)
         {
-            return Ok(await repo.GetTransactionAsync(id));
+            return Ok(await repo.GetTransactionAsync(id, User_OID));
+        }
+        [HttpPost]
+        [Route("Add")]
+        public async Task<IActionResult> AddTransaction([FromBody] Transaction t)
+        {
+            var detections = await repo.AddTransactionAsync(t);
+            await repo.SaveChangesAsync();
+            return RedirectToAction(nameof(Transactions_Main));
         }
         [HttpGet]
         [Route("DetailsEdit")]
@@ -91,11 +106,19 @@ namespace PersonalFinance.Controllers
             }
             return Ok(TrDet.Codes);
         }
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> Transaction_Edit(Transaction t)
+        {
+            await repo.UpdateTransactionAsync(t);
+            await repo.SaveChangesAsync();
+            return Ok(t);
+        }
         [HttpDelete]
         [Route("Delete")]
-        public async Task<IActionResult> Transaction_Delete(int id)
+        public async Task<IActionResult> Transaction_Delete(int id, string User_OID)
         {
-            var t = await repo.GetTransactionAsync(id);
+            var t = await repo.GetTransactionAsync(id, User_OID);
             await repo.DeleteTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
