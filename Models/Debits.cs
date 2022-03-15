@@ -20,4 +20,9 @@ namespace PersonalFinance.Models
         public string DebNote { get; set; }
         public int Exp_ID { get; set; }
     }
+    public class Debit_Exp
+    {
+        public Debit Debit { get; set; }
+        public bool FromTransaction { get; set; }
+    }
 }

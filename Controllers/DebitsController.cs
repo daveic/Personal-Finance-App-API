@@ -69,7 +69,40 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Debits_Main));
         }
-
+        [HttpPut]
+        [Route("UpdateExpOnDebit")]
+        public async Task<IActionResult> Debit_Edit(Debit_Exp dexp)
+        {
+            if (dexp.FromTransaction is false)
+            {
+                Debit oldDebit = await repo.GetDebitAsync(dexp.Debit.ID, dexp.Debit.Usr_OID);
+                for (int k = 0; k <= (oldDebit.RtNum - oldDebit.RtPaid); k++)
+                {
+                    var exp = await repo.GetExpirationAsync((oldDebit.Exp_ID + k), dexp.Debit.Usr_OID);
+                    await repo.DeleteExpirationAsync(exp);
+                    await repo.SaveChangesAsync();
+                }
+                for (int j = 0; j < dexp.Debit.RtNum; j++)
+                {
+                    Expiration exp = new Expiration();
+                    exp.Usr_OID = dexp.Debit.Usr_OID;
+                    exp.ExpTitle = dexp.Debit.DebTitle;
+                    exp.ExpDescription = dexp.Debit.DebTitle + " - rata: " + (j + 1);
+                    if (dexp.Debit.RtFreq == "Mesi")
+                    {
+                        exp.ExpDateTime = dexp.Debit.DebInsDate.AddMonths(j * dexp.Debit.Multiplier);
+                    }
+                    exp.ColorLabel = "red";
+                    exp.ExpValue = dexp.Debit.DebValue / dexp.Debit.RtNum;
+                    await repo.AddExpirationAsync(exp);
+                    await repo.SaveChangesAsync();
+                }
+                dexp.Debit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == dexp.Debit.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(dexp.Debit.RtNum) + 1;
+            }
+            await repo.UpdateDebitAsync(dexp.Debit);
+            await repo.SaveChangesAsync();
+            return Ok(dexp.Debit);
+        }
 
     }
 }

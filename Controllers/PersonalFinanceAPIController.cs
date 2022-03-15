@@ -106,14 +106,7 @@ namespace PersonalFinance.Controllers
 
 
 
-        [HttpPut]
-        [Route("UpdateDebit")]
-        public async Task<IActionResult> Debit_Edit(Debit d)
-        {
-            await repo.UpdateDebitAsync(d);
-            await repo.SaveChangesAsync();
-            return Ok(d);
-        }
+
         [HttpPut]
         [Route("UpdateTransaction")]
         public async Task<IActionResult> Transaction_Edit(Transaction t)
