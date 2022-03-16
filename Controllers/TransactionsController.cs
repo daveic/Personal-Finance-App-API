@@ -25,6 +25,12 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("All")]
+        public async Task<IActionResult> Transactions_All(string User_OID)
+        {
+            return Ok(await repo.GetAllTransactionsAsync(User_OID));
+        }
+        [HttpGet]
+        [Route("Main")]
         public async Task<IActionResult> Transactions_Main(string User_OID)
         {
             IEnumerable<Transaction> Transactions = await repo.GetAllTransactionsAsync(User_OID);
