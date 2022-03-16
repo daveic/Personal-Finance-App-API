@@ -37,7 +37,7 @@ namespace PersonalFinance.Controllers
             IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
             Transactions Trs = new ();
-
+            Trs.Trs = Transactions;
             //############################################################################################################################
             //FILTRI ANNO E MESE PER GRAFICO SALDO
             //############################################################################################################################
