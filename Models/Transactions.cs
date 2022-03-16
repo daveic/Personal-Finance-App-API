@@ -20,4 +20,11 @@ namespace PersonalFinance.Models
         public string User_OID { get; set; }
         public List<SelectListItem> Codes { get; set; }
     }
+    public class Transactions
+    {
+        public IEnumerable<Transaction> Trs { get; set; }
+        public List<SelectListItem> ItemListYear { get; set; }
+        public List<SelectListItem> ItemListMonth { get; set; }
+        public List<SelectListItem> Codes { get; set; }
+    }
 }

@@ -27,7 +27,69 @@ namespace PersonalFinance.Controllers
         [Route("All")]
         public async Task<IActionResult> Transactions_Main(string User_OID)
         {
-            return Ok(await repo.GetAllTransactionsAsync(User_OID));
+            IEnumerable<Transaction> Transactions = await repo.GetAllTransactionsAsync(User_OID);
+            IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);
+            IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
+            Transactions Trs = new ();
+
+            //############################################################################################################################
+            //FILTRI ANNO E MESE PER GRAFICO SALDO
+            //############################################################################################################################
+            //Trovo gli anni "unici"
+            var UniqueYear = Transactions.GroupBy(item => item.TrsDateTime.Year)
+                    .Select(group => group.First())
+                    .Select(item => item.TrsDateTime.Year)
+                    .ToList();
+            //Creo la lista di anni "unici" per il dropdown filter del grafico saldo
+            List<SelectListItem> itemlistYear = new ();
+            foreach (var year in UniqueYear) itemlistYear.Add(new SelectListItem() { Text = year.ToString(), Value = year.ToString() });
+            //Passo alla view la lista
+            Trs.ItemListYear = itemlistYear;
+            //############################################################################################################################
+            //Trovo i mesi "unici"
+            var UniqueMonth = Transactions.GroupBy(item => item.TrsDateTime.Month)
+                                .Select(group => group.First())
+                                .Select(item => item.TrsDateTime.Month)
+                                .ToList();
+            //Creo la lista di mesi "unici" per il dropdown filter del grafico saldo
+            List<SelectListItem> itemlistMonth = new ();
+            foreach (var month in UniqueMonth) itemlistMonth.Add(new SelectListItem() { Text = MonthConverter(month), Value = MonthConverter(month) });
+            //Passo alla view la lista
+            Trs.ItemListMonth = itemlistMonth;
+            //############################################################################################################################
+
+            var UniqueCodes = Transactions.GroupBy(x => x.TrsCode)
+                              .Select(x => x.First())
+                              .ToList();
+            List<SelectListItem> Codes = new();
+            foreach (var item in UniqueCodes)
+            {
+                SelectListItem code = new();
+                code.Value = item.TrsCode;
+                code.Text = item.TrsCode;
+                Codes.Add(code);
+            }
+            bool isPresent = false;
+            foreach (var credit in Credits)
+            {
+                foreach (var item in Codes)
+                {
+                    if (credit.CredCode == item.Value) isPresent = true;
+                }
+                if (isPresent is false) Codes.Add(new SelectListItem() { Text = credit.CredCode, Value = credit.CredCode });
+                isPresent = false;
+            }
+            foreach (var debit in Debits)
+            {
+                foreach (var item in Codes)
+                {
+                    if (debit.DebCode == item.Value) isPresent = true;
+                }
+                if (isPresent is false) Codes.Add(new SelectListItem() { Text = debit.DebCode, Value = debit.DebCode });
+                isPresent = false;
+            }
+            Trs.Codes = Codes;
+            return Ok(Trs);
         }
         [HttpGet]
         [Route("Details")]
