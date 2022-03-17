@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +30,6 @@ namespace PersonalFinance.Controllers
         {
             return Ok(await repo.GetAllBalancesAsync(User_OID));
         }
-
 
         [HttpPost]
         [Route("Update")]
@@ -63,13 +61,10 @@ namespace PersonalFinance.Controllers
             await repo.AddTransactionAsync(tr);
             await repo.SaveChangesAsync();
             b.ActBalance = tot;
-
             await repo.AddBalanceAsync(b);
             await repo.SaveChangesAsync();
             return Ok(1);
         }
-
-
 
 
         [HttpPost]
@@ -80,7 +75,5 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Balances_All));
         }
-
-
     }
 }

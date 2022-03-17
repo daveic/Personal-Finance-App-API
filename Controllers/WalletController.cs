@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
-using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -16,13 +11,12 @@ namespace PersonalFinance.Controllers
     [Route("api/[Controller]")]
     public class WalletController : PFA_APIController
     {
-        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public WalletController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public WalletController(IRepository repo) : base(repo)
         {
             this.repo = repo;
-            this.PersonalFinanceContext = PersonalFinanceContext;
         }
+
         [HttpGet]
         [Route("All")]
         public async Task<IActionResult> Wallet_Main(string User_OID)
@@ -34,11 +28,5 @@ namespace PersonalFinance.Controllers
             wallet.Contanti = wallet.Banks.First();
             return Ok(wallet);
         }
-
-
-
-       
-
-
     }
 }

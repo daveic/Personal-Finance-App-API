@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
-using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -11,35 +10,29 @@ namespace PersonalFinance.Controllers
     [Route("api/[Controller]")]
     public class BanksController : PFA_APIController
     {
-        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public BanksController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public BanksController(IRepository repo) : base(repo)
         {
             this.repo = repo;
-            this.PersonalFinanceContext = PersonalFinanceContext;
         }
-
 
         [HttpGet]
         [Route("All")]
         public async Task<IActionResult> Banks_All(string User_OID)
         {
-            var banks = await repo.GetAllBanksAsync(User_OID);
-
-            return Ok(banks);
+            return Ok(await repo.GetAllBanksAsync(User_OID));
         }
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Bank_Details(int id, string User_OID)
         {
-            var bank = await repo.GetBankAsync(id, User_OID);
-            return Ok(bank);
+            return Ok(await repo.GetBankAsync(id, User_OID));
         }
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Bank_Add([FromBody] Bank b)
         {
-            var detections = await repo.AddBankAsync(b);
+            await repo.AddBankAsync(b);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Banks_All));
         }
@@ -60,7 +53,5 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-
-
     }
 }

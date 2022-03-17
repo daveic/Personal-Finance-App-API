@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
-using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -11,12 +10,10 @@ namespace PersonalFinance.Controllers
     [Route("api/[Controller]")]
     public class TicketsController : PFA_APIController
     {
-        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public TicketsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public TicketsController(IRepository repo) : base(repo)
         {
             this.repo = repo;
-            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
         [HttpGet]
@@ -29,14 +26,13 @@ namespace PersonalFinance.Controllers
         [Route("Details")]
         public async Task<IActionResult> Ticket_Details(int id, string User_OID)
         {
-            var ticket = await repo.GetTicketAsync(id, User_OID);
-            return Ok(ticket);
+            return Ok(await repo.GetTicketAsync(id, User_OID));
         }
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Ticket_Add([FromBody] Ticket t)
         {
-            var detections = await repo.AddTicketAsync(t);
+            await repo.AddTicketAsync(t);
             await repo.SaveChangesAsync();
             return RedirectToAction(nameof(Tickets_All));
         }

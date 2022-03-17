@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
-using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -11,17 +10,15 @@ namespace PersonalFinance.Controllers
     [Route("api/[Controller]")]
     public class DepositsController : PFA_APIController
     {
-        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public DepositsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public DepositsController(IRepository repo) : base(repo)
         {
             this.repo = repo;
-            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
         [HttpGet]
         [Route("All")]
-        public async Task<IActionResult> Deposits_Main(string User_OID)
+        public async Task<IActionResult> Deposits_All(string User_OID)
         {
             return Ok(await repo.GetAllDepositsAsync(User_OID));
         }
@@ -29,16 +26,15 @@ namespace PersonalFinance.Controllers
         [Route("Details")]
         public async Task<IActionResult> Deposit_Details(int id, string User_OID)
         {
-            var deposit = await repo.GetDepositAsync(id, User_OID);
-            return Ok(deposit);
+            return Ok(await repo.GetDepositAsync(id, User_OID));
         }
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Deposit_Add([FromBody] Deposit d)
         {
-            var detections = await repo.AddDepositAsync(d);
+            await repo.AddDepositAsync(d);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(Deposits_Main));
+            return RedirectToAction(nameof(Deposits_All));
         }
         [HttpPut]
         [Route("Update")]
@@ -52,10 +48,10 @@ namespace PersonalFinance.Controllers
         [Route("Delete")]
         public async Task<IActionResult> Deposit_Delete(int id, string User_OID)
         {
-            var t = await repo.GetDepositAsync(id, User_OID);
-            await repo.DeleteDepositAsync(t);
+            var d = await repo.GetDepositAsync(id, User_OID);
+            await repo.DeleteDepositAsync(d);
             await repo.SaveChangesAsync();
-            return Ok(t);
+            return Ok(d);
         }
     }
 }
