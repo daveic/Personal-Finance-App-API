@@ -63,8 +63,6 @@ namespace PersonalFinance.Controllers
             double TotWithDebits = TransactionSum + CreditSum - DebitSum;
             // Totale saldo + crediti
             double TotNoDebits = TransactionSum + CreditSum;
-
-
             //############################################################################################################################
             //FILTRI ANNO E MESE PER GRAFICO SALDO
             //############################################################################################################################
