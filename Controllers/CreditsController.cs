@@ -39,7 +39,14 @@ namespace PersonalFinance.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public async Task<IActionResult> AddCredit([FromBody] Credit c)
+        public async Task<IActionResult> Credit_Add([FromBody] Credit c)
+        {
+            int i = await Credit_Add_Service(c);
+            return RedirectToAction(nameof(Credits_Main));
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Credit_Add_Service(Credit c)
         {
             Expiration exp = new()
             {
@@ -55,14 +62,20 @@ namespace PersonalFinance.Controllers
             c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
             await repo.AddCreditAsync(c);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(Credits_Main));
+            return 1;
         }
 
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Credit_Edit(Credit c)
         {
-            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();            
+            return Ok(await Credit_Edit_Service(c));
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<Credit> Credit_Edit_Service(Credit c)
+        {
+            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();
             foreach (var exp in Expirations)
             {
                 if (c.Exp_ID == exp.ID)
@@ -84,9 +97,8 @@ namespace PersonalFinance.Controllers
             }
             await repo.UpdateCreditAsync(c);
             await repo.SaveChangesAsync();
-            return Ok(c);
+            return c;
         }
-
 
         [HttpDelete]
         [Route("Delete")]
@@ -104,31 +116,7 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(t);
         }
-        //////HTTP DELETE METHODS
-
-        //[HttpDelete]
-        //[Route("DeleteKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_Delete(int id)
-        //{
-        //    var km = await repo.GetKnownMovementAsync(id);
-        //    await ExpToRemoveAsync(km.KMTitle, km.Usr_OID, km.Exp_ID);
-        //    await repo.DeleteKnownMovementAsync(km);
-        //    await repo.SaveChangesAsync();
-        //    return Ok(km);
-        //}
-
-
-        ////HTTP UPDATE METHODS
-
-        //[HttpPut]
-        //[Route("UpdateKnownMovement")]
-        //public async Task<IActionResult> KnownMovement_EditAsync(KnownMovement k)
-        //{
-        //    await EditKnownMovementAsync (k);
-        //    await repo.SaveChangesAsync();
-        //   // _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
-        //    return Ok(k);
-        //}
+        
 
 
     }

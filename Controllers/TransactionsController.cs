@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
 using PersonalFinance.Services.EntityFramework;
+using PersonalFinance.Controllers;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -105,11 +107,184 @@ namespace PersonalFinance.Controllers
         }
         [HttpPost]
         [Route("Add")]
-        public async Task<IActionResult> AddTransaction([FromBody] Transaction t)
+        public async Task<IActionResult> Transaction_Add([FromBody] Transaction t)
         {
             var detections = await repo.AddTransactionAsync(t);
             await repo.SaveChangesAsync();
+            await Transaction_Credit_Debit_UpdateAsync(t);
             return RedirectToAction(nameof(Transactions_Main));
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Credit_Add_Service([FromBody] Credit c)
+        {
+            Expiration exp = new()
+            {
+                Usr_OID = c.Usr_OID,
+                ExpTitle = c.CredTitle,
+                ExpDescription = "Rientro previsto - " + c.CredTitle,
+                ExpDateTime = c.PrevDateTime,
+                ColorLabel = "green",
+                ExpValue = c.CredValue
+            };
+            await repo.AddExpirationAsync(exp);
+            await repo.SaveChangesAsync();
+            c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
+            await repo.AddCreditAsync(c);
+            await repo.SaveChangesAsync();
+            return 1;
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<Credit> Credit_Edit_Service(Credit c)
+        {
+            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();
+            foreach (var exp in Expirations)
+            {
+                if (c.Exp_ID == exp.ID)
+                {
+                    await repo.DeleteExpirationAsync(exp);
+                    Expiration e = new()
+                    {
+                        Usr_OID = c.Usr_OID,
+                        ExpTitle = c.CredTitle,
+                        ExpDescription = "Rientro previsto - " + c.CredTitle,
+                        ExpDateTime = c.PrevDateTime,
+                        ColorLabel = "green",
+                        ExpValue = c.CredValue
+                    };
+                    await repo.AddExpirationAsync(e);
+                    c.Exp_ID = Expirations.Last().ID + 1;
+                    break;
+                }
+            }
+            await repo.UpdateCreditAsync(c);
+            await repo.SaveChangesAsync();
+            return c;
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Debit_Add_Service(Debit d)
+        {
+            if (d.DebDateTime == DateTime.MinValue)
+            {
+                d.DebDateTime = d.DebInsDate.AddMonths(Convert.ToInt32((d.RtNum * d.Multiplier)));
+            }
+
+            for (int k = 0; k < d.RtNum; k++)
+            {
+                Expiration exp = new()
+                {
+                    Usr_OID = d.Usr_OID,
+                    ExpTitle = d.DebTitle,
+                    ExpDescription = d.DebTitle + "rata: " + (k + 1)
+                };
+                if (d.RtFreq == "Mesi")
+                {
+                    exp.ExpDateTime = d.DebInsDate.AddMonths(k * d.Multiplier);
+                }
+                if (d.RtFreq == "Anni")
+                {
+                    exp.ExpDateTime = d.DebInsDate.AddYears(k * d.Multiplier);
+                }
+                exp.ColorLabel = "red";
+                exp.ExpValue = d.DebValue / d.RtNum;
+                await repo.AddExpirationAsync(exp);
+            }
+            await repo.SaveChangesAsync();
+            d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
+            var detections = await repo.AddDebitAsync(d);
+            await repo.SaveChangesAsync();
+            return 1;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Transaction_Credit_Debit_UpdateAsync(Transaction t)
+        {
+
+            //IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(t.Usr_OID);
+            //IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(t.Usr_OID);
+            var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+
+            if (t.TrsValue < 0)
+            {
+                foreach (var debit in Debits)
+                {
+                    if (t.TrsCode == debit.DebCode)
+                    {
+                        debit.RemainToPay += t.TrsValue;
+                        debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);
+                        var exp = await repo.GetExpirationAsync((debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)), debit.Usr_OID);
+                        await repo.DeleteExpirationAsync(exp);
+                        await repo.SaveChangesAsync();
+
+                        if (debit.RemainToPay <= 0)
+                        {
+                            await repo.DeleteDebitAsync(debit);
+                            await repo.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            
+                          //  Debit_Edit(debit, 1, true);
+                           // Debit_Edit_Service(Debit_Exp dexp)
+                        }
+                    }
+
+                }
+                if (t.TrsCode.StartsWith("CRE"))
+                {
+                    Credit model = new()
+                    {
+                        Usr_OID = t.Usr_OID,
+                        CredCode = t.TrsCode,
+                        CredDateTime = DateTime.UtcNow,
+                        CredValue = t.TrsValue,
+                        CredTitle = "Prestito/Anticipo",
+                        CredNote = ""
+                    };
+                    await Credit_Add_Service(model);
+                }
+
+            }
+            if (t.TrsValue > 0)
+            {
+                foreach (var credit in Credits)
+                {
+                    if (t.TrsCode == credit.CredCode)
+                    {
+                        credit.CredValue -= t.TrsValue;
+                        if (credit.CredValue <= 0)
+                        {
+                            await repo.DeleteCreditAsync(credit);
+                            await repo.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            await Credit_Edit_Service(credit);
+                            //Credit_Edit(credit, 1);
+                        }
+                    }
+                }
+                if (t.TrsCode.StartsWith("DEB"))
+                {
+                    Debit model = new();
+                    model.Usr_OID = t.Usr_OID;
+                    model.DebCode = t.TrsCode;
+                    model.DebInsDate = DateTime.UtcNow;
+                    model.DebValue = -t.TrsValue;
+                    model.DebTitle = "Prestito/Anticipo";
+                    model.DebNote = "";
+                    model.RemainToPay = -t.TrsValue;
+                    model.RtPaid = 0;
+                    model.RtNum = 1;
+                    await Debit_Add_Service(model);
+                    //Debit_Add(model, 1);
+                }
+            }
+            return 1;
         }
         [HttpGet]
         [Route("DetailsEdit")]

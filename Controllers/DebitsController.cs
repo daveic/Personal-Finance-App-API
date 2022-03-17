@@ -38,6 +38,13 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Debit_Add([FromBody] Debit d)
         {
+            await Debit_Add_Service(d);
+            return RedirectToAction(nameof(Debits_Main));
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Debit_Add_Service(Debit d)
+        {
             if (d.DebDateTime == DateTime.MinValue)
             {
                 d.DebDateTime = d.DebInsDate.AddMonths(Convert.ToInt32((d.RtNum * d.Multiplier)));
@@ -67,11 +74,18 @@ namespace PersonalFinance.Controllers
             d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
             var detections = await repo.AddDebitAsync(d);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(Debits_Main));
+            return 1;
         }
+
         [HttpPut]
         [Route("UpdateExpOnDebit")]
         public async Task<IActionResult> Debit_Edit(Debit_Exp dexp)
+        {
+            return Ok(await Debit_Edit_Service(dexp));
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<Debit> Debit_Edit_Service(Debit_Exp dexp)
         {
             if (dexp.FromTransaction is false)
             {
@@ -103,7 +117,7 @@ namespace PersonalFinance.Controllers
             }
             await repo.UpdateDebitAsync(dexp.Debit);
             await repo.SaveChangesAsync();
-            return Ok(dexp.Debit);
+            return dexp.Debit;
         }
         [HttpDelete]
         [Route("DeleteDebit")]

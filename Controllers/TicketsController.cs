@@ -21,7 +21,7 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("All")]
-        public async Task<IActionResult> Tickets_Main(string User_OID)
+        public async Task<IActionResult> Tickets_All(string User_OID)
         {
             return Ok(await repo.GetAllTicketsAsync(User_OID));
         }
@@ -38,7 +38,7 @@ namespace PersonalFinance.Controllers
         {
             var detections = await repo.AddTicketAsync(t);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(Tickets_Main));
+            return RedirectToAction(nameof(Tickets_All));
         }
         [HttpPut]
         [Route("Update")]

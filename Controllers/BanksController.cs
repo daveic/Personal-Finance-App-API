@@ -22,7 +22,7 @@ namespace PersonalFinance.Controllers
 
         [HttpGet]
         [Route("All")]
-        public async Task<IActionResult> Banks_Main(string User_OID)
+        public async Task<IActionResult> Banks_All(string User_OID)
         {
             var banks = await repo.GetAllBanksAsync(User_OID);
 
@@ -41,7 +41,7 @@ namespace PersonalFinance.Controllers
         {
             var detections = await repo.AddBankAsync(b);
             await repo.SaveChangesAsync();
-            return RedirectToAction(nameof(Banks_Main));
+            return RedirectToAction(nameof(Banks_All));
         }
         [HttpPut]
         [Route("Update")]
