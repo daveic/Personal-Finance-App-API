@@ -1,19 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PersonalFinance.Services.EntityFramework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.OpenApi.Models;
-using System.Threading.Tasks;
+
 using PersonalFinance.Services;
-using Microsoft.EntityFrameworkCore.Design;
-using PersonalFinance.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace PersonalFinance
 {
@@ -55,9 +50,7 @@ namespace PersonalFinance
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI V3"); c.RoutePrefix = "swagger"; });
-
-                
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyAPI V3"); c.RoutePrefix = "swagger"; });                
             }
             else
             {
@@ -67,7 +60,6 @@ namespace PersonalFinance
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseCors("apiPolicy");
             app.UseAuthorization();
