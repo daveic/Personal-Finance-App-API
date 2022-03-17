@@ -120,7 +120,7 @@ namespace PersonalFinance.Controllers
             return dexp.Debit;
         }
         [HttpDelete]
-        [Route("DeleteDebit")]
+        [Route("Delete")]
         public async Task<IActionResult> Debit_Delete(int id, string User_OID)
         {
             var t = await repo.GetDebitAsync(id, User_OID);
