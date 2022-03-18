@@ -106,9 +106,9 @@ namespace PersonalFinance.Controllers
         {
             var credit = await repo.GetCreditAsync(id, User_OID);
             Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
-            this.PersonalFinanceContext.Remove(e);
-
-           // await repo.SaveChangesAsync();
+            
+            await repo.DeleteExpirationAsync(e);
+   
 
 
             var t = await repo.GetCreditAsync(id, User_OID);
