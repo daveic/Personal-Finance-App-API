@@ -81,7 +81,9 @@ namespace PersonalFinance.Controllers
                 {
                     //await repo.DeleteExpirationAsync(exp);
                     this.PersonalFinanceContext.Remove(exp);
-                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
+                    Task mainTaskRemove = Post();
+                    mainTaskRemove.Wait();
+                    
                     Expiration e = new()
                     {
                         Usr_OID = c.Usr_OID,
@@ -93,9 +95,9 @@ namespace PersonalFinance.Controllers
                     };
                     //await repo.AddExpirationAsync(e);
                     this.PersonalFinanceContext.Add(e);
-                    //await repo.SaveChangesAsync();
-                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
 
+                    Task mainTaskAdd = Post();
+                    mainTaskAdd.Wait();
                     c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
                     break;
                 }
@@ -106,6 +108,13 @@ namespace PersonalFinance.Controllers
                 Microsoft.EntityFrameworkCore.EntityState.Modified;
             await repo.SaveChangesAsync();
             return c;
+        }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<IActionResult> Post()
+        {
+            bool v = await PersonalFinanceContext.SaveChangesAsync() > 0;
+            return Ok(v);
         }
 
         [HttpDelete]
