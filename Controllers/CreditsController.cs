@@ -80,6 +80,7 @@ namespace PersonalFinance.Controllers
                 if (c.Exp_ID == exp.ID)
                 {
                     await repo.DeleteExpirationAsync(exp);
+                    await repo.SaveChangesAsync();
                     Expiration e = new()
                     {
                         Usr_OID = c.Usr_OID,
