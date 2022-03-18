@@ -79,8 +79,9 @@ namespace PersonalFinance.Controllers
             {
                 if (c.Exp_ID == exp.ID)
                 {
-                    await repo.DeleteExpirationAsync(exp);
-                    await repo.SaveChangesAsync();
+                    //await repo.DeleteExpirationAsync(exp);
+                    this.PersonalFinanceContext.Remove(exp);
+                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
                     Expiration e = new()
                     {
                         Usr_OID = c.Usr_OID,
@@ -90,13 +91,19 @@ namespace PersonalFinance.Controllers
                         ColorLabel = "green",
                         ExpValue = c.CredValue
                     };
-                    await repo.AddExpirationAsync(e);
-                    await repo.SaveChangesAsync();
+                    //await repo.AddExpirationAsync(e);
+                    this.PersonalFinanceContext.Add(e);
+                    //await repo.SaveChangesAsync();
+                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
+
                     c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
                     break;
                 }
             }
-            await repo.UpdateCreditAsync(c);
+            //await repo.UpdateCreditAsync(c);
+            PersonalFinanceContext.Attach(c);
+            PersonalFinanceContext.Entry(c).State =
+                Microsoft.EntityFrameworkCore.EntityState.Modified;
             await repo.SaveChangesAsync();
             return c;
         }
