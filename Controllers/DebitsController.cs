@@ -78,7 +78,6 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateExpOnDebit")]
         [Route("Update")]
         public async Task<IActionResult> Debit_Edit(Debit_Exp dexp)
         {
