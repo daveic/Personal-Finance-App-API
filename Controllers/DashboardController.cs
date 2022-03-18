@@ -44,33 +44,31 @@ namespace PersonalFinance.Controllers
                 await repo.AddBankAsync(b);
                 await repo.SaveChangesAsync();
             }
-            double TransactionSum = 0;
             foreach (var item in Transactions)
             {
-                TransactionSum += item.TrsValue;
+                DOut.TransactionSum += item.TrsValue;
             }
-            double CreditSum = 0;
             foreach (var item in Credits)
             {
-                CreditSum += item.CredValue;
+                DOut.CreditSum += item.CredValue;
             }
-            double DebitSum = 0;
             foreach (var item in Debits)
             {
-                DebitSum += item.DebValue;
+                DOut.DebitSum += item.DebValue;
             }
             // Totale saldo + crediti - debiti
-            double TotWithDebits = TransactionSum + CreditSum - DebitSum;
+            DOut.TotWithDebits = DOut.TransactionSum + DOut.CreditSum - DOut.DebitSum;
             // Totale saldo + crediti
-            double TotNoDebits = TransactionSum + CreditSum;
+            DOut.TotNoDebits = DOut.TransactionSum + DOut.CreditSum;
+
             //############################################################################################################################
             //FILTRI ANNO E MESE PER GRAFICO SALDO
             //############################################################################################################################
             //Trovo gli anni "unici"
             var UniqueYear = Balances.GroupBy(x => x.BalDateTime.Year)
-                                    .OrderBy(x => x.Key)
-                                    .Select(x => new { Year = x.Key })
-                                    .ToList();
+                                        .OrderBy(x => x.Key)
+                                        .Select(x => new { Year = x.Key })
+                                        .ToList();
             //Creo la lista di anni "unici" per il dropdown filter del grafico saldo
             List<SelectListItem> itemlistYear = new();
             foreach (var year in UniqueYear)
@@ -84,9 +82,9 @@ namespace PersonalFinance.Controllers
             if (!String.IsNullOrEmpty(selectedYear)) Balances = Balances.AsQueryable().Where(x => x.BalDateTime.Year.ToString() == selectedYear);
             //Trovo i mesi "unici"
             var UniqueMonth = Balances.GroupBy(x => x.BalDateTime.Month)
-                        .OrderBy(x => x.Key)
-                        .Select(x => new { Month = x.Key })
-                        .ToList();
+                                        .OrderBy(x => x.Key)
+                                        .Select(x => new { Month = x.Key })
+                                        .ToList();
             //Creo la lista di mesi "unici" per il dropdown filter del grafico saldo
             List<SelectListItem> itemlistMonth = new();
             foreach (var month in UniqueMonth)
@@ -106,9 +104,9 @@ namespace PersonalFinance.Controllers
             //############################################################################################################################
             //Trovo gli anni "unici"
             var UniqueYearTr = Transactions.GroupBy(x => x.TrsDateTime.Year)
-                                    .OrderBy(x => x.Key)
-                                    .Select(x => new { Year = x.Key })
-                                    .ToList();
+                                            .OrderBy(x => x.Key)
+                                            .Select(x => new { Year = x.Key })
+                                            .ToList();
             //Creo la lista di anni "unici" per il dropdown filter del grafico saldo
             List<SelectListItem> itemlistYearTr = new();
             foreach (var year in UniqueYearTr)
@@ -122,9 +120,9 @@ namespace PersonalFinance.Controllers
             if (!String.IsNullOrEmpty(selectedYearTr)) Transactions = Transactions.AsQueryable().Where(x => x.TrsDateTime.Year.ToString() == selectedYearTr);
             //Trovo i mesi "unici"
             var UniqueMonthTr = Transactions.GroupBy(x => x.TrsDateTime.Month)
-                        .OrderBy(x => x.Key)
-                        .Select(x => new { Month = x.Key })
-                        .ToList();
+                                                .OrderBy(x => x.Key)
+                                                .Select(x => new { Month = x.Key })
+                                                .ToList();
             //Creo la lista di mesi "unici" per il dropdown filter del grafico saldo
             List<SelectListItem> itemlistMonthTr = new();
             foreach (var month in UniqueMonthTr)
@@ -138,28 +136,25 @@ namespace PersonalFinance.Controllers
             if (!String.IsNullOrEmpty(selectedMonthTr)) Transactions = Transactions.AsQueryable().Where(x => MonthConverter(x.TrsDateTime.Month) == selectedMonthTr);
             //############################################################################################################################
 
-
             var TransactionsIn = Transactions.Where(x => x.TrsValue >= 0);
             var TransactionsOut = Transactions.Where(x => x.TrsValue < 0);
 
-
             //############################################################################################################################
-            //Rimuovo l'orario dal DateTime e salvo come json
 
-            
-            //Passo alla view la lista aggiornata e convertita
+            //Passo alla view la lista aggiornata e convertita in JSON
             DOut.Balances = JsonConvert.SerializeObject(Balances);
 
-
             var UniqueCodes = Transactions.GroupBy(x => x.TrsCode)
-                               .Select(x => x.First())
-                               .ToList();
+                                           .Select(x => x.First())
+                                           .ToList();
             List<SelectListItem> Codes = new();
             foreach (var item in UniqueCodes)
             {
-                SelectListItem code = new();
-                code.Value = item.TrsCode;
-                code.Text = item.TrsCode;
+                SelectListItem code = new()
+                {
+                    Value = item.TrsCode,
+                    Text = item.TrsCode
+                };
                 Codes.Add(code);
             }
             bool isPresent = false;
@@ -204,14 +199,8 @@ namespace PersonalFinance.Controllers
             DOut.TransactionsOut = TransactionsOut;
 
             DOut.Transactions = JsonConvert.SerializeObject(Transactions);
-
-            //Passaggio di dati alla vista con ViewModel
-            DOut.TransactionSum = TransactionSum;
-            DOut.CreditSum = CreditSum;
-            DOut.DebitSum = DebitSum;
-            DOut.TotWithDebits = TotWithDebits;
-            DOut.TotNoDebits = TotNoDebits;
             DOut.Banks = Banks;
+
             return Ok(DOut);
         }
     }
