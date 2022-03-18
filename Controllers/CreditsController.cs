@@ -91,7 +91,7 @@ namespace PersonalFinance.Controllers
                     };
                     await repo.AddExpirationAsync(e);
                     await repo.SaveChangesAsync();
-                    c.Exp_ID = Expirations.Last().ID;
+                    c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
                     break;
                 }
             }
