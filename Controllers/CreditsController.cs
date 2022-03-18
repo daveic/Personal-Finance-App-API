@@ -91,7 +91,7 @@ namespace PersonalFinance.Controllers
                     };
                     await repo.AddExpirationAsync(e);
                     await repo.SaveChangesAsync();
-                    c.Exp_ID = Expirations.Last().ID + 1;
+                    c.Exp_ID = Expirations.Last().ID;
                     break;
                 }
             }
