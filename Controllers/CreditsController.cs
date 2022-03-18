@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +90,7 @@ namespace PersonalFinance.Controllers
                         ExpValue = c.CredValue
                     };
                     await repo.AddExpirationAsync(e);
+                    await repo.SaveChangesAsync();
                     c.Exp_ID = Expirations.Last().ID + 1;
                     break;
                 }
@@ -105,19 +105,11 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Credit_Delete(int id, string User_OID)
         {
             var credit = await repo.GetCreditAsync(id, User_OID);
-            Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
-            
+            Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);        
             await repo.DeleteExpirationAsync(e);
-   
-
-
-            var t = await repo.GetCreditAsync(id, User_OID);
-            await repo.DeleteCreditAsync(t);
+            await repo.DeleteCreditAsync(credit);
             await repo.SaveChangesAsync();
-            return Ok(t);
+            return Ok(credit);
         }
-        
-
-
     }
 }
