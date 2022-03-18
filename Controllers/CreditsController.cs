@@ -101,11 +101,12 @@ namespace PersonalFinance.Controllers
                     break;
                 }
             }
-            //await repo.UpdateCreditAsync(c);
+           
             c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
-            PersonalFinanceContext.Attach(c);
-            PersonalFinanceContext.Entry(c).State =
-                Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await repo.UpdateCreditAsync(c);
+            //PersonalFinanceContext.Attach(c);
+            //PersonalFinanceContext.Entry(c).State =
+            //    Microsoft.EntityFrameworkCore.EntityState.Modified;
             await repo.SaveChangesAsync();
             return c;
         }
