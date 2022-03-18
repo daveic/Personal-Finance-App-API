@@ -97,12 +97,12 @@ namespace PersonalFinance.Controllers
                     this.PersonalFinanceContext.Add(e);
 
                     Task mainTaskAdd = Post();
-                    mainTaskAdd.Wait();
-                    c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
+                    mainTaskAdd.Wait();                    
                     break;
                 }
             }
             //await repo.UpdateCreditAsync(c);
+            c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
             PersonalFinanceContext.Attach(c);
             PersonalFinanceContext.Entry(c).State =
                 Microsoft.EntityFrameworkCore.EntityState.Modified;
