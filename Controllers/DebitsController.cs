@@ -49,26 +49,40 @@ namespace PersonalFinance.Controllers
             {
                 d.DebDateTime = d.DebInsDate.AddMonths(Convert.ToInt32((d.RtNum * d.Multiplier)));
             }
-
-            for (int k = 0; k < d.RtNum; k++)
+            if (d.Multiplier == 0) 
             {
                 Expiration exp = new()
                 {
                     Usr_OID = d.Usr_OID,
                     ExpTitle = d.DebTitle,
-                    ExpDescription = d.DebTitle + "rata: " + (k + 1)
+                    ExpDescription = d.DebTitle
                 };
-                if (d.RtFreq == "Mesi")
-                {
-                    exp.ExpDateTime = d.DebInsDate.AddMonths(k * d.Multiplier);
-                }
-                if (d.RtFreq == "Anni")
-                {
-                    exp.ExpDateTime = d.DebInsDate.AddYears(k * d.Multiplier);
-                }
                 exp.ColorLabel = "red";
-                exp.ExpValue = d.DebValue / d.RtNum;
+                exp.ExpValue = d.DebValue;
                 await repo.AddExpirationAsync(exp);
+            }
+            else 
+            {             
+                for (int k = 0; k < d.RtNum; k++)
+                {
+                    Expiration exp = new()
+                    {
+                        Usr_OID = d.Usr_OID,
+                        ExpTitle = d.DebTitle,
+                        ExpDescription = d.DebTitle + "rata: " + (k + 1)
+                    };
+                    if (d.RtFreq == "Mesi")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddMonths(k * d.Multiplier);
+                    }
+                    if (d.RtFreq == "Anni")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddYears(k * d.Multiplier);
+                    }
+                    exp.ColorLabel = "red";
+                    exp.ExpValue = d.DebValue / d.RtNum;
+                    await repo.AddExpirationAsync(exp);
+                }
             }
             await repo.SaveChangesAsync();
             d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
