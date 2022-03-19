@@ -77,16 +77,19 @@ namespace PersonalFinance.Controllers
                     if (d.RtFreq == "Mesi")
                     {
                         exp.ExpDateTime = d.DebInsDate.AddMonths(k * d.Multiplier);
+                        d.DebDateTime = d.DebInsDate.AddMonths(Convert.ToInt32((d.RtNum * d.Multiplier)));
                     }
                     if (d.RtFreq == "Anni")
                     {
                         exp.ExpDateTime = d.DebInsDate.AddYears(k * d.Multiplier);
+                        d.DebDateTime = d.DebInsDate.AddYears(Convert.ToInt32((d.RtNum * d.Multiplier)));
                     }
                     exp.ColorLabel = "red";
                     exp.ExpValue = d.DebValue / d.RtNum;
                     await repo.AddExpirationAsync(exp);
                 }
                 await repo.SaveChangesAsync();
+                
                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
             }
             var detections = await repo.AddDebitAsync(d);
@@ -133,7 +136,7 @@ namespace PersonalFinance.Controllers
                 }
 
                 exp.ColorLabel = "red";
-                exp.ExpValue = d.DebValue / d.RtNum;
+                exp.ExpValue = d.RemainToPay / (d.RtNum - d.RtPaid);
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
             }
