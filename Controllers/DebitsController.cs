@@ -16,7 +16,7 @@ namespace PersonalFinance.Controllers
     {
         private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public DebitsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base (repo)
+        public DebitsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base (repo, PersonalFinanceContext)
         {
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;
@@ -54,7 +54,7 @@ namespace PersonalFinance.Controllers
                 Expiration exp = new()
                 {
                     Usr_OID = d.Usr_OID,
-                    ExpTitle = d.DebTitle,
+                    ExpTitle = d.DebCode,
                     ExpDescription = d.DebTitle,
                     ExpDateTime = d.DebDateTime, 
                     ColorLabel = "red",
@@ -71,7 +71,7 @@ namespace PersonalFinance.Controllers
                     Expiration exp = new()
                     {
                         Usr_OID = d.Usr_OID,
-                        ExpTitle = d.DebTitle,
+                        ExpTitle = d.DebCode,
                         ExpDescription = d.DebTitle + "rata: " + (k + 1)
                     };
                     if (d.RtFreq == "Mesi")
@@ -102,6 +102,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Debits_Edit(Debit d)
         {
             Debit oldDebit = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.ID);
+            int i = await ExpToRemoveAsync(d.DebCode, d.Usr_OID, d.Exp_ID);
             for (int k = 0; k < (oldDebit.RtNum - oldDebit.RtPaid); k++)
             {
                 var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == (oldDebit.Exp_ID + k));
@@ -116,7 +117,7 @@ namespace PersonalFinance.Controllers
                 Expiration exp = new()
                 {
                     Usr_OID = d.Usr_OID,
-                    ExpTitle = d.DebTitle,
+                    ExpTitle = d.DebCode,
                 };
                 if (d.Multiplier != 0)
                 {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
+using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -11,9 +12,11 @@ namespace PersonalFinance.Controllers
     public class BanksController : PFA_APIController
     {
         private readonly IRepository repo;
-        public BanksController(IRepository repo) : base(repo)
+        private readonly PersonalFinanceContext PersonalFinanceContext;
+        public BanksController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo, PersonalFinanceContext)
         {
             this.repo = repo;
+            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
         [HttpGet]

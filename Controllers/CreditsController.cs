@@ -15,7 +15,7 @@ namespace PersonalFinance.Controllers
     {
         private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public CreditsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base (repo)
+        public CreditsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base (repo, PersonalFinanceContext)
         {
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;

@@ -19,7 +19,7 @@ namespace PersonalFinance.Controllers
     {
         private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public DashboardController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo)
+        public DashboardController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo, PersonalFinanceContext)
         {
             this.repo = repo;
             this.PersonalFinanceContext = PersonalFinanceContext;

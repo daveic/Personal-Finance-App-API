@@ -3,21 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
+using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
 {
     public class PFA_APIController : Controller
     {
-
+        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public PFA_APIController(IRepository repo)
+        public PFA_APIController(IRepository repo, PersonalFinanceContext PersonalFinanceContext)
         {
             this.repo = repo;
+            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> ExpToRemoveAsync(string titleToMatch, string Usr_OID, int ID)
+        {
+            int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).OrderBy(x => x.ID).Last().ID;
+
+
+            int i = 0;
+            bool is_equal = true;
+            while (is_equal)
+            {
+                Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == Usr_OID).FirstOrDefault(x => x.ID == ID + i);
+                if (e != null && e.ExpTitle == titleToMatch) this.PersonalFinanceContext.Remove(e);
+
+                else if (e != null && e.ExpTitle != titleToMatch) is_equal = false;
+
+                else if (ID + i >= maxExp) is_equal = false;
+
+                i++;
+            }
+            await repo.SaveChangesAsync();
+            return 1;
+        }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public static string MonthConverter(int monthNum)
