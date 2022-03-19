@@ -86,10 +86,13 @@ namespace PersonalFinance.Controllers
             for (int k = 0; k < (oldDebit.RtNum - oldDebit.RtPaid); k++)
             {
                 var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == (oldDebit.Exp_ID + k));
-                await repo.DeleteExpirationAsync(exp);
-                await repo.SaveChangesAsync();
+                if(exp != null)
+                {
+                    await repo.DeleteExpirationAsync(exp);
+                    await repo.SaveChangesAsync();
+                }
             }
-            for (int j = 0; j < d.RtNum; j++)
+            for (int j = 0; j < (d.RtNum - d.RtPaid); j++)
             {
                 Expiration exp = new()
                 {
