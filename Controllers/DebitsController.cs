@@ -93,7 +93,6 @@ namespace PersonalFinance.Controllers
             return 1;
         }
 
-
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Debits_Edit(Debit d)
