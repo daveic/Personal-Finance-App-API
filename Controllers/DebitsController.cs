@@ -121,14 +121,16 @@ namespace PersonalFinance.Controllers
                         exp.ExpDateTime = d.DebInsDate.AddYears(j * d.Multiplier);
                     }
                     exp.ExpDescription = d.DebTitle + " - rata: " + (j + 1);
+                    exp.ExpValue = d.RemainToPay / (d.RtNum - d.RtPaid);
                 } else
                 {
                     exp.ExpDateTime = d.DebDateTime;
                     exp.ExpDescription = d.DebTitle;
+                    exp.ExpValue = d.DebValue / (d.RtNum - d.RtPaid);
                 }
 
                 exp.ColorLabel = "red";
-                exp.ExpValue = d.RemainToPay / (d.RtNum - d.RtPaid);
+                
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
             }
