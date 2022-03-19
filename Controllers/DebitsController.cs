@@ -60,6 +60,8 @@ namespace PersonalFinance.Controllers
                 exp.ColorLabel = "red";
                 exp.ExpValue = d.DebValue;
                 await repo.AddExpirationAsync(exp);
+                await repo.SaveChangesAsync();
+                d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID + 1;
             }
             else 
             {             
@@ -83,9 +85,9 @@ namespace PersonalFinance.Controllers
                     exp.ExpValue = d.DebValue / d.RtNum;
                     await repo.AddExpirationAsync(exp);
                 }
+                await repo.SaveChangesAsync();
+                d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
             }
-            await repo.SaveChangesAsync();
-            d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
             var detections = await repo.AddDebitAsync(d);
             await repo.SaveChangesAsync();
             return 1;
