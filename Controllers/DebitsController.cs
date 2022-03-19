@@ -83,12 +83,31 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Debits_Edit(Debit d)
         {
             Debit oldDebit = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.ID);
-            for (int k = 0; k <= (oldDebit.RtNum - oldDebit.RtPaid); k++)
+            for (int k = 0; k < (oldDebit.RtNum - oldDebit.RtPaid); k++)
             {
                 var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == (oldDebit.Exp_ID + k));
                 await repo.DeleteExpirationAsync(exp);
                 await repo.SaveChangesAsync();
             }
+            for (int j = 0; j < d.RtNum; j++)
+            {
+                Expiration exp = new()
+                {
+                    Usr_OID = d.Usr_OID,
+                    ExpTitle = d.DebTitle,
+                    ExpDescription = d.DebTitle + " - rata: " + (j + 1)
+                };
+                if (d.RtFreq == "Mesi")
+                {
+                    exp.ExpDateTime = d.DebInsDate.AddMonths(j * d.Multiplier);
+                }
+                exp.ColorLabel = "red";
+                exp.ExpValue = d.DebValue / d.RtNum;
+                await repo.AddExpirationAsync(exp);
+                await repo.SaveChangesAsync();
+            }
+            d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
+
             await repo.UpdateDebitAsync(d);
             await repo.SaveChangesAsync();
             return Ok(d);
