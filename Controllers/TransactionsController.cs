@@ -227,9 +227,8 @@ namespace PersonalFinance.Controllers
                         }
                         else
                         {
-                            
-                          //  Debit_Edit(debit, 1, true);
-                           // Debit_Edit_Service(Debit_Exp dexp)
+                            await repo.UpdateDebitAsync(debit);
+                            await repo.SaveChangesAsync();
                         }
                     }
 
