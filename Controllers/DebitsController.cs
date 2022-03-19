@@ -103,15 +103,15 @@ namespace PersonalFinance.Controllers
         {
             Debit oldDebit = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.ID);
             int i = await ExpToRemoveAsync(d.DebCode, d.Usr_OID, d.Exp_ID);
-            for (int k = 0; k < (oldDebit.RtNum - oldDebit.RtPaid); k++)
-            {
-                var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == (oldDebit.Exp_ID + k));
-                if(exp != null)
-                {
-                    await repo.DeleteExpirationAsync(exp);
-                    await repo.SaveChangesAsync();
-                }
-            }
+            //for (int k = 0; k < (oldDebit.RtNum - oldDebit.RtPaid); k++)
+            //{
+            //    var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == (oldDebit.Exp_ID + k));
+            //    if(exp != null)
+            //    {
+            //        await repo.DeleteExpirationAsync(exp);
+            //        await repo.SaveChangesAsync();
+            //    }
+            //}
             for (int j = 0; j < (d.RtNum - d.RtPaid); j++)
             {
                 Expiration exp = new()

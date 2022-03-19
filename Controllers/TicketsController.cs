@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinance.Models;
 using PersonalFinance.Services;
+using PersonalFinance.Services.EntityFramework;
 
 //Known Movements Controller
 namespace PersonalFinance.Controllers
@@ -10,10 +11,12 @@ namespace PersonalFinance.Controllers
     [Route("api/[Controller]")]
     public class TicketsController : PFA_APIController
     {
+        private readonly PersonalFinanceContext PersonalFinanceContext;
         private readonly IRepository repo;
-        public TicketsController(IRepository repo) : base(repo)
+        public TicketsController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo, PersonalFinanceContext)
         {
             this.repo = repo;
+            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
         [HttpGet]
