@@ -114,12 +114,24 @@ namespace PersonalFinance.Controllers
                 {
                     Usr_OID = d.Usr_OID,
                     ExpTitle = d.DebTitle,
-                    ExpDescription = d.DebTitle + " - rata: " + (j + 1)
                 };
-                if (d.RtFreq == "Mesi")
+                if (d.Multiplier != 0)
                 {
-                    exp.ExpDateTime = d.DebInsDate.AddMonths(j * d.Multiplier);
+                    if (d.RtFreq == "Mesi")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddMonths(j * d.Multiplier);
+                    }
+                    if (d.RtFreq == "Anni")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddYears(j * d.Multiplier);
+                    }
+                    exp.ExpDescription = d.DebTitle + " - rata: " + (j + 1);
+                } else
+                {
+                    exp.ExpDateTime = d.DebDateTime;
+                    exp.ExpDescription = d.DebTitle;
                 }
+
                 exp.ColorLabel = "red";
                 exp.ExpValue = d.DebValue / d.RtNum;
                 await repo.AddExpirationAsync(exp);
