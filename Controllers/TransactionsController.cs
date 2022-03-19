@@ -109,10 +109,10 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Transaction_Add([FromBody] Transaction t)
         {
-            var detections = await repo.AddTransactionAsync(t);
+            await repo.AddTransactionAsync(t);
             await repo.SaveChangesAsync();
             await Transaction_Credit_Debit_UpdateAsync(t);
-            return RedirectToAction(nameof(Transactions_Main));
+            return Ok();
         }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
@@ -216,8 +216,8 @@ namespace PersonalFinance.Controllers
                     {
                         debit.RemainToPay += t.TrsValue;
                         debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);
-                        var exp = await repo.GetExpirationAsync((debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)), debit.Usr_OID);
-                        await repo.DeleteExpirationAsync(exp);
+                        var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
+                        this.PersonalFinanceContext.Remove(exp);
                         //await repo.SaveChangesAsync();
 
                         if (debit.RemainToPay <= 0)
@@ -227,8 +227,10 @@ namespace PersonalFinance.Controllers
                         }
                         else
                         {
-                            await repo.UpdateDebitAsync(debit);
-                            
+                            //await repo.UpdateDebitAsync();
+                            PersonalFinanceContext.Attach(debit);
+                            PersonalFinanceContext.Entry(debit).State =
+                                Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                     }
 
