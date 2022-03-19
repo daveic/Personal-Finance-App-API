@@ -55,10 +55,11 @@ namespace PersonalFinance.Controllers
                 {
                     Usr_OID = d.Usr_OID,
                     ExpTitle = d.DebTitle,
-                    ExpDescription = d.DebTitle
+                    ExpDescription = d.DebTitle,
+                    ExpDateTime = d.DebDateTime, 
+                    ColorLabel = "red",
+                    ExpValue = d.DebValue
                 };
-                exp.ColorLabel = "red";
-                exp.ExpValue = d.DebValue;
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID + 1;
