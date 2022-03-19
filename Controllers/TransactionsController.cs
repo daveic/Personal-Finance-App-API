@@ -218,21 +218,22 @@ namespace PersonalFinance.Controllers
                         debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);
                         var exp = await repo.GetExpirationAsync((debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)), debit.Usr_OID);
                         await repo.DeleteExpirationAsync(exp);
-                        await repo.SaveChangesAsync();
+                        //await repo.SaveChangesAsync();
 
                         if (debit.RemainToPay <= 0)
                         {
                             await repo.DeleteDebitAsync(debit);
-                            await repo.SaveChangesAsync();
+                           // await repo.SaveChangesAsync();
                         }
                         else
                         {
                             await repo.UpdateDebitAsync(debit);
-                            await repo.SaveChangesAsync();
+                            
                         }
                     }
 
                 }
+                await repo.SaveChangesAsync();
                 if (t.TrsCode.StartsWith("CRE"))
                 {
                     Credit model = new()
