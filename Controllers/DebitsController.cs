@@ -62,7 +62,7 @@ namespace PersonalFinance.Controllers
                 };
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
-                d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID + 1;
+                d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
             }
             else 
             {             
