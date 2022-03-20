@@ -43,26 +43,7 @@ namespace PersonalFinance.Controllers
             int i = await Credit_Add_Service(c);
             return RedirectToAction(nameof(Credits_Main));
         }
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public async Task<int> Credit_Add_Service(Credit c)
-        {
-            Expiration exp = new()
-            {
-                Usr_OID = c.Usr_OID,
-                ExpTitle = c.CredTitle,
-                ExpDescription = "Rientro previsto - " + c.CredTitle,
-                ExpDateTime = c.PrevDateTime,
-                ColorLabel = "green",
-                ExpValue = c.CredValue
-            };
-            await repo.AddExpirationAsync(exp);
-            await repo.SaveChangesAsync();
-            c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
-            await repo.AddCreditAsync(c);
-            await repo.SaveChangesAsync();
-            return 1;
-        }
+
 
         [HttpPut]
         [Route("Update")]
