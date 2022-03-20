@@ -201,10 +201,10 @@ namespace PersonalFinance.Controllers
                     model.Usr_OID = t.Usr_OID;
                     model.DebCode = t.TrsCode;
                     model.DebInsDate = DateTime.UtcNow;
-                    model.DebValue = -t.TrsValue;
+                    model.DebValue = t.TrsValue;
                     model.DebTitle = "Prestito/Anticipo";
                     model.DebNote = "";
-                    model.RemainToPay = -t.TrsValue;
+                    model.RemainToPay = t.TrsValue;
                     model.RtPaid = 0;
                     model.RtNum = 1;
                     model.Multiplier = 0;
