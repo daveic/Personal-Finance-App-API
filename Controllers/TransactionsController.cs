@@ -158,7 +158,7 @@ namespace PersonalFinance.Controllers
                         CredValue = -t.TrsValue,
                         CredTitle = "Prestito/Anticipo",
                         CredNote = "",
-                        PrevDateTime = t.TrsDateTimeExp
+                        PrevDateTime = (DateTime)t.TrsDateTimeExp
                     };
                     await Credit_Add_Service(model);
                 }
@@ -211,7 +211,7 @@ namespace PersonalFinance.Controllers
                     model.RtPaid = 0;
                     model.RtNum = 1;
                     model.Multiplier = 0;
-                    model.DebDateTime = t.TrsDateTimeExp;
+                    model.DebDateTime = (DateTime)t.TrsDateTimeExp;
                     await Debit_Add_Service(model);
                 }
             }

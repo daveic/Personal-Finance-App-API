@@ -41,8 +41,6 @@ namespace PersonalFinance.Controllers
             await Debit_Add_Service(d);
             return RedirectToAction(nameof(Debits_Main));
         }
-        
-
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Debits_Edit(Debit d)
@@ -75,20 +73,11 @@ namespace PersonalFinance.Controllers
                     exp.ExpValue = d.DebValue / (d.RtNum - d.RtPaid);
                 }
 
-                exp.ColorLabel = "red";
-                
+                exp.ColorLabel = "red";                
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
             }
             d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
-            await repo.UpdateDebitAsync(d);
-            await repo.SaveChangesAsync();
-            return Ok(d);
-        }
-        [HttpPut]
-        [Route("UpdateOnTransaction")]
-        public async Task<IActionResult> Debits_Edit_OnTransaction(Debit d)
-        {
             await repo.UpdateDebitAsync(d);
             await repo.SaveChangesAsync();
             return Ok(d);
@@ -99,10 +88,6 @@ namespace PersonalFinance.Controllers
         {
             Debit deb = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).FirstOrDefault(x => x.ID == id);
             await ExpToRemoveAsync(deb.DebCode, User_OID, deb.Exp_ID);
-            //for (int i = 0; i <= (deb.RtNum - deb.RtPaid); i++)
-            //{
-            //    int res = DeleteItemN("Expirations", (deb.Exp_ID + i), GetUserData().Result);
-            //}
             var t = await repo.GetDebitAsync(id, User_OID);
             await repo.DeleteDebitAsync(t);
             await repo.SaveChangesAsync();

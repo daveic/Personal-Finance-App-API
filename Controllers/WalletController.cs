@@ -13,11 +13,9 @@ namespace PersonalFinance.Controllers
     public class WalletController : PFA_APIController
     {
         private readonly IRepository repo;
-        private readonly PersonalFinanceContext PersonalFinanceContext;
         public WalletController(IRepository repo, PersonalFinanceContext PersonalFinanceContext) : base(repo, PersonalFinanceContext)
         {
             this.repo = repo;
-            this.PersonalFinanceContext = PersonalFinanceContext;
         }
 
         [HttpGet]

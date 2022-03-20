@@ -22,20 +22,17 @@ namespace PersonalFinance.Controllers
         }
 
         [HttpGet]
-        [Route("Details")]
-        public async Task<IActionResult> Credits_Details(int id, string User_OID)
-        {
-            var credit = await repo.GetCreditAsync(id, User_OID);
-            return Ok(credit);
-        }
-
-        [HttpGet]
         [Route("All")]
         public async Task<IActionResult> Credits_Main(string User_OID)
         {            
             return Ok(await repo.GetAllCreditsAsync(User_OID));            
         }
-
+        [HttpGet]
+        [Route("Details")]
+        public async Task<IActionResult> Credits_Details(int id, string User_OID)
+        {
+            return Ok(await repo.GetCreditAsync(id, User_OID));
+        }
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Credit_Add([FromBody] Credit c)
@@ -43,8 +40,6 @@ namespace PersonalFinance.Controllers
             int i = await Credit_Add_Service(c);
             return RedirectToAction(nameof(Credits_Main));
         }
-
-
         [HttpPut]
         [Route("Update")]
         public async Task<IActionResult> Credit_Edit(Credit c)
@@ -60,11 +55,10 @@ namespace PersonalFinance.Controllers
             {
                 if (c.Exp_ID == exp.ID)
                 {
-                    //await repo.DeleteExpirationAsync(exp);
                     this.PersonalFinanceContext.Remove(exp);
-                    Task mainTaskRemove = Post();
-                    mainTaskRemove.Wait();
-                    
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
+                    //Task mainTaskRemove = Post();
+                    //mainTaskRemove.Wait();
                     Expiration e = new()
                     {
                         Usr_OID = c.Usr_OID,
@@ -74,20 +68,13 @@ namespace PersonalFinance.Controllers
                         ColorLabel = "green",
                         ExpValue = c.CredValue
                     };
-                    //await repo.AddExpirationAsync(e);
                     this.PersonalFinanceContext.Add(e);
-
-                    Task mainTaskAdd = Post();
-                    mainTaskAdd.Wait();                    
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
                     break;
                 }
-            }
-           
+            }           
             c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
             await repo.UpdateCreditAsync(c);
-            //PersonalFinanceContext.Attach(c);
-            //PersonalFinanceContext.Entry(c).State =
-            //    Microsoft.EntityFrameworkCore.EntityState.Modified;
             await repo.SaveChangesAsync();
             return c;
         }
