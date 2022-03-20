@@ -130,7 +130,7 @@ namespace PersonalFinance.Controllers
                     if (t.TrsCode == debit.DebCode)
                     {
                         debit.RemainToPay += t.TrsValue;
-                        debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);
+                        debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);                        
                         var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
                         this.PersonalFinanceContext.Remove(exp);
                         _ = PersonalFinanceContext.SaveChanges() > 0;
@@ -141,7 +141,6 @@ namespace PersonalFinance.Controllers
                         }
                         else
                         {
-                            //await repo.UpdateDebitAsync();
                             PersonalFinanceContext.Attach(debit);
                             PersonalFinanceContext.Entry(debit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -149,7 +148,6 @@ namespace PersonalFinance.Controllers
                         }
                     }
                 }
-                //await repo.SaveChangesAsync();
                 if (t.TrsCode.StartsWith("CRE"))
                 {
                     Credit model = new()
@@ -159,7 +157,8 @@ namespace PersonalFinance.Controllers
                         CredDateTime = DateTime.UtcNow,
                         CredValue = t.TrsValue,
                         CredTitle = "Prestito/Anticipo",
-                        CredNote = ""
+                        CredNote = "",
+                        PrevDateTime = t.TrsDateTimeExp
                     };
                     await Credit_Add_Service(model);
                 }
@@ -172,6 +171,7 @@ namespace PersonalFinance.Controllers
                     {
                         var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
                         this.PersonalFinanceContext.Remove(expCred);
+                        _ = PersonalFinanceContext.SaveChanges() > 0;
                         credit.CredValue -= t.TrsValue;
                         if (credit.CredValue <= 0)
                         {
@@ -190,13 +190,14 @@ namespace PersonalFinance.Controllers
                             };
                             this.PersonalFinanceContext.Add(e);
                             credit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).OrderBy(x => x.ID).Last().ID;//
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
                             PersonalFinanceContext.Attach(credit);
                             PersonalFinanceContext.Entry(credit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                     }
                 }
-                await repo.SaveChangesAsync();
+                _ = PersonalFinanceContext.SaveChanges() > 0;
                 if (t.TrsCode.StartsWith("DEB"))
                 {
                     Debit model = new();
@@ -210,6 +211,7 @@ namespace PersonalFinance.Controllers
                     model.RtPaid = 0;
                     model.RtNum = 1;
                     model.Multiplier = 0;
+                    model.DebDateTime = t.TrsDateTimeExp;
                     await Debit_Add_Service(model);
                 }
             }
@@ -224,15 +226,9 @@ namespace PersonalFinance.Controllers
                 .GroupBy(x => x.TrsCode)
                 .Select(x => x.First())
                 .ToList();
-            //IEnumerable<Transaction> Transactions = GetAllItems<Transaction>("PersonalFinanceAPI", nameof(Transactions), User_OID);
+
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == TrDet.User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == TrDet.User_OID).ToList();
-            //IEnumerable<Credit> Credits = GetAllItems<Credit>("PersonalFinanceAPI", nameof(Credits), User_OID);
-            //IEnumerable<Debit> Debits = GetAllItems<Debit>("PersonalFinanceAPI", nameof(Debits), User_OID);
-            //Transaction t = GetItemID<Transaction>(nameof(Transaction), id);
-            /*var UniqueCodes = Transactions.GroupBy(x => x.TrsCode)
-                                          .Select(x => x.First())
-                                          .ToList();*/
             TrDet.Codes = new List<SelectListItem>();
             foreach (var item in UniqueCodes)
             {

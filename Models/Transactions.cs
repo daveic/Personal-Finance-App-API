@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PersonalFinance.Models
 {
@@ -13,6 +14,8 @@ namespace PersonalFinance.Models
         public DateTime TrsDateTime { get; set; }
         public double TrsValue { get; set; }
         public string TrsNote { get; set; }
+        [NotMapped]
+        public DateTime TrsDateTimeExp { get; set; }
     }
     public class TransactionDetailsEdit
     {
