@@ -175,7 +175,6 @@ namespace PersonalFinance.Controllers
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                     }
-
                 }
                 await repo.SaveChangesAsync();
                 if (t.TrsCode.StartsWith("CRE"))
@@ -191,7 +190,6 @@ namespace PersonalFinance.Controllers
                     };
                     await Credit_Add_Service(model);
                 }
-
             }
             if (t.TrsValue > 0)
             {
@@ -208,10 +206,6 @@ namespace PersonalFinance.Controllers
                         }
                         else
                         {
-                            PersonalFinanceContext.Attach(credit);
-                            PersonalFinanceContext.Entry(credit).State =
-                                Microsoft.EntityFrameworkCore.EntityState.Modified;
-
                             Expiration e = new()
                             {
                                 Usr_OID = credit.Usr_OID,
@@ -222,6 +216,10 @@ namespace PersonalFinance.Controllers
                                 ExpValue = credit.CredValue
                             };
                             this.PersonalFinanceContext.Add(e);
+                            credit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).OrderBy(x => x.ID).Last().ID;//
+                            PersonalFinanceContext.Attach(credit);
+                            PersonalFinanceContext.Entry(credit).State =
+                                Microsoft.EntityFrameworkCore.EntityState.Modified;
                         }
                     }
                 }
