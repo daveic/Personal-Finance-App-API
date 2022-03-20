@@ -15,7 +15,7 @@ namespace PersonalFinance.Models
         public double TrsValue { get; set; }
         public string TrsNote { get; set; }
         [NotMapped]
-        public DateTime TrsDateTimeExp { get; set; }
+        public DateTime? TrsDateTimeExp { get; set; }
     }
     public class TransactionDetailsEdit
     {
