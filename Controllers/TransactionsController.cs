@@ -109,9 +109,9 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Transaction_Add([FromBody] Transaction t)
         {
-            await repo.AddTransactionAsync(t);
-            await repo.SaveChangesAsync();
             await Transaction_Credit_Debit_UpdateAsync(t);
+            this.PersonalFinanceContext.Add(t);
+            await repo.SaveChangesAsync();
             return Ok();
         }
         
@@ -133,6 +133,7 @@ namespace PersonalFinance.Controllers
                         debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);
                         var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
                         this.PersonalFinanceContext.Remove(exp);
+                        _ = PersonalFinanceContext.SaveChanges() > 0;
 
                         if (debit.RemainToPay <= 0)
                         {
@@ -144,10 +145,11 @@ namespace PersonalFinance.Controllers
                             PersonalFinanceContext.Attach(debit);
                             PersonalFinanceContext.Entry(debit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
                         }
                     }
                 }
-                await repo.SaveChangesAsync();
+                //await repo.SaveChangesAsync();
                 if (t.TrsCode.StartsWith("CRE"))
                 {
                     Credit model = new()
