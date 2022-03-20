@@ -65,7 +65,38 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return 1;
         }
-
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<Credit> Credit_Edit_Service(Credit c)
+        {
+            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();
+            foreach (var exp in Expirations)
+            {
+                if (c.Exp_ID == exp.ID)
+                {
+                    this.PersonalFinanceContext.Remove(exp);
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
+                    //Task mainTaskRemove = Post();
+                    //mainTaskRemove.Wait();
+                    Expiration e = new()
+                    {
+                        Usr_OID = c.Usr_OID,
+                        ExpTitle = c.CredTitle,
+                        ExpDescription = "Rientro previsto - " + c.CredTitle,
+                        ExpDateTime = c.PrevDateTime,
+                        ColorLabel = "green",
+                        ExpValue = c.CredValue
+                    };
+                    this.PersonalFinanceContext.Add(e);
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
+                    break;
+                }
+            }
+            c.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).OrderBy(x => x.ID).Last().ID;
+            await repo.UpdateCreditAsync(c);
+            await repo.SaveChangesAsync();
+            return c;
+        }
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public async Task<int> Debit_Add_Service(Debit d)
@@ -121,7 +152,48 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return 1;
         }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<int> Debit_Edit_Service(Debit d)
+        {
+            Debit oldDebit = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.ID);
+            int i = await ExpToRemoveAsync(d.DebCode, d.Usr_OID, d.Exp_ID);
+            for (int j = 0; j < (d.RtNum - d.RtPaid); j++)
+            {
+                Expiration exp = new()
+                {
+                    Usr_OID = d.Usr_OID,
+                    ExpTitle = d.DebCode,
+                };
+                if (d.Multiplier != 0)
+                {
+                    if (d.RtFreq == "Mesi")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddMonths(j * d.Multiplier);
+                    }
+                    if (d.RtFreq == "Anni")
+                    {
+                        exp.ExpDateTime = d.DebInsDate.AddYears(j * d.Multiplier);
+                    }
+                    exp.ExpDescription = d.DebTitle + " - rata: " + (j + 1);
+                    exp.ExpValue = d.RemainToPay / (d.RtNum - d.RtPaid);
+                }
+                else
+                {
+                    exp.ExpDateTime = d.DebDateTime;
+                    exp.ExpDescription = d.DebTitle;
+                    exp.ExpValue = d.DebValue / (d.RtNum - d.RtPaid);
+                }
 
+                exp.ColorLabel = "red";
+                await repo.AddExpirationAsync(exp);
+                await repo.SaveChangesAsync();
+            }
+            d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
+            await repo.UpdateDebitAsync(d);
+            await repo.SaveChangesAsync();
+            return 1;
+        }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]

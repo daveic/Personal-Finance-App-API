@@ -43,44 +43,9 @@ namespace PersonalFinance.Controllers
         }
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> Debits_Edit(Debit d)
+        public async Task<IActionResult> Debit_Edit(Debit d)
         {
-            Debit oldDebit = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.ID);
-            int i = await ExpToRemoveAsync(d.DebCode, d.Usr_OID, d.Exp_ID);
-            for (int j = 0; j < (d.RtNum - d.RtPaid); j++)
-            {
-                Expiration exp = new()
-                {
-                    Usr_OID = d.Usr_OID,
-                    ExpTitle = d.DebCode,
-                };
-                if (d.Multiplier != 0)
-                {
-                    if (d.RtFreq == "Mesi")
-                    {
-                        exp.ExpDateTime = d.DebInsDate.AddMonths(j * d.Multiplier);
-                    }
-                    if (d.RtFreq == "Anni")
-                    {
-                        exp.ExpDateTime = d.DebInsDate.AddYears(j * d.Multiplier);
-                    }
-                    exp.ExpDescription = d.DebTitle + " - rata: " + (j + 1);
-                    exp.ExpValue = d.RemainToPay / (d.RtNum - d.RtPaid);
-                } else
-                {
-                    exp.ExpDateTime = d.DebDateTime;
-                    exp.ExpDescription = d.DebTitle;
-                    exp.ExpValue = d.DebValue / (d.RtNum - d.RtPaid);
-                }
-
-                exp.ColorLabel = "red";                
-                await repo.AddExpirationAsync(exp);
-                await repo.SaveChangesAsync();
-            }
-            d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
-            await repo.UpdateDebitAsync(d);
-            await repo.SaveChangesAsync();
-            return Ok(d);
+            return Ok(await Debit_Edit_Service(d));
         }
         [HttpDelete]
         [Route("Delete")]

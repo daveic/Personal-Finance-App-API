@@ -278,6 +278,40 @@ namespace PersonalFinance.Controllers
         [Route("Update")]
         public async Task<IActionResult> Transaction_Edit(Transaction t)
         {
+            Transaction trsOld = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == t.ID);
+            if(t.TrsCode == "CRE" )
+            {
+                Credit c = new()
+                {
+                    Usr_OID = t.Usr_OID,
+                    CredCode = t.TrsCode,
+                    CredDateTime = t.TrsDateTime,
+                    CredValue = -t.TrsValue,
+                    CredTitle = "Prestito/Anticipo",
+                    CredNote = t.TrsNote,
+                    PrevDateTime = (DateTime)t.TrsDateTimeExp
+                };
+                await Credit_Edit_Service(c);
+            } else if (t.TrsCode == "DEB")
+            {
+              
+                Debit d = new()
+                {
+                    Usr_OID = t.Usr_OID,
+                    DebCode = t.TrsCode,
+                    DebInsDate = DateTime.UtcNow,
+                    DebValue = t.TrsValue,
+                    DebTitle = "Prestito/Anticipo",
+                    DebNote = t.TrsNote,
+                    RemainToPay = t.TrsValue,
+                    RtPaid = 0,
+                    RtNum = 1,
+                    Multiplier = 0,
+                    DebDateTime = (DateTime)t.TrsDateTimeExp
+                };
+                await Debit_Edit_Service(d);
+            }
+
             await repo.UpdateTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
