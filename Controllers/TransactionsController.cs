@@ -10,7 +10,7 @@ using PersonalFinance.Services;
 using PersonalFinance.Services.EntityFramework;
 using PersonalFinance.Controllers;
 
-//Known Movements Controller
+//Transactions Controller
 namespace PersonalFinance.Controllers
 {
     [ApiController]

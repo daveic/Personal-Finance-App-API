@@ -5,7 +5,7 @@ using PersonalFinance.Models;
 using PersonalFinance.Services;
 using PersonalFinance.Services.EntityFramework;
 
-//Known Movements Controller
+//Wallet Controller
 namespace PersonalFinance.Controllers
 {
     [ApiController]
