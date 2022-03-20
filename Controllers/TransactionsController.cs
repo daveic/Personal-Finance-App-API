@@ -155,7 +155,7 @@ namespace PersonalFinance.Controllers
                         Usr_OID = t.Usr_OID,
                         CredCode = t.TrsCode,
                         CredDateTime = DateTime.UtcNow,
-                        CredValue = t.TrsValue,
+                        CredValue = -t.TrsValue,
                         CredTitle = "Prestito/Anticipo",
                         CredNote = "",
                         PrevDateTime = t.TrsDateTimeExp

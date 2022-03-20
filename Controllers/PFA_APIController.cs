@@ -52,7 +52,7 @@ namespace PersonalFinance.Controllers
             Expiration exp = new()
             {
                 Usr_OID = c.Usr_OID,
-                ExpTitle = c.CredTitle,
+                ExpTitle = c.CredCode,
                 ExpDescription = "Rientro previsto - " + c.CredTitle,
                 ExpDateTime = c.PrevDateTime,
                 ColorLabel = "green",
