@@ -114,35 +114,6 @@ namespace PersonalFinance.Controllers
             await Transaction_Credit_Debit_UpdateAsync(t);
             return Ok();
         }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public async Task<Credit> Credit_Edit_Service(Credit c)
-        {
-            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == c.Usr_OID).ToList();
-            foreach (var exp in Expirations)
-            {
-                if (c.Exp_ID == exp.ID)
-                {
-                    await repo.DeleteExpirationAsync(exp);
-                    Expiration e = new()
-                    {
-                        Usr_OID = c.Usr_OID,
-                        ExpTitle = c.CredTitle,
-                        ExpDescription = "Rientro previsto - " + c.CredTitle,
-                        ExpDateTime = c.PrevDateTime,
-                        ColorLabel = "green",
-                        ExpValue = c.CredValue
-                    };
-                    await repo.AddExpirationAsync(e);
-                    c.Exp_ID = Expirations.Last().ID + 1;
-                    break;
-                }
-            }
-            await repo.UpdateCreditAsync(c);
-            await repo.SaveChangesAsync();
-            return c;
-        }
         
 
         [ApiExplorerSettings(IgnoreApi = true)]
