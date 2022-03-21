@@ -219,60 +219,65 @@ namespace PersonalFinance.Controllers
         }
         [HttpGet]
         [Route("DetailsEdit")]
-        public IActionResult Transaction_Details_Edit(TransactionDetailsEdit TrDet)
+        public virtual Task<List<string>> Transaction_Details_Edit(string User_OID)
         {
             var UniqueCodes = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable()
-                .Where(x => x.Usr_OID == TrDet.User_OID)
+                .Where(x => x.Usr_OID == User_OID)
                 .GroupBy(x => x.TrsCode)
                 .Select(x => x.First())
                 .ToList();
 
-            var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == TrDet.User_OID).ToList();
-            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == TrDet.User_OID).ToList();
-            TrDet.Codes = new List<SelectListItem>();
+            var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+            List<string> codes = new();
+
+            //TrDet.Codes = new List<SelectListItem>();
             foreach (var item in UniqueCodes)
             {
-                SelectListItem code = new();
-                code.Value = item.TrsCode;
-                code.Text = item.TrsCode;
-                TrDet.Codes.Add(code);
+                codes.Add(item.TrsCode);
+                //SelectListItem code = new();
+                //code.Value = item.TrsCode;
+                //code.Text = item.TrsCode;
+                //TrDet.Codes.Add(code);
             }
             bool isPresent = false;
             foreach (var credit in Credits)
             {
-                foreach (var item in TrDet.Codes)
+                foreach (var item in codes)
                 {
-                    if (credit.CredCode == item.Value) isPresent = true;
+                    if (credit.CredCode == item) isPresent = true;
                 }
                 if (isPresent is true)
                 {
-                    SelectListItem code = new()
-                    {
-                        Value = credit.CredCode,
-                        Text = credit.CredCode
-                    };
-                    TrDet.Codes.Add(code);
+                    //SelectListItem code = new()
+                    //{
+                    //    Value = credit.CredCode,
+                    //    Text = credit.CredCode
+                    //};
+                    //TrDet.Codes.Add(code);
+                    codes.Add(credit.CredCode);
                 }
                 isPresent = false;
             }
             foreach (var debit in Debits)
             {
-                foreach (var item in TrDet.Codes)
+                foreach (var item in codes)
                 {
-                    if (debit.DebCode == item.Value) isPresent = true;
+                    if (debit.DebCode == item) isPresent = true;
                 }
                 if (isPresent is false)
                 {
-                    SelectListItem code = new()
-                    {
-                        Value = debit.DebCode,
-                        Text = debit.DebCode
-                    };
-                    TrDet.Codes.Add(code);
+                    //SelectListItem code = new()
+                    //{
+                    //    Value = debit.DebCode,
+                    //    Text = debit.DebCode
+                    //};
+                    //TrDet.Codes.Add(code);
+                    codes.Add(debit.DebCode);
                 }
                 isPresent = false;
             }
-            return Ok(TrDet.Codes);
+            return Task.FromResult(codes);
         }
         [HttpPut]
         [Route("Update")]
