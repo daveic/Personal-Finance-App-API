@@ -148,8 +148,15 @@ namespace PersonalFinance.Controllers
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                         }
+                        t.TrsTitle = "Pagamento rata " + debit.RtPaid;
+                        t.TrsCode = debit.DebCode;
+                        t.TrsDateTime = DateTime.UtcNow;
+                        t.TrsValue = debit.DebValue / debit.RtNum;
+                        t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                     }
                 }
+
+
             }
             if (t.DebCredInValue != 0)
             {
@@ -226,6 +233,7 @@ namespace PersonalFinance.Controllers
                     }
                 }
             }
+
             if (t.DebCredInValue != 0 && t.DebCredChoice is null)
             {
                 if (t.TrsValue < 0 && t.TrsCode is null)
