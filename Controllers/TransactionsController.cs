@@ -240,7 +240,6 @@ namespace PersonalFinance.Controllers
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
 
-
             TransactionDetailsEdit APIData = new();
             APIData.DebitsRat = Debits.Where(x => x.RtNum > 1).ToList();
             APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
