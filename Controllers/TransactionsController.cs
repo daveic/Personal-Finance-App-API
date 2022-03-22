@@ -217,14 +217,14 @@ namespace PersonalFinance.Controllers
             }
             return 1;
         }
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public async Task<int> Transaction_Credit_Debit_RestoreAsync(Transaction t)
-        {
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[NonAction]
+        //public async Task<int> Transaction_Credit_Debit_RestoreAsync(Transaction t)
+        //{
 
-            return 1;
+        //    return 1;
         
-        }
+        //}
 
         [HttpGet]
         [Route("DetailsEdit")]
@@ -242,8 +242,8 @@ namespace PersonalFinance.Controllers
 
 
             TransactionDetailsEdit APIData = new();
-            APIData.DebitsRat = Debits.Where(x => x.Multiplier > 1);
-            APIData.DebitsMono = Debits.Where(x => x.Multiplier == 1);
+            APIData.DebitsRat = Debits.Where(x => x.Multiplier > 1).ToList();
+            APIData.DebitsMono = Debits.Where(x => x.Multiplier == 1).ToList();
             APIData.CreditsMono = Credits;
             APIData.Codes = new();
             foreach (var item in UniqueCodes)
