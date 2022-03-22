@@ -243,7 +243,7 @@ namespace PersonalFinance.Controllers
 
             TransactionDetailsEdit APIData = new();
             APIData.DebitsRat = Debits.Where(x => x.Multiplier > 1).ToList();
-            APIData.DebitsMono = Debits.Where(x => x.Multiplier == 1).ToList();
+            APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
             APIData.CreditsMono = Credits;
             APIData.Codes = new();
             foreach (var item in UniqueCodes)
