@@ -201,7 +201,7 @@ namespace PersonalFinance.Controllers
                         }
                     }
                 }
-                else if (t.DebCredChoice.StartsWith("CRED"))
+                else if (t.DebCredChoice.StartsWith("CRE"))
                 {
                     foreach (var credit in Credits)
                     {
@@ -210,7 +210,7 @@ namespace PersonalFinance.Controllers
                             var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
                             this.PersonalFinanceContext.Remove(expCred);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
-                            credit.CredValue -= t.TrsValue;
+                            credit.CredValue -= t.DebCredInValue;
                             if (credit.CredValue <= 0)
                             {
                                 await repo.DeleteCreditAsync(credit);
@@ -237,7 +237,7 @@ namespace PersonalFinance.Controllers
                             t.TrsTitle = "Rientro credito";
                             t.TrsCode = credit.CredCode;
                             t.TrsDateTime = DateTime.UtcNow;
-                            t.TrsValue = t.DebCredInValue;
+                            t.TrsValue = -t.DebCredInValue;
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
