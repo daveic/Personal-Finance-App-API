@@ -148,7 +148,7 @@ namespace PersonalFinance.Controllers
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                         }
-                        t.TrsTitle = "Pagamento rata " + debit.RtPaid;
+                        t.TrsTitle = "Pagamento " + debit.RtPaid + "° rata ";
                         t.TrsCode = debit.DebCode;
                         t.TrsDateTime = DateTime.UtcNow;
                         t.TrsValue = debit.DebValue / debit.RtNum;
@@ -193,6 +193,11 @@ namespace PersonalFinance.Controllers
                                     Microsoft.EntityFrameworkCore.EntityState.Modified;
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                             }
+                            t.TrsTitle = "Pagamento debito";
+                            t.TrsCode = debit.DebCode;
+                            t.TrsDateTime = DateTime.UtcNow;
+                            t.TrsValue = t.DebCredInValue;
+                            t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
                 }
@@ -229,6 +234,11 @@ namespace PersonalFinance.Controllers
                                     Microsoft.EntityFrameworkCore.EntityState.Modified;
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                             }
+                            t.TrsTitle = "Rientro credito";
+                            t.TrsCode = credit.CredCode;
+                            t.TrsDateTime = DateTime.UtcNow;
+                            t.TrsValue = t.DebCredInValue;
+                            t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
                 }
