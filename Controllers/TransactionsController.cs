@@ -109,6 +109,7 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Transaction_Add([FromBody] Transaction t)
         {
+
             await Transaction_Credit_Debit_UpdateAsync(t);
             this.PersonalFinanceContext.Add(t);
             await repo.SaveChangesAsync();
@@ -123,14 +124,15 @@ namespace PersonalFinance.Controllers
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
 
-            if (t.TrsValue < 0)
+
+            if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
             {
                 foreach (var debit in Debits)
                 {
-                    if (t.TrsCode == debit.DebCode)
+                    if (t.DebCredChoice == debit.DebCode)
                     {
-                        debit.RemainToPay += t.TrsValue;
-                        debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);                        
+                        debit.RemainToPay -= debit.DebValue / debit.RtNum;
+                        debit.RtPaid += 1;
                         var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
                         this.PersonalFinanceContext.Remove(exp);
                         _ = PersonalFinanceContext.SaveChanges() > 0;
@@ -148,57 +150,98 @@ namespace PersonalFinance.Controllers
                         }
                     }
                 }
-                if (t.TrsCode.StartsWith("CRE"))
+            }
+            if (t.DebCredInValue != 0)
+            {
+                if (t.DebCredChoice.StartsWith("DEB"))
+                {
+                    foreach (var debit in Debits)
+                    {
+                        if (t.DebCredChoice == debit.DebCode)
+                        {
+                            debit.RemainToPay -= t.DebCredInValue;
+                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == debit.Exp_ID);
+                            this.PersonalFinanceContext.Remove(exp);
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
+
+                            if (debit.RemainToPay <= 0)
+                            {
+
+                                await repo.DeleteDebitAsync(debit);
+                            }
+                            else
+                            {
+                                Expiration newexp = new()
+                                {
+                                    Usr_OID = debit.Usr_OID,
+                                    ExpTitle = debit.DebCode,
+                                    ExpDescription = "Scadenza - " + debit.DebTitle,
+                                    ExpDateTime = debit.DebDateTime,
+                                    ColorLabel = "green",
+                                    ExpValue = debit.RemainToPay
+                                };
+                                await repo.AddExpirationAsync(newexp);
+                                PersonalFinanceContext.Attach(debit);
+                                PersonalFinanceContext.Entry(debit).State =
+                                    Microsoft.EntityFrameworkCore.EntityState.Modified;
+                                _ = PersonalFinanceContext.SaveChanges() > 0;
+                            }
+                        }
+                    }
+                }
+                else if (t.DebCredChoice.StartsWith("CRED"))
+                {
+                    foreach (var credit in Credits)
+                    {
+                        if (t.DebCredChoice == credit.CredCode)
+                        {
+                            var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
+                            this.PersonalFinanceContext.Remove(expCred);
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
+                            credit.CredValue -= t.TrsValue;
+                            if (credit.CredValue <= 0)
+                            {
+                                await repo.DeleteCreditAsync(credit);
+                            }
+                            else
+                            {
+                                Expiration exp = new()
+                                {
+                                    Usr_OID = credit.Usr_OID,
+                                    ExpTitle = credit.CredCode,
+                                    ExpDescription = "Rientro previsto - " + credit.CredTitle,
+                                    ExpDateTime = credit.PrevDateTime,
+                                    ColorLabel = "green",
+                                    ExpValue = credit.CredValue
+                                };
+                                await repo.AddExpirationAsync(exp);
+                                _ = PersonalFinanceContext.SaveChanges() > 0;
+                                credit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).OrderBy(x => x.ID).Last().ID;
+                                PersonalFinanceContext.Attach(credit);
+                                PersonalFinanceContext.Entry(credit).State =
+                                    Microsoft.EntityFrameworkCore.EntityState.Modified;
+                                _ = PersonalFinanceContext.SaveChanges() > 0;
+                            }
+                        }
+                    }
+                }
+            }
+            if (t.DebCredInValue != 0 && t.DebCredChoice is null)
+            {
+                if (t.TrsValue < 0 && t.TrsCode is null)
                 {
                     Credit model = new()
                     {
                         Usr_OID = t.Usr_OID,
-                        CredCode = t.TrsCode,
+                        CredCode = "CRE " + t.TrsTitle,
                         CredDateTime = DateTime.UtcNow,
-                        CredValue = -t.TrsValue,
-                        CredTitle = "Prestito/Anticipo",
-                        CredNote = "",
+                        CredValue = t.TrsValue,
+                        CredTitle = t.TrsTitle,
+                        CredNote = t.TrsNote,
                         PrevDateTime = (DateTime)t.TrsDateTimeExp
                     };
                     await Credit_Add_Service(model);
-                }
-            }
-            if (t.TrsValue > 0)
-            {
-                foreach (var credit in Credits)
-                {
-                    if (t.TrsCode == credit.CredCode)
-                    {
-                        var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
-                        this.PersonalFinanceContext.Remove(expCred);
-                        _ = PersonalFinanceContext.SaveChanges() > 0;
-                        credit.CredValue -= t.TrsValue;
-                        if (credit.CredValue <= 0)
-                        {
-                            await repo.DeleteCreditAsync(credit);                             
-                        }
-                        else
-                        {
-                            Expiration e = new()
-                            {
-                                Usr_OID = credit.Usr_OID,
-                                ExpTitle = credit.CredTitle,
-                                ExpDescription = "Rientro previsto - " + credit.CredTitle,
-                                ExpDateTime = credit.PrevDateTime,
-                                ColorLabel = "green",
-                                ExpValue = credit.CredValue
-                            };
-                            this.PersonalFinanceContext.Add(e);
-                            credit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).OrderBy(x => x.ID).Last().ID;//
-                            _ = PersonalFinanceContext.SaveChanges() > 0;
-                            PersonalFinanceContext.Attach(credit);
-                            PersonalFinanceContext.Entry(credit).State =
-                                Microsoft.EntityFrameworkCore.EntityState.Modified;
-                        }
-                    }
-                }
-                _ = PersonalFinanceContext.SaveChanges() > 0;
-                if (t.TrsCode.StartsWith("DEB"))
+                } else if (t.TrsValue > 0 && t.TrsCode is null)
                 {
                     Debit model = new();
                     model.Usr_OID = t.Usr_OID;
@@ -212,9 +255,102 @@ namespace PersonalFinance.Controllers
                     model.RtNum = 1;
                     model.Multiplier = 0;
                     model.DebDateTime = (DateTime)t.TrsDateTimeExp;
-                    await Debit_Add_Service(model);
+                    await Debit_Add_Service(model);                    
                 }
             }
+
+            //    if (t.TrsValue < 0)
+            //{
+            //    foreach (var debit in Debits)
+            //    {
+            //        if (t.TrsCode == debit.DebCode)
+            //        {
+            //            debit.RemainToPay += t.TrsValue;
+            //            debit.RtPaid += (-t.TrsValue) / (debit.DebValue / debit.RtNum);                        
+            //            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
+            //            this.PersonalFinanceContext.Remove(exp);
+            //            _ = PersonalFinanceContext.SaveChanges() > 0;
+
+            //            if (debit.RemainToPay <= 0)
+            //            {
+            //                await repo.DeleteDebitAsync(debit);
+            //            }
+            //            else
+            //            {
+            //                PersonalFinanceContext.Attach(debit);
+            //                PersonalFinanceContext.Entry(debit).State =
+            //                    Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //                _ = PersonalFinanceContext.SaveChanges() > 0;
+            //            }
+            //        }
+            //    }
+            //    if (t.TrsCode.StartsWith("CRE"))
+            //    {
+            //        Credit model = new()
+            //        {
+            //            Usr_OID = t.Usr_OID,
+            //            CredCode = t.TrsCode,
+            //            CredDateTime = DateTime.UtcNow,
+            //            CredValue = -t.TrsValue,
+            //            CredTitle = "Prestito/Anticipo",
+            //            CredNote = "",
+            //            PrevDateTime = (DateTime)t.TrsDateTimeExp
+            //        };
+            //        await Credit_Add_Service(model);
+            //    }
+            //}
+            //if (t.TrsValue > 0)
+            //{
+            //    foreach (var credit in Credits)
+            //    {
+            //        if (t.TrsCode == credit.CredCode)
+            //        {
+            //            var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
+            //            this.PersonalFinanceContext.Remove(expCred);
+            //            _ = PersonalFinanceContext.SaveChanges() > 0;
+            //            credit.CredValue -= t.TrsValue;
+            //            if (credit.CredValue <= 0)
+            //            {
+            //                await repo.DeleteCreditAsync(credit);                             
+            //            }
+            //            else
+            //            {
+            //                Expiration e = new()
+            //                {
+            //                    Usr_OID = credit.Usr_OID,
+            //                    ExpTitle = credit.CredTitle,
+            //                    ExpDescription = "Rientro previsto - " + credit.CredTitle,
+            //                    ExpDateTime = credit.PrevDateTime,
+            //                    ColorLabel = "green",
+            //                    ExpValue = credit.CredValue
+            //                };
+            //                this.PersonalFinanceContext.Add(e);
+            //                credit.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).OrderBy(x => x.ID).Last().ID;//
+            //                _ = PersonalFinanceContext.SaveChanges() > 0;
+            //                PersonalFinanceContext.Attach(credit);
+            //                PersonalFinanceContext.Entry(credit).State =
+            //                    Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //            }
+            //        }
+            //    }
+            //    _ = PersonalFinanceContext.SaveChanges() > 0;
+            //    if (t.TrsCode.StartsWith("DEB"))
+            //    {
+            //        Debit model = new();
+            //        model.Usr_OID = t.Usr_OID;
+            //        model.DebCode = t.TrsCode;
+            //        model.DebInsDate = DateTime.UtcNow;
+            //        model.DebValue = t.TrsValue;
+            //        model.DebTitle = "Prestito/Anticipo";
+            //        model.DebNote = "";
+            //        model.RemainToPay = t.TrsValue;
+            //        model.RtPaid = 0;
+            //        model.RtNum = 1;
+            //        model.Multiplier = 0;
+            //        model.DebDateTime = (DateTime)t.TrsDateTimeExp;
+            //        await Debit_Add_Service(model);
+            //    }
+            //}
             return 1;
         }
         //[ApiExplorerSettings(IgnoreApi = true)]
