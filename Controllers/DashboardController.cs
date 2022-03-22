@@ -197,7 +197,6 @@ namespace PersonalFinance.Controllers
 
             DOut.TransactionsIn = TransactionsIn;
             DOut.TransactionsOut = TransactionsOut;
-
             DOut.Transactions = JsonConvert.SerializeObject(Transactions);
             DOut.Banks = Banks;
 

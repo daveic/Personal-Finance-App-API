@@ -223,7 +223,7 @@ namespace PersonalFinance.Controllers
         //{
 
         //    return 1;
-        
+     
         //}
 
         [HttpGet]
@@ -239,7 +239,6 @@ namespace PersonalFinance.Controllers
 
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
-
 
             TransactionDetailsEdit APIData = new();
             APIData.DebitsRat = Debits.Where(x => x.Multiplier > 1).ToList();
