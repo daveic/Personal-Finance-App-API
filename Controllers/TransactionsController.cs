@@ -263,11 +263,11 @@ namespace PersonalFinance.Controllers
                 {
                     Debit model = new();
                     model.Usr_OID = t.Usr_OID;
-                    model.DebCode = t.TrsCode;
+                    model.DebCode = "DEB " + t.TrsTitle;
                     model.DebInsDate = DateTime.UtcNow;
                     model.DebValue = t.TrsValue;
-                    model.DebTitle = "Prestito/Anticipo";
-                    model.DebNote = "";
+                    model.DebTitle = t.TrsTitle;
+                    model.DebNote = t.TrsNote;
                     model.RemainToPay = t.TrsValue;
                     model.RtPaid = 0;
                     model.RtNum = 1;
