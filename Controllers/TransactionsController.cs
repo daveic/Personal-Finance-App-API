@@ -480,6 +480,33 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Transaction_Delete(int id, string User_OID)
         {
             var t = await repo.GetTransactionAsync(id, User_OID);
+            if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
+            {
+                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                foreach (var debit in Debits)
+                {
+                    if (t.DebCredChoice == debit.DebCode)
+                    {
+                        debit.RemainToPay += debit.DebValue / debit.RtNum;
+                        debit.RtPaid -= 1;
+                        await Debit_Edit_Service(debit);
+                    }
+                    //else se non lo trova significa che è stato rimosso del tutto, errore - l'utente se lo ricrea
+                }
+            }
+            if (t.DebCredInValue != 0 && t.DebCredChoice.StartsWith("DEB"))
+            {
+                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                foreach (var debit in Debits)
+                {
+                    if (t.DebCredChoice == debit.DebCode)
+                    {
+                        debit.RemainToPay += t.DebCredInValue;
+                        await Debit_Edit_Service(debit);
+                    }
+                }
+            }
+
             await repo.DeleteTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
