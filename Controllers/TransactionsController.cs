@@ -491,7 +491,8 @@ namespace PersonalFinance.Controllers
                         var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)+1));
                         debit.RemainToPay += debit.DebValue / debit.RtNum;
                         debit.RtPaid -= 1;
-                        debit.DebInsDate = exp.ExpDateTime;    
+                        if(debit.RtFreq == "Mesi") debit.DebInsDate = exp.ExpDateTime.AddMonths(-debit.Multiplier);
+                        if (debit.RtFreq == "Anni") debit.DebInsDate = exp.ExpDateTime.AddMonths(-debit.Multiplier);
                         await Debit_Edit_Service(debit);
                     }
                     //else se non lo trova significa che è stato rimosso del tutto, errore - l'utente se lo ricrea
