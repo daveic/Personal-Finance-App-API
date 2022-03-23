@@ -517,13 +517,45 @@ namespace PersonalFinance.Controllers
                 {
                     if(t.DebCredChoice == credit.CredCode)
                     {
-                        credit.CredValue -= t.DebCredInValue;
+                        credit.CredValue += t.DebCredInValue;
                         await Credit_Edit_Service(credit);
                     }
 
         
                 }
             }
+            //se erano crediti o debiti e sono stati rimossi coon la trans, li ricreo:
+            /*if (t.DebCredChoice == "NCred")
+                {
+                    Credit model = new()
+                    {
+                        Usr_OID = t.Usr_OID,
+                        CredCode = "CRE " + t.TrsTitle,
+                        CredDateTime = DateTime.Now,
+                        CredValue = -t.TrsValue,
+                        CredTitle = t.TrsTitle,
+                        CredNote = t.TrsNote,
+                        PrevDateTime = (DateTime)t.TrsDateTimeExp
+                    };
+                    await Credit_Add_Service(model);
+                    t.TrsCode = model.CredCode;
+                } else if (t.DebCredChoice == "NDeb")
+                {
+                    Debit model = new();
+                    model.Usr_OID = t.Usr_OID;
+                    model.DebCode = "DEB " + t.TrsTitle;
+                    model.DebInsDate = DateTime.Now;
+                    model.DebValue = t.TrsValue;
+                    model.DebTitle = t.TrsTitle;
+                    model.DebNote = t.TrsNote;
+                    model.RemainToPay = t.TrsValue;
+                    model.RtPaid = 0;
+                    model.RtNum = 1;
+                    model.Multiplier = 0;
+                    model.DebDateTime = (DateTime)t.TrsDateTimeExp;
+                    await Debit_Add_Service(model);
+                    t.TrsCode = model.DebCode;
+                }*/
             await repo.DeleteTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
