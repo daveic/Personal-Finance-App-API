@@ -76,12 +76,10 @@ namespace PersonalFinance.Controllers
                 {
                     this.PersonalFinanceContext.Remove(exp);
                     _ = PersonalFinanceContext.SaveChanges() > 0;
-                    //Task mainTaskRemove = Post();
-                    //mainTaskRemove.Wait();
                     Expiration e = new()
                     {
                         Usr_OID = c.Usr_OID,
-                        ExpTitle = c.CredTitle,
+                        ExpTitle = c.CredCode,
                         ExpDescription = "Rientro previsto - " + c.CredTitle,
                         ExpDateTime = c.PrevDateTime,
                         ColorLabel = "green",
