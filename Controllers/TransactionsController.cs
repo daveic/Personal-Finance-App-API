@@ -244,27 +244,27 @@ namespace PersonalFinance.Controllers
                 }
             }
 
-            if (t.DebCredInValue != 0 && t.DebCredChoice is null)
+            if (t.DebCredInValue == 0 && t.DebCredChoice is not null)
             {
-                if (t.TrsValue < 0 && t.TrsCode is null)
+                if (t.DebCredChoice == "NCred")
                 {
                     Credit model = new()
                     {
                         Usr_OID = t.Usr_OID,
                         CredCode = "CRE " + t.TrsTitle,
-                        CredDateTime = DateTime.UtcNow,
+                        CredDateTime = DateTime.Now,
                         CredValue = t.TrsValue,
                         CredTitle = t.TrsTitle,
                         CredNote = t.TrsNote,
                         PrevDateTime = (DateTime)t.TrsDateTimeExp
                     };
                     await Credit_Add_Service(model);
-                } else if (t.TrsValue > 0 && t.TrsCode is null)
+                } else if (t.DebCredChoice == "NDeb")
                 {
                     Debit model = new();
                     model.Usr_OID = t.Usr_OID;
                     model.DebCode = "DEB " + t.TrsTitle;
-                    model.DebInsDate = DateTime.UtcNow;
+                    model.DebInsDate = DateTime.Now;
                     model.DebValue = t.TrsValue;
                     model.DebTitle = t.TrsTitle;
                     model.DebNote = t.TrsNote;
