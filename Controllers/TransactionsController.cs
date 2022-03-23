@@ -510,7 +510,20 @@ namespace PersonalFinance.Controllers
                     }
                 }
             }
+            if (t.DebCredInValue != 0 && t.DebCredChoice.StartsWith("CRE"))
+            {
+                var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                foreach (var credit in Credits)
+                {
+                    if(t.DebCredChoice == credit.CredCode)
+                    {
+                        credit.CredValue -= t.DebCredInValue;
+                        await Credit_Edit_Service(credit);
+                    }
 
+        
+                }
+            }
             await repo.DeleteTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
