@@ -483,12 +483,15 @@ namespace PersonalFinance.Controllers
             if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
             {
                 var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                
                 foreach (var debit in Debits)
                 {
                     if (t.DebCredChoice == debit.DebCode)
                     {
                         debit.RemainToPay += debit.DebValue / debit.RtNum;
+                        var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
                         debit.RtPaid -= 1;
+                        debit.DebInsDate = exp.ExpDateTime;    
                         await Debit_Edit_Service(debit);
                     }
                     //else se non lo trova significa che è stato rimosso del tutto, errore - l'utente se lo ricrea
