@@ -196,7 +196,7 @@ namespace PersonalFinance.Controllers
                             t.TrsTitle = "Pagamento debito";
                             t.TrsCode = debit.DebCode;
                             t.TrsDateTime = DateTime.UtcNow;
-                            t.TrsValue = t.DebCredInValue;
+                            t.TrsValue = -t.DebCredInValue;
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
@@ -259,6 +259,7 @@ namespace PersonalFinance.Controllers
                         PrevDateTime = (DateTime)t.TrsDateTimeExp
                     };
                     await Credit_Add_Service(model);
+                    t.TrsCode = model.CredCode;
                 } else if (t.DebCredChoice == "NDeb")
                 {
                     Debit model = new();
@@ -273,7 +274,8 @@ namespace PersonalFinance.Controllers
                     model.RtNum = 1;
                     model.Multiplier = 0;
                     model.DebDateTime = (DateTime)t.TrsDateTimeExp;
-                    await Debit_Add_Service(model);                    
+                    await Debit_Add_Service(model);
+                    t.TrsCode = model.DebCode;
                 }
             }
 
