@@ -184,7 +184,7 @@ namespace PersonalFinance.Controllers
                                     ExpTitle = debit.DebCode,
                                     ExpDescription = "Scadenza - " + debit.DebTitle,
                                     ExpDateTime = debit.DebDateTime,
-                                    ColorLabel = "green",
+                                    ColorLabel = "red",
                                     ExpValue = debit.RemainToPay
                                 };
                                 await repo.AddExpirationAsync(newexp);
@@ -237,7 +237,7 @@ namespace PersonalFinance.Controllers
                             t.TrsTitle = "Rientro credito";
                             t.TrsCode = credit.CredCode;
                             t.TrsDateTime = DateTime.UtcNow;
-                            t.TrsValue = -t.DebCredInValue;
+                            t.TrsValue = t.DebCredInValue;
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
