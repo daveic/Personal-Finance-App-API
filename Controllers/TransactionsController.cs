@@ -513,7 +513,7 @@ namespace PersonalFinance.Controllers
                                 await Debit_Add_Service(item);
                             }
                         }
-                        
+                       
                         //var trs = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(x => x.TrsCode == t.TrsCode);
                         //var trscount = trs.Count();
                         //var trsfrq = trs.OrderByDescending(x => x.TrsDateTime).Take(2);
