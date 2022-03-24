@@ -31,7 +31,7 @@ namespace PersonalFinance.Controllers
         {
             IEnumerable<Transaction> Transactions = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             IEnumerable<Credit> Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
-            IEnumerable<Debit> Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+            IEnumerable<Debit> Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
             IEnumerable<Bank> Banks = PersonalFinanceContext.Set<Bank>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             IEnumerable<Ticket> Tickets = PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             IEnumerable<Deposit> Deposits = PersonalFinanceContext.Set<Deposit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();

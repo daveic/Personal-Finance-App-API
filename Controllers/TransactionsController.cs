@@ -37,7 +37,9 @@ namespace PersonalFinance.Controllers
         {
             IEnumerable<Transaction> Transactions = await repo.GetAllTransactionsAsync(User_OID);
             IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);
+            //edits = Credits.Where(y => y.Hide == 0);
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
+            Debits = Debits.Where(y => y.Hide == 0);
             Transactions Trs = new ();
             Trs.Trs = Transactions;
             //############################################################################################################################
@@ -122,7 +124,7 @@ namespace PersonalFinance.Controllers
         public async Task<int> Transaction_Credit_Debit_UpdateAsync(Transaction t)
         {
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
-            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 0).ToList();
 
 
             if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
@@ -399,7 +401,7 @@ namespace PersonalFinance.Controllers
                 .ToList();
 
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
-            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+            var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
 
             TransactionDetailsEdit APIData = new();
 

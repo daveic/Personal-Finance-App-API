@@ -117,6 +117,7 @@ namespace PersonalFinance.Controllers
                 await repo.AddExpirationAsync(exp);
                 await repo.SaveChangesAsync();
                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
+
             }
             else
             {
@@ -146,6 +147,7 @@ namespace PersonalFinance.Controllers
 
                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID - Convert.ToInt32(d.RtNum) + 1;
             }
+            d.Hide = 0;
             var detections = await repo.AddDebitAsync(d);
             await repo.SaveChangesAsync();
             return 1;

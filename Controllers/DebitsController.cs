@@ -26,7 +26,8 @@ namespace PersonalFinance.Controllers
         [Route("All")]
         public async Task<IActionResult> Debits_Main(string User_OID)
         {
-            return Ok(await repo.GetAllDebitsAsync(User_OID));
+            var debits = await repo.GetAllDebitsAsync(User_OID);
+            return Ok(debits.Where(y => y.Hide == 0));
         }
         [HttpGet]
         [Route("Details")]
