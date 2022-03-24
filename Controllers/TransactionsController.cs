@@ -139,7 +139,12 @@ namespace PersonalFinance.Controllers
 
                         if (debit.RemainToPay <= 0)
                         {
-                            await repo.DeleteDebitAsync(debit);
+                            debit.Hide = 1;
+                            PersonalFinanceContext.Attach(debit);
+                            PersonalFinanceContext.Entry(debit).State =
+                                Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
+                            //await repo.DeleteDebitAsync(debit);
                         }
                         else
                         {
@@ -482,7 +487,7 @@ namespace PersonalFinance.Controllers
             var t = await repo.GetTransactionAsync(id, User_OID);
             if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
             {
-                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 0).ToList();
                 
                 foreach (var debit in Debits)
                 {
@@ -497,23 +502,33 @@ namespace PersonalFinance.Controllers
                     }
                     else
                     {
-                        var trs = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(x => x.TrsCode == t.TrsCode);
-                        var trscount = trs.Count();
-                        var trsfrq = trs.OrderByDescending(x => x.TrsDateTime).Take(2);
-                        int monthnum = Math.Abs(12 * (trsfrq.Last().TrsDateTime.Year - trsfrq.First().TrsDateTime.Year) + trsfrq.Last().TrsDateTime.Month - trsfrq.First().TrsDateTime.Month);
-                        Debit model = new();
-                        model.Usr_OID = t.Usr_OID;
-                        model.DebCode = "DEB " + t.TrsTitle;
-                        model.DebInsDate = DateTime.Now;
-                        model.DebValue = t.TrsValue;
-                        model.DebTitle = t.TrsTitle;
-                        model.DebNote = "Ultima rata del debito con codice '" + t.TrsCode + "' ricreata a seguito di eliminazione o modifica di una transazione.";
-                        model.RemainToPay = t.TrsValue;
-                        model.RtPaid = trscount;
-                        model.RtNum = 1;
-                        model.Multiplier = monthnum;
-                        model.DebDateTime = (DateTime)trsfrq.First().TrsDateTime.AddMonths(monthnum);
-                        await Debit_Add_Service(model);                       
+                        var DebitsHide = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 1).ToList();
+                        foreach (var item in DebitsHide)
+                        {
+                            if( t.DebCredChoice == item.DebCode)
+                            {
+                                item.Hide = 0;
+                                await Debit_Add_Service(item);
+                            }
+                        }
+                        
+                        //var trs = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(x => x.TrsCode == t.TrsCode);
+                        //var trscount = trs.Count();
+                        //var trsfrq = trs.OrderByDescending(x => x.TrsDateTime).Take(2);
+                        //int monthnum = Math.Abs(12 * (trsfrq.Last().TrsDateTime.Year - trsfrq.First().TrsDateTime.Year) + trsfrq.Last().TrsDateTime.Month - trsfrq.First().TrsDateTime.Month);
+                        //Debit model = new();
+                        //model.Usr_OID = t.Usr_OID;
+                        //model.DebCode = t.TrsCode;
+                        //model.DebInsDate = DateTime.Now;
+                        //model.DebValue = t.TrsValue;
+                        //model.DebTitle = t.TrsTitle;
+                        //model.DebNote = "Ultima rata del debito con codice '" + t.TrsCode + "' ricreata a seguito di eliminazione o modifica di una transazione.";
+                        //model.RemainToPay = t.TrsValue;
+                        //model.RtPaid = trscount;
+                        //model.RtNum = trscount + 1;
+                        //model.Multiplier = monthnum;
+                        //model.DebDateTime = (DateTime)trsfrq.First().TrsDateTime.AddMonths(monthnum);
+                        //await Debit_Add_Service(model);                       
                     }
                     //else se non lo trova significa che è stato rimosso del tutto, errore - l'utente se lo ricrea
                 }
@@ -527,6 +542,22 @@ namespace PersonalFinance.Controllers
                     {
                         debit.RemainToPay += t.DebCredInValue;
                         await Debit_Edit_Service(debit);
+                    }
+                    else
+                    {
+                        //Debit model = new();
+                        //model.Usr_OID = t.Usr_OID;
+                        //model.DebCode = t.TrsCode;
+                        //model.DebInsDate = DateTime.Now;
+                        //model.DebValue = t.TrsValue;
+                        //model.DebTitle = t.TrsTitle;
+                        //model.DebNote = "Ultima rata del debito con codice '" + t.TrsCode + "' ricreata a seguito di eliminazione o modifica di una transazione.";
+                        //model.RemainToPay = t.TrsValue;
+                        //model.RtPaid = trscount;
+                        //model.RtNum = trscount + 1;
+                        //model.Multiplier = monthnum;
+                        //model.DebDateTime = (DateTime)trsfrq.First().TrsDateTime.AddMonths(monthnum);
+                        //await Debit_Add_Service(model);
                     }
                 }
             }
