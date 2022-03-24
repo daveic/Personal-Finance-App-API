@@ -297,7 +297,6 @@ namespace PersonalFinance.Controllers
             //            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
             //            this.PersonalFinanceContext.Remove(exp);
             //            _ = PersonalFinanceContext.SaveChanges() > 0;
-
             //            if (debit.RemainToPay <= 0)
             //            {
             //                await repo.DeleteDebitAsync(debit);
