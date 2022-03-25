@@ -111,14 +111,11 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Transaction_Add([FromBody] Transaction t)
         {
-
             await Transaction_Credit_Debit_UpdateAsync(t);
             this.PersonalFinanceContext.Add(t);
             await repo.SaveChangesAsync();
             return Ok();
         }
-        
-
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public async Task<int> Transaction_Credit_Debit_UpdateAsync(Transaction t)
@@ -381,20 +378,12 @@ namespace PersonalFinance.Controllers
             //}
             return 1;
         }
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[NonAction]
-        //public async Task<int> Transaction_Credit_Debit_RestoreAsync(Transaction t)
-        //{
 
-        //    return 1;
-     
-        //}
 
         [HttpGet]
         [Route("DetailsEdit")]
         public virtual Task<TransactionDetailsEdit> Transaction_Details_Edit(string User_OID)
         {
-
             var UniqueCodes = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable()
                 .Where(x => x.Usr_OID == User_OID)
                 .GroupBy(x => x.TrsCode)
@@ -446,41 +435,9 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Transaction_Edit(Transaction t)
         {
             Transaction trsOld = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == t.ID);
-            if(t.TrsCode == "CRE" )
-            {
-                Credit c = new()
-                {
-                    Usr_OID = t.Usr_OID,
-                    CredCode = t.TrsCode,
-                    CredDateTime = t.TrsDateTime,
-                    CredValue = -t.TrsValue,
-                    CredTitle = "Prestito/Anticipo",
-                    CredNote = t.TrsNote,
-                    PrevDateTime = (DateTime)t.TrsDateTimeExp
-                };
-                await Credit_Edit_Service(c);
-            } else if (t.TrsCode == "DEB")
-            {
-              
-                Debit d = new()
-                {
-                    Usr_OID = t.Usr_OID,
-                    DebCode = t.TrsCode,
-                    DebInsDate = DateTime.UtcNow,
-                    DebValue = t.TrsValue,
-                    DebTitle = "Prestito/Anticipo",
-                    DebNote = t.TrsNote,
-                    RemainToPay = t.TrsValue,
-                    RtPaid = 0,
-                    RtNum = 1,
-                    Multiplier = 0,
-                    DebDateTime = (DateTime)t.TrsDateTimeExp
-                };
-                await Debit_Edit_Service(d);
-            }
-
-            await repo.UpdateTransactionAsync(t);
-            await repo.SaveChangesAsync();
+            await Transaction_Delete(trsOld.ID, trsOld.Usr_OID);
+            await Transaction_Add(t);
+            
             return Ok(t);
         }
         [HttpDelete]
