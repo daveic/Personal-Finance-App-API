@@ -505,39 +505,71 @@ namespace PersonalFinance.Controllers
         
                 }
             }
-            //se erano crediti o debiti e sono stati rimossi coon la trans, li ricreo:
-            /*if (t.DebCredChoice == "NCred")
+            if (t.DebCredInValue == 0 && t.DebCredChoice is not null)
+            {
+                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+                var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+
+                if (t.DebCredChoice == "NCred")
                 {
-                    Credit model = new()
+                    foreach (var dd in Debits)
                     {
-                        Usr_OID = t.Usr_OID,
-                        CredCode = "CRE " + t.TrsTitle,
-                        CredDateTime = DateTime.Now,
-                        CredValue = -t.TrsValue,
-                        CredTitle = t.TrsTitle,
-                        CredNote = t.TrsNote,
-                        PrevDateTime = (DateTime)t.TrsDateTimeExp
-                    };
-                    await Credit_Add_Service(model);
-                    t.TrsCode = model.CredCode;
-                } else if (t.DebCredChoice == "NDeb")
+                        if (dd.DebCode == t.DebCredChoice)
+                        {
+                            await ExpToRemoveAsync(dd.DebCode, dd.Usr_OID, dd.Exp_ID);
+                            await repo.DeleteDebitAsync(dd);
+                            await repo.SaveChangesAsync();
+                        }
+                    }
+                }
+                else if (t.DebCredChoice == "NDeb")
                 {
-                    Debit model = new();
-                    model.Usr_OID = t.Usr_OID;
-                    model.DebCode = "DEB " + t.TrsTitle;
-                    model.DebInsDate = DateTime.Now;
-                    model.DebValue = t.TrsValue;
-                    model.DebTitle = t.TrsTitle;
-                    model.DebNote = t.TrsNote;
-                    model.RemainToPay = t.TrsValue;
-                    model.RtPaid = 0;
-                    model.RtNum = 1;
-                    model.Multiplier = 0;
-                    model.DebDateTime = (DateTime)t.TrsDateTimeExp;
-                    await Debit_Add_Service(model);
-                    t.TrsCode = model.DebCode;
-                }*/
-            await repo.DeleteTransactionAsync(t);
+                    foreach (var cc in Credits)
+                    {
+                        if (cc.CredCode == t.DebCredChoice)
+                        {
+                            await ExpToRemoveAsync(cc.CredCode, cc.Usr_OID, cc.Exp_ID);
+                            await repo.DeleteCreditAsync(cc);
+                            await repo.SaveChangesAsync();
+                        }
+                    }
+                }
+
+
+            }
+                    //se erano crediti o debiti e sono stati rimossi coon la trans, li ricreo:
+                    /*if (t.DebCredChoice == "NCred")
+                        {
+                            Credit model = new()
+                            {
+                                Usr_OID = t.Usr_OID,
+                                CredCode = "CRE " + t.TrsTitle,
+                                CredDateTime = DateTime.Now,
+                                CredValue = -t.TrsValue,
+                                CredTitle = t.TrsTitle,
+                                CredNote = t.TrsNote,
+                                PrevDateTime = (DateTime)t.TrsDateTimeExp
+                            };
+                            await Credit_Add_Service(model);
+                            t.TrsCode = model.CredCode;
+                        } else if (t.DebCredChoice == "NDeb")
+                        {
+                            Debit model = new();
+                            model.Usr_OID = t.Usr_OID;
+                            model.DebCode = "DEB " + t.TrsTitle;
+                            model.DebInsDate = DateTime.Now;
+                            model.DebValue = t.TrsValue;
+                            model.DebTitle = t.TrsTitle;
+                            model.DebNote = t.TrsNote;
+                            model.RemainToPay = t.TrsValue;
+                            model.RtPaid = 0;
+                            model.RtNum = 1;
+                            model.Multiplier = 0;
+                            model.DebDateTime = (DateTime)t.TrsDateTimeExp;
+                            await Debit_Add_Service(model);
+                            t.TrsCode = model.DebCode;
+                        }*/
+                    await repo.DeleteTransactionAsync(t);
             await repo.SaveChangesAsync();
             return Ok(t);
         }
