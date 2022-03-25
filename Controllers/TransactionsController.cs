@@ -143,7 +143,7 @@ namespace PersonalFinance.Controllers
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                             //await repo.DeleteDebitAsync(debit);
-                            t.TrsTitle = "Pagamento " + debit.RtPaid + 1 + "° rata ";
+                            t.TrsTitle = "Pagamento " + (debit.RtPaid + 1) + "° rata ";
                         }
                         else
                         {
@@ -510,7 +510,9 @@ namespace PersonalFinance.Controllers
                         //    if( t.DebCredChoice == item.DebCode)
                         //    {
                         debit.Hide = 0;
-                        debit.DebInsDate.AddMonths(Convert.ToInt32(debit.RtPaid) * debit.Multiplier);
+                        //debit.DebInsDate.AddMonths(Convert.ToInt32(debit.RtPaid) * debit.Multiplier);
+                        if (debit.RtFreq == "Mesi") debit.DebInsDate = debit.DebDateTime.AddMonths(-debit.Multiplier);
+                        if (debit.RtFreq == "Anni") debit.DebInsDate = debit.DebDateTime.AddYears(-debit.Multiplier);
                         await Debit_Edit_Service(debit);
                    
                        
