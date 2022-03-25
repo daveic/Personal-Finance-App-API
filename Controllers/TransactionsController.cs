@@ -133,29 +133,31 @@ namespace PersonalFinance.Controllers
                 {
                     if (t.DebCredChoice == debit.DebCode)
                     {
-                        debit.RemainToPay -= debit.DebValue / debit.RtNum;
-                        debit.RtPaid += 1;
-                        var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
-                        this.PersonalFinanceContext.Remove(exp);
-                        _ = PersonalFinanceContext.SaveChanges() > 0;
-
-                        if (debit.RemainToPay <= 0)
+                        if (debit.RtNum - debit.RtPaid == 1)
                         {
                             debit.Hide = 1;
+                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid)));
+                            this.PersonalFinanceContext.Remove(exp);
                             PersonalFinanceContext.Attach(debit);
                             PersonalFinanceContext.Entry(debit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                             //await repo.DeleteDebitAsync(debit);
+                            t.TrsTitle = "Pagamento " + debit.RtPaid + 1 + "° rata ";
                         }
                         else
                         {
+                            debit.RemainToPay -= debit.DebValue / debit.RtNum;
+                            debit.RtPaid += 1;
+                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
+                            this.PersonalFinanceContext.Remove(exp);
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
                             PersonalFinanceContext.Attach(debit);
                             PersonalFinanceContext.Entry(debit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
+                            t.TrsTitle = "Pagamento " + debit.RtPaid + "° rata ";
                         }
-                        t.TrsTitle = "Pagamento " + debit.RtPaid + "° rata ";
                         t.TrsCode = debit.DebCode;
                         t.TrsDateTime = DateTime.UtcNow;
                         t.TrsValue = debit.DebValue / debit.RtNum;
@@ -488,30 +490,29 @@ namespace PersonalFinance.Controllers
             var t = await repo.GetTransactionAsync(id, User_OID);
             if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
             {
-                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 0).ToList();
+                var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
                 
                 foreach (var debit in Debits)
                 {
-                    if (t.DebCredChoice == debit.DebCode)
+                    if (t.DebCredChoice == debit.DebCode && debit.Hide == 0)
                     {
                         var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)+1));
                         debit.RemainToPay += debit.DebValue / debit.RtNum;
                         debit.RtPaid -= 1;
                         if(debit.RtFreq == "Mesi") debit.DebInsDate = exp.ExpDateTime.AddMonths(-debit.Multiplier);
-                        if (debit.RtFreq == "Anni") debit.DebInsDate = exp.ExpDateTime.AddMonths(-debit.Multiplier);
+                        if (debit.RtFreq == "Anni") debit.DebInsDate = exp.ExpDateTime.AddYears(-debit.Multiplier);
                         await Debit_Edit_Service(debit);
-                    }
-                    else
+                    } else if (t.DebCredChoice == debit.DebCode && debit.Hide == 1)
                     {
-                        var DebitsHide = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 1).ToList();
-                        foreach (var item in DebitsHide)
-                        {
-                            if( t.DebCredChoice == item.DebCode)
-                            {
-                                item.Hide = 0;
-                                await Debit_Add_Service(item);
-                            }
-                        }
+                        //var DebitsHide = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 1).ToList();
+                        //foreach (var item in DebitsHide)
+                        //{
+                        //    if( t.DebCredChoice == item.DebCode)
+                        //    {
+                        debit.Hide = 0;
+                        debit.DebInsDate.AddMonths(Convert.ToInt32(debit.RtPaid) * debit.Multiplier);
+                        await Debit_Edit_Service(debit);
+                   
                        
                         //var trs = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(x => x.TrsCode == t.TrsCode);
                         //var trscount = trs.Count();
