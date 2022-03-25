@@ -164,43 +164,43 @@ namespace PersonalFinance.Controllers
             {
                 if (t.DebCredChoice.StartsWith("DEB"))
                 {
-                    foreach (var debit in Debits)
+                    foreach (var d in Debits)
                     {
-                        if (t.DebCredChoice == debit.DebCode)
+                        if (t.DebCredChoice == d.DebCode)
                         {
-                            double ToPay = debit.RemainToPay - t.DebCredInValue;
-                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == debit.Exp_ID);
+                            double ToPay = d.RemainToPay - t.DebCredInValue;
+                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.Exp_ID + 1);
                             this.PersonalFinanceContext.Remove(exp);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
 
                             if (ToPay <= 0)
                             {
-                                debit.Hide = 1;
-                                PersonalFinanceContext.Attach(debit);
-                                PersonalFinanceContext.Entry(debit).State =
+                                d.Hide = 1;
+                                PersonalFinanceContext.Attach(d);
+                                PersonalFinanceContext.Entry(d).State =
                                     Microsoft.EntityFrameworkCore.EntityState.Modified;
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                             }
                             else
                             {
-                                debit.RemainToPay -= t.DebCredInValue;
+                                d.RemainToPay -= t.DebCredInValue;
                                 Expiration newexp = new()
                                 {
-                                    Usr_OID = debit.Usr_OID,
-                                    ExpTitle = debit.DebCode,
-                                    ExpDescription = "Scadenza - " + debit.DebTitle,
-                                    ExpDateTime = debit.DebDateTime,
+                                    Usr_OID = d.Usr_OID,
+                                    ExpTitle = d.DebCode,
+                                    ExpDescription = "Scadenza - " + d.DebTitle,
+                                    ExpDateTime = d.DebDateTime,
                                     ColorLabel = "red",
-                                    ExpValue = debit.RemainToPay
+                                    ExpValue = d.RemainToPay
                                 };
                                 await repo.AddExpirationAsync(newexp);
-                                PersonalFinanceContext.Attach(debit);
-                                PersonalFinanceContext.Entry(debit).State =
+                                PersonalFinanceContext.Attach(d);
+                                PersonalFinanceContext.Entry(d).State =
                                     Microsoft.EntityFrameworkCore.EntityState.Modified;
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                             }
                             t.TrsTitle = "Pagamento debito";
-                            t.TrsCode = debit.DebCode;
+                            t.TrsCode = d.DebCode;
                             t.TrsDateTime = DateTime.UtcNow;
                             t.TrsValue = -t.DebCredInValue;
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
