@@ -193,7 +193,9 @@ namespace PersonalFinance.Controllers
                                     ColorLabel = "red",
                                     ExpValue = d.RemainToPay
                                 };
-                                await repo.AddExpirationAsync(newexp);
+                                //await repo.AddExpirationAsync(newexp);
+                                this.PersonalFinanceContext.Add(newexp);
+                                _ = PersonalFinanceContext.SaveChanges() > 0;
                                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
                                 PersonalFinanceContext.Attach(d);
                                 PersonalFinanceContext.Entry(d).State =
