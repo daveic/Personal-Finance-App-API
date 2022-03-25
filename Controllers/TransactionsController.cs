@@ -126,7 +126,6 @@ namespace PersonalFinance.Controllers
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 0).ToList();
 
-
             if (t.DebCredInValue == 0 && t.DebCredChoice.StartsWith("DEB"))
             {
                 foreach (var debit in Debits)
@@ -142,7 +141,6 @@ namespace PersonalFinance.Controllers
                             PersonalFinanceContext.Entry(debit).State =
                                 Microsoft.EntityFrameworkCore.EntityState.Modified;
                             _ = PersonalFinanceContext.SaveChanges() > 0;
-                            //await repo.DeleteDebitAsync(debit);
                             t.TrsTitle = "Pagamento " + (debit.RtPaid + 1) + "° rata ";
                         }
                         else
@@ -164,8 +162,6 @@ namespace PersonalFinance.Controllers
                         t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                     }
                 }
-
-
             }
             if (t.DebCredInValue != 0)
             {
@@ -175,18 +171,22 @@ namespace PersonalFinance.Controllers
                     {
                         if (t.DebCredChoice == debit.DebCode)
                         {
-                            debit.RemainToPay -= t.DebCredInValue;
+                            double ToPay = debit.RemainToPay - t.DebCredInValue;
                             var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == debit.Exp_ID);
                             this.PersonalFinanceContext.Remove(exp);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
 
-                            if (debit.RemainToPay <= 0)
+                            if (ToPay <= 0)
                             {
-
-                                await repo.DeleteDebitAsync(debit);
+                                debit.Hide = 1;
+                                PersonalFinanceContext.Attach(debit);
+                                PersonalFinanceContext.Entry(debit).State =
+                                    Microsoft.EntityFrameworkCore.EntityState.Modified;
+                                _ = PersonalFinanceContext.SaveChanges() > 0;
                             }
                             else
                             {
+                                debit.RemainToPay -= t.DebCredInValue;
                                 Expiration newexp = new()
                                 {
                                     Usr_OID = debit.Usr_OID,
@@ -504,75 +504,43 @@ namespace PersonalFinance.Controllers
                         await Debit_Edit_Service(debit);
                     } else if (t.DebCredChoice == debit.DebCode && debit.Hide == 1)
                     {
-                        //var DebitsHide = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(y => y.Hide == 1).ToList();
-                        //foreach (var item in DebitsHide)
-                        //{
-                        //    if( t.DebCredChoice == item.DebCode)
-                        //    {
                         debit.Hide = 0;
-                        //debit.DebInsDate.AddMonths(Convert.ToInt32(debit.RtPaid) * debit.Multiplier);
                         if (debit.RtFreq == "Mesi") debit.DebInsDate = debit.DebDateTime.AddMonths(-debit.Multiplier);
                         if (debit.RtFreq == "Anni") debit.DebInsDate = debit.DebDateTime.AddYears(-debit.Multiplier);
-                        await Debit_Edit_Service(debit);
-                   
-                       
-                        //var trs = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).Where(x => x.TrsCode == t.TrsCode);
-                        //var trscount = trs.Count();
-                        //var trsfrq = trs.OrderByDescending(x => x.TrsDateTime).Take(2);
-                        //int monthnum = Math.Abs(12 * (trsfrq.Last().TrsDateTime.Year - trsfrq.First().TrsDateTime.Year) + trsfrq.Last().TrsDateTime.Month - trsfrq.First().TrsDateTime.Month);
-                        //Debit model = new();
-                        //model.Usr_OID = t.Usr_OID;
-                        //model.DebCode = t.TrsCode;
-                        //model.DebInsDate = DateTime.Now;
-                        //model.DebValue = t.TrsValue;
-                        //model.DebTitle = t.TrsTitle;
-                        //model.DebNote = "Ultima rata del debito con codice '" + t.TrsCode + "' ricreata a seguito di eliminazione o modifica di una transazione.";
-                        //model.RemainToPay = t.TrsValue;
-                        //model.RtPaid = trscount;
-                        //model.RtNum = trscount + 1;
-                        //model.Multiplier = monthnum;
-                        //model.DebDateTime = (DateTime)trsfrq.First().TrsDateTime.AddMonths(monthnum);
-                        //await Debit_Add_Service(model);                       
+                        await Debit_Edit_Service(debit);                    
                     }
-                    //else se non lo trova significa che è stato rimosso del tutto, errore - l'utente se lo ricrea
                 }
             }
             if (t.DebCredInValue != 0 && t.DebCredChoice.StartsWith("DEB"))
             {
                 var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+
                 foreach (var debit in Debits)
                 {
-                    if (t.DebCredChoice == debit.DebCode)
+                    if (t.DebCredChoice == debit.DebCode && debit.Hide == 0)
                     {
                         debit.RemainToPay += t.DebCredInValue;
                         await Debit_Edit_Service(debit);
-                    }
-                    else
+                    } else if (t.DebCredChoice == debit.DebCode && debit.Hide == 1)
                     {
-                        //Debit model = new();
-                        //model.Usr_OID = t.Usr_OID;
-                        //model.DebCode = t.TrsCode;
-                        //model.DebInsDate = DateTime.Now;
-                        //model.DebValue = t.TrsValue;
-                        //model.DebTitle = t.TrsTitle;
-                        //model.DebNote = "Ultima rata del debito con codice '" + t.TrsCode + "' ricreata a seguito di eliminazione o modifica di una transazione.";
-                        //model.RemainToPay = t.TrsValue;
-                        //model.RtPaid = trscount;
-                        //model.RtNum = trscount + 1;
-                        //model.Multiplier = monthnum;
-                        //model.DebDateTime = (DateTime)trsfrq.First().TrsDateTime.AddMonths(monthnum);
-                        //await Debit_Add_Service(model);
+                        debit.Hide = 0;
+                        await Debit_Edit_Service(debit);
                     }
                 }
             }
             if (t.DebCredInValue != 0 && t.DebCredChoice.StartsWith("CRE"))
             {
                 var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
+
                 foreach (var credit in Credits)
                 {
                     if(t.DebCredChoice == credit.CredCode)
                     {
                         credit.CredValue += t.DebCredInValue;
+                        await Credit_Edit_Service(credit);
+                    } else
+                    {
+                        //credit.Hide = 0;
                         await Credit_Edit_Service(credit);
                     }
 
