@@ -194,6 +194,7 @@ namespace PersonalFinance.Controllers
                                     ExpValue = d.RemainToPay
                                 };
                                 await repo.AddExpirationAsync(newexp);
+                                d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
                                 PersonalFinanceContext.Attach(d);
                                 PersonalFinanceContext.Entry(d).State =
                                     Microsoft.EntityFrameworkCore.EntityState.Modified;
