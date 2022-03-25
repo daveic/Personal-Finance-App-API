@@ -182,7 +182,7 @@ namespace PersonalFinance.Controllers
                 {
                     exp.ExpDateTime = d.DebDateTime;
                     exp.ExpDescription = d.DebTitle;
-                    exp.ExpValue = d.DebValue / (d.RtNum - d.RtPaid);
+                    exp.ExpValue = d.RemainToPay;
                 }
 
                 exp.ColorLabel = "red";
