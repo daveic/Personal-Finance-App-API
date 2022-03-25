@@ -498,7 +498,7 @@ namespace PersonalFinance.Controllers
                         await Credit_Edit_Service(credit);
                     } else
                     {
-                        //credit.Hide = 0;
+                        credit.Hide = 0;
                         await Credit_Edit_Service(credit);
                     }
 
@@ -510,11 +510,11 @@ namespace PersonalFinance.Controllers
                 var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).ToList();
                 var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
 
-                if (t.DebCredChoice == "NCred")
+                if (t.DebCredChoice == "NDeb")
                 {
                     foreach (var dd in Debits)
                     {
-                        if (dd.DebCode == t.DebCredChoice)
+                        if (dd.DebCode == t.TrsCode)
                         {
                             await ExpToRemoveAsync(dd.DebCode, dd.Usr_OID, dd.Exp_ID);
                             await repo.DeleteDebitAsync(dd);
@@ -522,11 +522,11 @@ namespace PersonalFinance.Controllers
                         }
                     }
                 }
-                else if (t.DebCredChoice == "NDeb")
+                else if (t.DebCredChoice == "NCred")
                 {
                     foreach (var cc in Credits)
                     {
-                        if (cc.CredCode == t.DebCredChoice)
+                        if (cc.CredCode == t.TrsCode)
                         {
                             await ExpToRemoveAsync(cc.CredCode, cc.Usr_OID, cc.Exp_ID);
                             await repo.DeleteCreditAsync(cc);
