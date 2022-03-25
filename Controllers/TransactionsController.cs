@@ -169,7 +169,7 @@ namespace PersonalFinance.Controllers
                         if (t.DebCredChoice == d.DebCode)
                         {
                             double ToPay = d.RemainToPay - t.DebCredInValue;
-                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.Exp_ID + 1);
+                            var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.Exp_ID);
                             this.PersonalFinanceContext.Remove(exp);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
 
