@@ -38,6 +38,7 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Credit_Add([FromBody] Credit c)
         {
             c.CredCode = "CRE " + c.CredTitle;
+            c.FromTrs = 0;
             int i = await Credit_Add_Service(c);
             return RedirectToAction(nameof(Credits_Main));
         }

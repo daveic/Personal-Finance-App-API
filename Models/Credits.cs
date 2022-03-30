@@ -15,5 +15,6 @@ namespace PersonalFinance.Models
         public string CredNote { get; set; }
         public int Exp_ID { get; set; }
         public int Hide { get; set; }
+        public int FromTrs { get; set; }
     }
 }

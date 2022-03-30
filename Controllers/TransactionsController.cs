@@ -263,7 +263,8 @@ namespace PersonalFinance.Controllers
                         CredValue = -t.TrsValue,
                         CredTitle = t.TrsTitle,
                         CredNote = t.TrsNote,
-                        PrevDateTime = (DateTime)t.TrsDateTimeExp
+                        PrevDateTime = (DateTime)t.TrsDateTimeExp,
+                        FromTrs = 1
                     };
                     await Credit_Add_Service(model);
                     t.TrsCode = model.CredCode;
@@ -281,6 +282,7 @@ namespace PersonalFinance.Controllers
                     model.RtNum = 1;
                     model.Multiplier = 0;
                     model.DebDateTime = (DateTime)t.TrsDateTimeExp;
+                    model.FromTrs = 1;
                     await Debit_Add_Service(model);
                     t.TrsCode = model.DebCode;
                 }
