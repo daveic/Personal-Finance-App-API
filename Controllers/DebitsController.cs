@@ -39,6 +39,7 @@ namespace PersonalFinance.Controllers
         [Route("Add")]
         public async Task<IActionResult> Debit_Add([FromBody] Debit d)
         {
+            d.DebCode = "DEB " + d.DebTitle;
             await Debit_Add_Service(d);
             return RedirectToAction(nameof(Debits_Main));
         }
