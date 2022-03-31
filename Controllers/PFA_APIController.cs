@@ -121,7 +121,7 @@ namespace PersonalFinance.Controllers
                     {
                         Usr_OID = d.Usr_OID,
                         ExpTitle = d.DebCode,
-                        ExpDescription = d.DebTitle + "rata: " + (k + 1)
+                        ExpDescription = d.DebTitle + " - rata: " + (k + 1)
                     };
                     if (d.RtFreq == "Mesi")
                     {
