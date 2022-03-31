@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PersonalFinance.Models;
-using PersonalFinance.Services.EntityFramework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace PersonalFinance.Services.EntityFramework
@@ -233,7 +228,6 @@ namespace PersonalFinance.Services.EntityFramework
                 Microsoft.EntityFrameworkCore.EntityState.Modified;
             return Task.FromResult(true);
         }
-
 
         //SAVE CHANGES ID Method
         public virtual async Task<bool> SaveChangesAsync()

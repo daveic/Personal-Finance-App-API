@@ -64,15 +64,5 @@ namespace PersonalFinance.Controllers
             await repo.SaveChangesAsync();
             return Ok(1);
         }
-
-
-        //[HttpPost]
-        //[Route("Add")]
-        //public async Task<IActionResult> AddBalance([FromBody] Balance b)
-        //{
-        //    await repo.AddBalanceAsync(b);
-        //    await repo.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Balances_All));
-        //}
     }
 }
