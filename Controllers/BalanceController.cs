@@ -40,26 +40,27 @@ namespace PersonalFinance.Controllers
             IEnumerable<Ticket> Tickets = PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == b.Usr_OID).ToList();
             double tot = 0;
             double totTransaction = 0;
-
-            foreach (var item in Banks)
-            {
-                tot += item.BankValue;
-            }
-            foreach (var item in Tickets)
-            {
-                tot += Convert.ToInt32(item.NumTicket) * item.TicketValue;
-            }
+           
             foreach (var item in Transactions)
             {
                 totTransaction += item.TrsValue;
             }
             if( b.FromFU is true)
             {
+                foreach (var item in Banks)
+                {
+                    tot += item.BankValue;
+                }
+                foreach (var item in Tickets)
+                {
+                    tot += Convert.ToInt32(item.NumTicket) * item.TicketValue;
+                }
                 Transaction tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Fast_Update", TrsTitle = "Allineamento Fast Update", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Allineamento Fast Update eseguito il " + DateTime.UtcNow };
                 await repo.AddTransactionAsync(tr);
                 await repo.SaveChangesAsync();
+                b.ActBalance = tot;
             }
-            b.ActBalance = tot;
+            b.ActBalance = totTransaction;
             await repo.AddBalanceAsync(b);
             await repo.SaveChangesAsync();
             return Ok(1);
