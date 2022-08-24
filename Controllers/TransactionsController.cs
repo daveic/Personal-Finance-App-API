@@ -39,8 +39,10 @@ namespace PersonalFinance.Controllers
             //edits = Credits.Where(y => y.Hide == 0);
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
             Debits = Debits.Where(y => y.Hide == 0);
-            Transactions Trs = new ();
-            Trs.Trs = Transactions;
+            Transactions Trs = new()
+            {
+                Trs = Transactions
+            };
             //############################################################################################################################
             //FILTRI ANNO E MESE PER GRAFICO SALDO
             //############################################################################################################################
