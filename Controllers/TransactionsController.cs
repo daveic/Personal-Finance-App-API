@@ -156,7 +156,7 @@ namespace PersonalFinance.Controllers
                         }
                         t.TrsCode = debit.DebCode;
                         t.TrsDateTime = DateTime.UtcNow;
-                        t.TrsValue = debit.DebValue / debit.RtNum;
+                        t.TrsValue = - debit.DebValue / debit.RtNum;//
                         t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                     }
                 }
