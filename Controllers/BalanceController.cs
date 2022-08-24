@@ -58,12 +58,13 @@ namespace PersonalFinance.Controllers
                 
                 Transaction tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Fast_Update", TrsTitle = "Allineamento Fast Update", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Allineamento Fast Update eseguito il " + DateTime.UtcNow };
                 b.ActBalance = tot;
-                await repo.AddTransactionAsync(tr);
-                await repo.AddBalanceAsync(b);
+                await repo.AddTransactionAsync(tr);                
                 await repo.SaveChangesAsync();
-                return Ok(1);
+            } else
+            {
+                b.ActBalance = totTransaction;
             }
-            b.ActBalance = totTransaction;
+
             await repo.AddBalanceAsync(b);
             await repo.SaveChangesAsync();
             return Ok(1);
