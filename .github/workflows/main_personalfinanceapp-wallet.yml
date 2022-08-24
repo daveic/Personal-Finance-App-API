@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - personalfinanceapp-wallet
+name: Build and deploy ASP.Net Core app to Azure Web App - personalfinanceapp-API
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'personalfinanceapp-wallet'
+          app-name: 'PersonalFinanceAppAPI'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_30DC90A2698842DC8F0796132C15B1CB }}
+          publish-profile: ${{ secrets.PersonalFinanceAppAPI_FFFF }}
           package: .
