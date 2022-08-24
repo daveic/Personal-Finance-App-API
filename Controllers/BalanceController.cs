@@ -55,10 +55,12 @@ namespace PersonalFinance.Controllers
                 {
                     tot += Convert.ToInt32(item.NumTicket) * item.TicketValue;
                 }
+                
                 Transaction tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Fast_Update", TrsTitle = "Allineamento Fast Update", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Allineamento Fast Update eseguito il " + DateTime.UtcNow };
+                b.ActBalance = tot;
                 await repo.AddTransactionAsync(tr);
                 await repo.SaveChangesAsync();
-                b.ActBalance = tot;
+                return Ok(1);
             }
             b.ActBalance = totTransaction;
             await repo.AddBalanceAsync(b);
