@@ -39,7 +39,7 @@ namespace PersonalFinance.Controllers
             //edits = Credits.Where(y => y.Hide == 0);
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
             Debits = Debits.Where(y => y.Hide == 0);
-            Transactions Trs = new()
+            Transactions Trs =   new()
             {
                 Trs = Transactions
             };
