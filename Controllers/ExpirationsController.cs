@@ -77,7 +77,7 @@ namespace PersonalFinance.Controllers
         {
             return Ok(PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).OrderBy(x => x.ExpDateTime.Month).Take(5).ToList());
         }
-
+        [HttpGet]
         [Route("GetAllExp")]
         public async Task<IActionResult> Expirations_GetAll(string User_OID)
         {
