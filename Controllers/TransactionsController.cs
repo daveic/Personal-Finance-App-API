@@ -134,6 +134,7 @@ namespace PersonalFinance.Controllers
                         {
                             debit.Hide = 1;
                             var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid)));
+                            t.TrsDateTimeExp = exp.ExpDateTime;
                             this.PersonalFinanceContext.Remove(exp);
                             PersonalFinanceContext.Attach(debit);
                             PersonalFinanceContext.Entry(debit).State =
@@ -146,6 +147,7 @@ namespace PersonalFinance.Controllers
                             debit.RemainToPay -= debit.DebValue / debit.RtNum;
                             debit.RtPaid += 1;
                             var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == debit.Usr_OID).FirstOrDefault(x => x.ID == (debit.Exp_ID + Convert.ToInt32(debit.RtPaid - 1)));
+                            t.TrsDateTimeExp = exp.ExpDateTime;
                             this.PersonalFinanceContext.Remove(exp);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                             PersonalFinanceContext.Attach(debit);
@@ -171,6 +173,7 @@ namespace PersonalFinance.Controllers
                         {
                             double ToPay = d.RemainToPay - t.DebCredInValue;
                             var exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).FirstOrDefault(x => x.ID == d.Exp_ID);
+                            t.TrsDateTimeExp = exp.ExpDateTime;
                             this.PersonalFinanceContext.Remove(exp);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
 
@@ -218,6 +221,7 @@ namespace PersonalFinance.Controllers
                         if (t.DebCredChoice == credit.CredCode)
                         {
                             var expCred = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
+                            t.TrsDateTimeExp = expCred.ExpDateTime;
                             this.PersonalFinanceContext.Remove(expCred);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
                             credit.CredValue -= t.DebCredInValue;
