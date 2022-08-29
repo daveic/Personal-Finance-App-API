@@ -365,9 +365,9 @@ namespace PersonalFinance.Controllers
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
             var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID);
-            Expirations = Expirations.Where(x => x.ColorLabel.StartsWith("rgb"));
+            var ExpirationList = Expirations.Where(x => x.ColorLabel.StartsWith("rgb")).ToList();
 
-
+            List<Expiration> ExpToShow = new();
 
             TransactionDetailsEdit APIData = new();
 
@@ -375,17 +375,18 @@ namespace PersonalFinance.Controllers
             APIData.DebitsRat = Debits.Where(x => x.RtNum > 1).ToList();
             APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
             APIData.CreditsMono = Credits;
-            foreach (var km in KnownMovements)
-            {
-                APIData.MonthExpirations.Add(new Expiration() { ExpTitle = km.KMTitle, ExpValue = km.KMValue, ColorLabel = "orange" });   
-            }
-            foreach (var exp in Expirations)
+            foreach (var exp in ExpirationList)
             {
                 if(exp.ExpDateTime.Month == DateTime.Today.Month)
                 {
-                    APIData.MonthExpirations.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel });
+                    ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel });
                 }                
             }
+            foreach (var km in KnownMovements)
+            {
+                ExpToShow.Add(new Expiration() { ExpTitle = km.KMTitle, ExpValue = km.KMValue, ColorLabel = "orange" });                
+            }
+            APIData.MonthExpirations = ExpToShow;
             APIData.Codes = new();
             foreach (var item in UniqueCodes)
             {
