@@ -315,11 +315,11 @@ namespace PersonalFinance.Controllers
                             this.PersonalFinanceContext.Remove(expMvf);
                             _ = PersonalFinanceContext.SaveChanges() > 0;
 
-                            t.TrsTitle = km.KMTitle;
+                            t.TrsTitle = "Movimento fisso";
                             t.TrsCode = km.KMTitle;
                             t.TrsDateTime = DateTime.UtcNow;
                             t.TrsValue = km.KMValue;
-                            t.TrsNote = "Pagamento movimento fisso - " + t.TrsCode;
+                            t.TrsNote = "Movimento fisso - " + t.TrsCode;
                         }
                     }
                 }
@@ -334,7 +334,7 @@ namespace PersonalFinance.Controllers
                             {
                                 t.TrsDateTimeExp = exp.ExpDateTime;
                                 t.ExpColorLabel = exp.ColorLabel;
-                                t.TrsTitle = "Pagamento scadenza";
+                                t.TrsTitle = "Scadenza";
                                 t.TrsCode = exp.ExpTitle;
                                 t.TrsDateTime = DateTime.UtcNow;
                                 t.TrsValue = exp.ExpValue;
