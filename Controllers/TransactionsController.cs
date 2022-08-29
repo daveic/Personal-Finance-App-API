@@ -264,50 +264,7 @@ namespace PersonalFinance.Controllers
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
-                }
-                else if (t.DebCredChoice.StartsWith("MVF"))
-                {
-                    foreach (var km in KnownMovements)
-                    {
-                        if (t.DebCredChoice == km.KMTitle)
-                        {
-                            var expMvf = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == km.Usr_OID).FirstOrDefault(x => x.ID == km.Exp_ID);
-                            t.TrsDateTimeExp = expMvf.ExpDateTime;
-                            t.ExpColorLabel = "orange";
-                            this.PersonalFinanceContext.Remove(expMvf);
-                            _ = PersonalFinanceContext.SaveChanges() > 0;
-
-                            t.TrsTitle = km.KMTitle;
-                            t.TrsCode = km.KMTitle;
-                            t.TrsDateTime = DateTime.UtcNow;
-                            t.TrsValue = km.KMValue;
-                            t.TrsNote = "Pagamento movimento fisso - " + t.TrsCode;
-                        }
-                    }
-                }
-                else if (t.DebCredChoice.StartsWith("SCD"))
-                {
-                    Expiration ExpirationToDelete = new();
-                    foreach (var exp in Expirations)
-                    {
-                        if(exp.ExpDateTime.Month == DateTime.Today.Month)
-                        {
-                            if (t.DebCredChoice == exp.ExpTitle)
-                            {
-                                t.TrsDateTimeExp = exp.ExpDateTime;
-                                t.ExpColorLabel = exp.ColorLabel;
-                                t.TrsTitle = "Pagamento scadenza";
-                                t.TrsCode = exp.ExpTitle;
-                                t.TrsDateTime = DateTime.UtcNow;
-                                t.TrsValue = exp.ExpValue;
-                                t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
-                                ExpirationToDelete = exp;
-                            }                                            
-                        }
-                    }
-                    this.PersonalFinanceContext.Remove(ExpirationToDelete);
-                    _ = PersonalFinanceContext.SaveChanges() > 0;                    
-                }
+                }                
             }
             if (t.DebCredInValue == 0 && t.DebCredChoice is not null)
             {
@@ -345,6 +302,49 @@ namespace PersonalFinance.Controllers
                     };
                     await Debit_Add_Service(model);
                     t.TrsCode = model.DebCode;
+                }
+                else if (t.DebCredChoice.StartsWith("MVF"))
+                {
+                    foreach (var km in KnownMovements)
+                    {
+                        if (t.DebCredChoice == km.KMTitle)
+                        {
+                            var expMvf = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == km.Usr_OID).FirstOrDefault(x => x.ID == km.Exp_ID);
+                            t.TrsDateTimeExp = expMvf.ExpDateTime;
+                            t.ExpColorLabel = "orange";
+                            this.PersonalFinanceContext.Remove(expMvf);
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
+
+                            t.TrsTitle = km.KMTitle;
+                            t.TrsCode = km.KMTitle;
+                            t.TrsDateTime = DateTime.UtcNow;
+                            t.TrsValue = km.KMValue;
+                            t.TrsNote = "Pagamento movimento fisso - " + t.TrsCode;
+                        }
+                    }
+                }
+                else if (t.DebCredChoice.StartsWith("SCD"))
+                {
+                    Expiration ExpirationToDelete = new();
+                    foreach (var exp in Expirations)
+                    {
+                        if (exp.ExpDateTime.Month == DateTime.Today.Month)
+                        {
+                            if (t.DebCredChoice == exp.ExpTitle)
+                            {
+                                t.TrsDateTimeExp = exp.ExpDateTime;
+                                t.ExpColorLabel = exp.ColorLabel;
+                                t.TrsTitle = "Pagamento scadenza";
+                                t.TrsCode = exp.ExpTitle;
+                                t.TrsDateTime = DateTime.UtcNow;
+                                t.TrsValue = exp.ExpValue;
+                                t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
+                                ExpirationToDelete = exp;
+                            }
+                        }
+                    }
+                    this.PersonalFinanceContext.Remove(ExpirationToDelete);
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
                 }
             }
             return 1;
