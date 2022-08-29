@@ -75,9 +75,11 @@ namespace PersonalFinance.Controllers
             List<SelectListItem> Codes = new();
             foreach (var item in UniqueCodes)
             {
-                SelectListItem code = new();
-                code.Value = item.TrsCode;
-                code.Text = item.TrsCode;
+                SelectListItem code = new()
+                {
+                    Value = item.TrsCode,
+                    Text = item.TrsCode
+                };
                 Codes.Add(code);
             }
             bool isPresent = false;
@@ -292,7 +294,6 @@ namespace PersonalFinance.Controllers
                         {
                             if (t.DebCredChoice == exp.ExpTitle)
                             {
-                                //var expScd = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == credit.Usr_OID).FirstOrDefault(x => x.ID == credit.Exp_ID);
                                 t.TrsDateTimeExp = exp.ExpDateTime;
                                 t.ExpColorLabel = exp.ColorLabel;
                                 t.TrsTitle = "Pagamento scadenza";
@@ -327,19 +328,21 @@ namespace PersonalFinance.Controllers
                     t.TrsCode = model.CredCode;
                 } else if (t.DebCredChoice == "NDeb")
                 {
-                    Debit model = new();
-                    model.Usr_OID = t.Usr_OID;
-                    model.DebCode = "DEB " + t.TrsTitle;
-                    model.DebInsDate = DateTime.Now;
-                    model.DebValue = t.TrsValue;
-                    model.DebTitle = t.TrsTitle;
-                    model.DebNote = t.TrsNote;
-                    model.RemainToPay = t.TrsValue;
-                    model.RtPaid = 0;
-                    model.RtNum = 1;
-                    model.Multiplier = 0;
-                    model.DebDateTime = (DateTime)t.TrsDateTimeExp;
-                    model.FromTrs = 1;
+                    Debit model = new()
+                    {
+                        Usr_OID = t.Usr_OID,
+                        DebCode = "DEB " + t.TrsTitle,
+                        DebInsDate = DateTime.Now,
+                        DebValue = t.TrsValue,
+                        DebTitle = t.TrsTitle,
+                        DebNote = t.TrsNote,
+                        RemainToPay = t.TrsValue,
+                        RtPaid = 0,
+                        RtNum = 1,
+                        Multiplier = 0,
+                        DebDateTime = (DateTime)t.TrsDateTimeExp,
+                        FromTrs = 1
+                    };
                     await Debit_Add_Service(model);
                     t.TrsCode = model.DebCode;
                 }
@@ -360,12 +363,29 @@ namespace PersonalFinance.Controllers
 
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
+            var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
+            var Expirations = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID);
+            Expirations = Expirations.Where(x => x.ColorLabel.StartsWith("rgb"));
+
+
 
             TransactionDetailsEdit APIData = new();
+
 
             APIData.DebitsRat = Debits.Where(x => x.RtNum > 1).ToList();
             APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
             APIData.CreditsMono = Credits;
+            foreach (var km in KnownMovements)
+            {
+                APIData.MonthExpirations.Add(new Expiration() { ExpTitle = km.KMTitle, ExpValue = km.KMValue, ColorLabel = "orange" });   
+            }
+            foreach (var exp in Expirations)
+            {
+                if(exp.ExpDateTime.Month == DateTime.Today.Month)
+                {
+                    APIData.MonthExpirations.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel });
+                }                
+            }
             APIData.Codes = new();
             foreach (var item in UniqueCodes)
             {
@@ -398,16 +418,16 @@ namespace PersonalFinance.Controllers
             }
             return Task.FromResult(APIData);
         }
-        [HttpPut]
-        [Route("Update")]
-        public async Task<IActionResult> Transaction_Edit(Transaction t)
-        {
-            Transaction trsOld = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == t.ID);
-            await Transaction_Delete(trsOld.ID, trsOld.Usr_OID);
-            await Transaction_Add(t);
+        //[HttpPut]
+        //[Route("Update")]
+        //public async Task<IActionResult> Transaction_Edit(Transaction t)
+        //{
+        //    Transaction trsOld = PersonalFinanceContext.Set<Transaction>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == t.Usr_OID).FirstOrDefault(x => x.ID == t.ID);
+        //    await Transaction_Delete(trsOld.ID, trsOld.Usr_OID);
+        //    await Transaction_Add(t);
             
-            return Ok(t);
-        }
+        //    return Ok(t);
+        //}
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Transaction_Delete(int id, string User_OID)
