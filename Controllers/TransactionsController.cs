@@ -368,7 +368,7 @@ namespace PersonalFinance.Controllers
             var ExpirationList = Expirations.Where(x => x.ColorLabel.StartsWith("rgb")).ToList();
 
             List<Expiration> ExpToShow = new();
-
+            List<Expiration> ExpToShowOnExp = new();
             TransactionDetailsEdit APIData = new();
 
 
@@ -382,11 +382,14 @@ namespace PersonalFinance.Controllers
                     ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel });
                 }                
             }
+            ExpToShowOnExp = ExpToShow;
             foreach (var km in KnownMovements)
             {
+                if(km.On_Exp is true) ExpToShowOnExp.Add(new Expiration() { ExpTitle = km.KMTitle, ExpValue = km.KMValue, ColorLabel = "orange" });
                 ExpToShow.Add(new Expiration() { ExpTitle = km.KMTitle, ExpValue = km.KMValue, ColorLabel = "orange" });                
             }
             APIData.MonthExpirations = ExpToShow;
+            APIData.MonthExpirationsOnExp = ExpToShowOnExp;
             APIData.Codes = new();
             foreach (var item in UniqueCodes)
             {

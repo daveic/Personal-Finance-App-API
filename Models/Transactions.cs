@@ -26,6 +26,7 @@ namespace PersonalFinance.Models
         public List<Debit> DebitsMono { get; set; }
         public List<Credit> CreditsMono { get; set; }
         public List<Expiration> MonthExpirations { get; set; }
+        public List<Expiration> MonthExpirationsOnExp { get; set; }
         public List<string> Codes { get; set; }
     }
     public class Transactions
