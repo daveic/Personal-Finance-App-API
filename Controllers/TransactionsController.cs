@@ -75,30 +75,35 @@ namespace PersonalFinance.Controllers
             List<SelectListItem> Codes = new();
             foreach (var item in UniqueCodes)
             {
-                SelectListItem code = new();
-                code.Value = item.TrsCode;
-                code.Text = item.TrsCode;
-                Codes.Add(code);
-            }
-            bool isPresent = false;
-            foreach (var credit in Credits)
-            {
-                foreach (var item in Codes)
+
+
+                if (!item.TrsCode.StartsWith("CRE") && !item.TrsCode.StartsWith("DEB") && !item.TrsCode.StartsWith("MVF") && !item.TrsCode.StartsWith("SCD") && item.TrsCode != "Fast_Update")
                 {
-                    if (credit.CredCode == item.Value) isPresent = true;
+                    SelectListItem code = new();
+                    code.Value = item.TrsCode;
+                    code.Text = item.TrsCode;
+                    Codes.Add(code);
                 }
-                if (isPresent is false) Codes.Add(new SelectListItem() { Text = credit.CredCode, Value = credit.CredCode });
-                isPresent = false;
             }
-            foreach (var debit in Debits)
-            {
-                foreach (var item in Codes)
-                {
-                    if (debit.DebCode == item.Value) isPresent = true;
-                }
-                if (isPresent is false) Codes.Add(new SelectListItem() { Text = debit.DebCode, Value = debit.DebCode });
-                isPresent = false;
-            }
+            //bool isPresent = false;
+            //foreach (var credit in Credits)
+            //{
+            //    foreach (var item in Codes)
+            //    {
+            //        if (credit.CredCode == item.Value) isPresent = true;
+            //    }
+            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = credit.CredCode, Value = credit.CredCode });
+            //    isPresent = false;
+            //}
+            //foreach (var debit in Debits)
+            //{
+            //    foreach (var item in Codes)
+            //    {
+            //        if (debit.DebCode == item.Value) isPresent = true;
+            //    }
+            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = debit.DebCode, Value = debit.DebCode });
+            //    isPresent = false;
+            //}
             Trs.Codes = Codes;
             return Ok(Trs);
         }
