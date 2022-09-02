@@ -380,7 +380,7 @@ namespace PersonalFinance.Controllers
             {
                 if(exp.ExpDateTime.Month == DateTime.Today.Month)
                 {
-                    ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel });
+                    ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel, ExpDescription = exp.ExpDescription });
                 }                
             }
             
