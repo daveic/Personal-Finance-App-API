@@ -28,8 +28,10 @@ namespace PersonalFinance.Controllers
         [Route("All")]
         public async Task<IActionResult> Expirations_Main(string User_OID, string selectedYear)
         {
-            Expirations expirations = new();
-            expirations.ExpirationList = await repo.GetAllExpirationsAsync(User_OID);
+            Expirations expirations = new()
+            {
+                ExpirationList = await repo.GetAllExpirationsAsync(User_OID)
+            };
             //Trovo gli anni "unici"
             var expOtherYears = expirations.ExpirationList.Where(x => x.ExpDateTime.Year != DateTime.Now.Year);
             var UniqueYear = expOtherYears
@@ -56,9 +58,11 @@ namespace PersonalFinance.Controllers
                 var singleMonthExp = expirations.ExpirationList.AsQueryable().Where(x => x.ExpDateTime.Month.ToString() == month.ToString());
                 foreach (var exp in singleMonthExp)
                 {
-                    ExpMonth item = new();
-                    item.Month = MonthConverter(month);
-                    item.ExpItem = exp;
+                    ExpMonth item = new()
+                    {
+                        Month = MonthConverter(month),
+                        ExpItem = exp
+                    };
                     expMonth.Add(item);
                 }
             }
@@ -73,6 +77,13 @@ namespace PersonalFinance.Controllers
         {
             return Ok(PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).OrderBy(x => x.ExpDateTime.Month).Take(5).ToList());
         }
+        [HttpGet]
+        [Route("GetAllExp")]
+        public async Task<IActionResult> Expirations_GetAll(string User_OID)
+        {
+            return Ok(await repo.GetAllExpirationsAsync(User_OID));
+        }
+
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> Expiration_Add([FromBody] Expiration e)

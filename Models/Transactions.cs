@@ -14,8 +14,9 @@ namespace PersonalFinance.Models
         public DateTime TrsDateTime { get; set; }
         public double TrsValue { get; set; }
         public string TrsNote { get; set; }
-        [NotMapped]
+        //[NotMapped]
         public DateTime? TrsDateTimeExp { get; set; }
+        public string ExpColorLabel { get; set; }
         public string DebCredChoice { get; set; }
         public double DebCredInValue { get; set; }
     }
@@ -24,6 +25,8 @@ namespace PersonalFinance.Models
         public List<Debit> DebitsRat { get; set; }
         public List<Debit> DebitsMono { get; set; }
         public List<Credit> CreditsMono { get; set; }
+        public List<Expiration> MonthExpirations { get; set; }
+        public List<Expiration> MonthExpirationsOnExp { get; set; }
         public List<string> Codes { get; set; }
     }
     public class Transactions

@@ -120,41 +120,39 @@ namespace PersonalFinance.Controllers
         [NonAction]
         public async Task<KnownMovement> EditKnownMovementAsync(KnownMovement k)
         {
-
             if (k.KMValue < 0) k.KMType = "Uscita"; else if (k.KMValue >= 0) k.KMType = "Entrata";
             if (k.Exp_ID != 0)
             {
                 Expiration exp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID);
-                if(k.KMTitle != exp.ExpTitle || k.KMValue != exp.ExpValue)
-                { //
-                    int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).OrderBy(x => x.ID).Last().ID;
-
-                    int i = 0;
-                    bool is_equal = true;
-                    while (is_equal)
+                if(exp != null)
+                {
+                    if(k.KMTitle != exp.ExpTitle || k.KMValue != exp.ExpValue)
                     {
-                        Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID + i);
-                        if (e != null && e.ExpDescription == exp.ExpTitle) 
+                        int maxExp = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).OrderBy(x => x.ID).Last().ID;
+
+                        int i = 0;
+                        bool is_equal = true;
+                        while (is_equal)
                         {
-                            e.ExpTitle = k.KMTitle;
-                            e.ExpValue = k.KMValue;
-                            e.ExpDescription = k.KMTitle;
-                            PersonalFinanceContext.Attach(e);
-                            PersonalFinanceContext.Entry(e).State =
-                                Microsoft.EntityFrameworkCore.EntityState.Modified;
+                            Expiration e = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == k.Usr_OID).FirstOrDefault(x => x.ID == k.Exp_ID + i);
+                            if (e != null && e.ExpDescription == exp.ExpTitle) 
+                            {
+                                e.ExpTitle = k.KMTitle;
+                                e.ExpValue = k.KMValue;
+                                e.ExpDescription = k.KMTitle;
+                                PersonalFinanceContext.Attach(e);
+                                PersonalFinanceContext.Entry(e).State =
+                                    Microsoft.EntityFrameworkCore.EntityState.Modified;
                             
-                        } //this.PersonalFinanceContext.Remove(e);
+                            }
+                            else if (e != null && e.ExpDescription != exp.ExpTitle) is_equal = false;
+                            else if (k.Exp_ID + i >= maxExp) is_equal = false;
 
-                        else if (e != null && e.ExpDescription != exp.ExpTitle) is_equal = false;
-
-                        else if (k.Exp_ID + i >= maxExp) is_equal = false;
-
-                        i++;
+                            i++;
+                        }
+                        _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
                     }
-                    //
-                    //await ExpToRemoveAsync(e.ExpTitle, k.Usr_OID, k.Exp_ID);
-                    _ = await PersonalFinanceContext.SaveChangesAsync() > 0;
-                }
+                }                
             }
 
             if (k.On_Exp is true && k.Exp_ID==0) k.Exp_ID = -1;
@@ -163,12 +161,7 @@ namespace PersonalFinance.Controllers
                 await ExpToRemoveAsync(k.KMTitle, k.Usr_OID, k.Exp_ID);
                 k.Exp_ID = 0;
             }
-
-            //dovrei riuscire a passare qui il vecchio titolo, cosi da cercare e rimuovere prima di fare la modifica
             await repo.UpdateKnownMovementAsync(k);
-            //PersonalFinanceContext.Attach(k);
-            //PersonalFinanceContext.Entry(k).State =
-            //    Microsoft.EntityFrameworkCore.EntityState.Modified;
          
             return k;
         }
