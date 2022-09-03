@@ -16,6 +16,7 @@ namespace PersonalFinance.Models
         public string TrsNote { get; set; }
         //[NotMapped]
         public DateTime? TrsDateTimeExp { get; set; }
+        public string? DCName { get; set; }
         public string ExpColorLabel { get; set; }
         public string DebCredChoice { get; set; }
         public double DebCredInValue { get; set; }
