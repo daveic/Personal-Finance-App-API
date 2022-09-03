@@ -150,48 +150,51 @@ namespace PersonalFinance.Controllers
             List<SelectListItem> Codes = new();
             foreach (var item in UniqueCodes)
             {
-                SelectListItem code = new()
-                {
-                    Value = item.TrsCode,
-                    Text = item.TrsCode
-                };
-                Codes.Add(code);
-            }
-            bool isPresent = false;
-            foreach (var credit in Credits)
-            {
-                foreach (var item in Codes)
-                {
-                    if (credit.CredCode == item.Value) isPresent = true;
-                }
-                if (isPresent is true)
+                if (!item.TrsCode.StartsWith("CRE") && !item.TrsCode.StartsWith("DEB") && !item.TrsCode.StartsWith("MVF") && !item.TrsCode.StartsWith("SCD") && item.TrsCode != "Fast_Update")
                 {
                     SelectListItem code = new()
                     {
-                        Value = credit.CredCode,
-                        Text = credit.CredCode
+                        Value = item.TrsCode,
+                        Text = item.TrsCode
                     };
                     Codes.Add(code);
-                }
-                isPresent = false;
+                }                
             }
-            foreach (var debit in Debits)
-            {
-                foreach (var item in Codes)
-                {
-                    if (debit.DebCode == item.Value) isPresent = true;
-                }
-                if (isPresent is false)
-                {
-                    SelectListItem code = new()
-                    {
-                        Value = debit.DebCode,
-                        Text = debit.DebCode
-                    };
-                    Codes.Add(code);
-                }
-                isPresent = false;
-            }
+            //bool isPresent = false;
+            //foreach (var credit in Credits)
+            //{
+            //    foreach (var item in Codes)
+            //    {
+            //        if (credit.CredCode == item.Value) isPresent = true;
+            //    }
+            //    if (isPresent is true)
+            //    {
+            //        SelectListItem code = new()
+            //        {
+            //            Value = credit.CredCode,
+            //            Text = credit.CredCode
+            //        };
+            //        Codes.Add(code);
+            //    }
+            //    isPresent = false;
+            //}
+            //foreach (var debit in Debits)
+            //{
+            //    foreach (var item in Codes)
+            //    {
+            //        if (debit.DebCode == item.Value) isPresent = true;
+            //    }
+            //    if (isPresent is false)
+            //    {
+            //        SelectListItem code = new()
+            //        {
+            //            Value = debit.DebCode,
+            //            Text = debit.DebCode
+            //        };
+            //        Codes.Add(code);
+            //    }
+            //    isPresent = false;
+            //}
             DOut.Codes = Codes;
             DOut.Transaction = new Transaction();
 

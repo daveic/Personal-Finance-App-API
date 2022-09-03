@@ -75,8 +75,6 @@ namespace PersonalFinance.Controllers
             List<SelectListItem> Codes = new();
             foreach (var item in UniqueCodes)
             {
-
-
                 if (!item.TrsCode.StartsWith("CRE") && !item.TrsCode.StartsWith("DEB") && !item.TrsCode.StartsWith("MVF") && !item.TrsCode.StartsWith("SCD") && item.TrsCode != "Fast_Update")
                 {
                     SelectListItem code = new();
