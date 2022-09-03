@@ -10,6 +10,6 @@ namespace PersonalFinance.Models
         public DateTime BalDateTime { get; set; }
         public double ActBalance { get; set; }
         [NotMapped]
-        public bool FromFU { get; set; }
+        public int FromFU { get; set; }
     }
 }

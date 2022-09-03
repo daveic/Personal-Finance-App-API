@@ -40,12 +40,12 @@ namespace PersonalFinance.Controllers
             IEnumerable<Ticket> Tickets = PersonalFinanceContext.Set<Ticket>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == b.Usr_OID).ToList();
             double tot = 0;
             double totTransaction = 0;
-           
+
             foreach (var item in Transactions)
             {
                 totTransaction += item.TrsValue;
             }
-            if( b.FromFU is true)
+            if (b.FromFU == 1 || b.FromFU == 2 || b.FromFU == 3)
             {
                 foreach (var item in Banks)
                 {
@@ -55,8 +55,12 @@ namespace PersonalFinance.Controllers
                 {
                     tot += Convert.ToInt32(item.NumTicket) * item.TicketValue;
                 }
-                
-                Transaction tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Fast_Update", TrsTitle = "Allineamento Fast Update", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Allineamento Fast Update eseguito il " + DateTime.UtcNow };
+                Transaction tr = new();
+
+                if (b.FromFU == 1) { tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Fast_Update", TrsTitle = "Allineamento Fast Update", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Allineamento Fast Update eseguito il " + DateTime.UtcNow }; }
+                else if (b.FromFU == 2) { tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Nuovo ticket", TrsTitle = "Inserimento nuovo ticket", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Inserimento nuovo ticket eseguito il " + DateTime.UtcNow }; }
+                else if (b.FromFU == 3) { tr = new() { Usr_OID = b.Usr_OID, TrsCode = "Nuovo conto", TrsTitle = "Inserimento nuovo conto", TrsDateTime = DateTime.UtcNow, TrsValue = tot - totTransaction, TrsNote = "Inserimento nuovo conto eseguito il " + DateTime.UtcNow }; }
+
                 b.ActBalance = tot;
                 await repo.AddTransactionAsync(tr);                
                 await repo.SaveChangesAsync();
