@@ -96,25 +96,6 @@ namespace PersonalFinance.Controllers
                 };
                 BankList.Add(bank);       
             }
-            //bool isPresent = false;
-            //foreach (var credit in Credits)
-            //{
-            //    foreach (var item in Codes)
-            //    {
-            //        if (credit.CredCode == item.Value) isPresent = true;
-            //    }
-            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = credit.CredCode, Value = credit.CredCode });
-            //    isPresent = false;
-            //}
-            //foreach (var debit in Debits)
-            //{
-            //    foreach (var item in Codes)
-            //    {
-            //        if (debit.DebCode == item.Value) isPresent = true;
-            //    }
-            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = debit.DebCode, Value = debit.DebCode });
-            //    isPresent = false;
-            //}
             Trs.Codes = Codes;
             Trs.BankList = BankList;    
             return Ok(Trs);
@@ -220,7 +201,6 @@ namespace PersonalFinance.Controllers
                                     ColorLabel = "red",
                                     ExpValue = d.RemainToPay
                                 };
-                                //await repo.AddExpirationAsync(newexp);
                                 this.PersonalFinanceContext.Add(newexp);
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
