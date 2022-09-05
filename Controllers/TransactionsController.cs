@@ -35,9 +35,9 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Transactions_Main(string User_OID)
         {
             IEnumerable<Transaction> Transactions = await repo.GetAllTransactionsAsync(User_OID);
-            IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);
-            //edits = Credits.Where(y => y.Hide == 0);
+            IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);            
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
+            IEnumerable<Bank> Banks = await repo.GetAllBanksAsync(User_OID);
             Debits = Debits.Where(y => y.Hide == 0);
             Transactions Trs =   new()
             {
@@ -77,11 +77,24 @@ namespace PersonalFinance.Controllers
             {
                 if (!item.TrsCode.StartsWith("CRE") && !item.TrsCode.StartsWith("DEB") && !item.TrsCode.StartsWith("MVF") && !item.TrsCode.StartsWith("SCD") && item.TrsCode != "Fast_Update" && item.TrsCode != "Nuovo ticket" && item.TrsCode != "Nuovo conto")
                 {
-                    SelectListItem code = new();
-                    code.Value = item.TrsCode;
-                    code.Text = item.TrsCode;
+                    SelectListItem code = new()
+                    {
+                        Value = item.TrsCode,
+                        Text = item.TrsCode
+                    };
                     Codes.Add(code);
                 }
+            }
+
+            List<SelectListItem> BankList = new();
+            foreach (var bk in Banks)
+            {
+                SelectListItem bank = new()
+                {
+                    Value = bk.BankName,
+                    Text = bk.BankName
+                };
+                BankList.Add(bank);       
             }
             //bool isPresent = false;
             //foreach (var credit in Credits)
@@ -103,6 +116,7 @@ namespace PersonalFinance.Controllers
             //    isPresent = false;
             //}
             Trs.Codes = Codes;
+            Trs.BankList = BankList;    
             return Ok(Trs);
         }
         [HttpGet]
@@ -364,6 +378,7 @@ namespace PersonalFinance.Controllers
                 .Select(x => x.First())
                 .ToList();
 
+            var Banks = PersonalFinanceContext.Set<Bank>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
             var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
@@ -373,12 +388,12 @@ namespace PersonalFinance.Controllers
             List<Expiration> ExpToShow = new();
             List<Expiration> ExpToShowOnExp = new();
             List<Expiration> ExpToShowAll = new();
-            TransactionDetailsEdit APIData = new();
-
-
-            APIData.DebitsRat = Debits.Where(x => x.RtNum > 1).ToList();
-            APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
-            APIData.CreditsMono = Credits;
+            TransactionDetailsEdit APIData = new()
+            {
+                DebitsRat = Debits.Where(x => x.RtNum > 1).ToList(),
+                DebitsMono = Debits.Where(x => x.RtNum == 1).ToList(),
+                CreditsMono = Credits
+            };
             foreach (var exp in ExpirationList)
             {
                 if(exp.ExpDateTime.Month == DateTime.Today.Month)
@@ -386,7 +401,12 @@ namespace PersonalFinance.Controllers
                     ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel, ExpDescription = exp.ExpDescription });
                 }                
             }
-            
+
+            APIData.BankList = new();
+            foreach (var bank in Banks)
+            {
+                APIData.BankList.Add(bank.BankName);
+            }
 
             foreach (var km in KnownMovements)
             {

@@ -30,6 +30,7 @@ namespace PersonalFinance.Models
         public List<Expiration> MonthExpirations { get; set; }
         public List<Expiration> MonthExpirationsOnExp { get; set; }
         public List<string> Codes { get; set; }
+        public List<string> BankList { get; set; }
     }
     public class Transactions
     {
@@ -37,5 +38,6 @@ namespace PersonalFinance.Models
         public List<SelectListItem> ItemListYear { get; set; }
         public List<SelectListItem> ItemListMonth { get; set; }
         public List<SelectListItem> Codes { get; set; }
+        public List<SelectListItem> BankList { get; set; }
     }
 }
