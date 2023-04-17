@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <UserSecretsId>35286355-badb-4c36-b45e-d0f3c65f8e03</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
