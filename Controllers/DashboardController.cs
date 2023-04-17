@@ -144,6 +144,19 @@ namespace PersonalFinance.Controllers
             //Passo alla view la lista aggiornata e convertita in JSON
             DOut.Balances = JsonConvert.SerializeObject(Balances);
 
+            List<SelectListItem> BankListItems = new();
+            foreach (var bank in Banks)
+            {
+                SelectListItem bankItem = new()
+                {
+                    Value = bank.BankName,
+                    Text = bank.BankName
+                };
+                BankListItems.Add(bankItem);
+            }
+
+            DOut.BankList = BankListItems;
+
             var UniqueCodes = Transactions.GroupBy(x => x.TrsCode)
                                            .Select(x => x.First())
                                            .ToList();

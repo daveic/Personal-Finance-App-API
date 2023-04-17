@@ -35,9 +35,9 @@ namespace PersonalFinance.Controllers
         public async Task<IActionResult> Transactions_Main(string User_OID)
         {
             IEnumerable<Transaction> Transactions = await repo.GetAllTransactionsAsync(User_OID);
-            IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);
-            //edits = Credits.Where(y => y.Hide == 0);
+            IEnumerable<Credit> Credits = await repo.GetAllCreditsAsync(User_OID);            
             IEnumerable<Debit> Debits = await repo.GetAllDebitsAsync(User_OID);
+            IEnumerable<Bank> Banks = await repo.GetAllBanksAsync(User_OID);
             Debits = Debits.Where(y => y.Hide == 0);
             Transactions Trs =   new()
             {
@@ -77,32 +77,27 @@ namespace PersonalFinance.Controllers
             {
                 if (!item.TrsCode.StartsWith("CRE") && !item.TrsCode.StartsWith("DEB") && !item.TrsCode.StartsWith("MVF") && !item.TrsCode.StartsWith("SCD") && item.TrsCode != "Fast_Update" && item.TrsCode != "Nuovo ticket" && item.TrsCode != "Nuovo conto")
                 {
-                    SelectListItem code = new();
-                    code.Value = item.TrsCode;
-                    code.Text = item.TrsCode;
+                    SelectListItem code = new()
+                    {
+                        Value = item.TrsCode,
+                        Text = item.TrsCode
+                    };
                     Codes.Add(code);
                 }
             }
-            //bool isPresent = false;
-            //foreach (var credit in Credits)
-            //{
-            //    foreach (var item in Codes)
-            //    {
-            //        if (credit.CredCode == item.Value) isPresent = true;
-            //    }
-            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = credit.CredCode, Value = credit.CredCode });
-            //    isPresent = false;
-            //}
-            //foreach (var debit in Debits)
-            //{
-            //    foreach (var item in Codes)
-            //    {
-            //        if (debit.DebCode == item.Value) isPresent = true;
-            //    }
-            //    if (isPresent is false) Codes.Add(new SelectListItem() { Text = debit.DebCode, Value = debit.DebCode });
-            //    isPresent = false;
-            //}
+
+            List<SelectListItem> BankList = new();
+            foreach (var bk in Banks)
+            {
+                SelectListItem bank = new()
+                {
+                    Value = bk.BankName,
+                    Text = bk.BankName
+                };
+                BankList.Add(bank);       
+            }
             Trs.Codes = Codes;
+            Trs.BankList = BankList;    
             return Ok(Trs);
         }
         [HttpGet]
@@ -206,7 +201,6 @@ namespace PersonalFinance.Controllers
                                     ColorLabel = "red",
                                     ExpValue = d.RemainToPay
                                 };
-                                //await repo.AddExpirationAsync(newexp);
                                 this.PersonalFinanceContext.Add(newexp);
                                 _ = PersonalFinanceContext.SaveChanges() > 0;
                                 d.Exp_ID = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == d.Usr_OID).OrderBy(x => x.ID).Last().ID;
@@ -265,7 +259,65 @@ namespace PersonalFinance.Controllers
                             t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
                         }
                     }
-                }                
+                }       
+                else if (t.DebCredChoice.StartsWith("MVF"))
+                {
+                    foreach (var km in KnownMovements)
+                    {
+                        if (t.DebCredChoice == km.KMTitle)
+                        {
+                            var expMvf = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == km.Usr_OID).FirstOrDefault(x => x.ID == km.Exp_ID);
+                            t.TrsDateTimeExp = expMvf.ExpDateTime;
+                            t.ExpColorLabel = "orange";
+                            this.PersonalFinanceContext.Remove(expMvf);
+                            _ = PersonalFinanceContext.SaveChanges() > 0;
+
+                            t.TrsTitle = "Movimento fisso";
+                            if(t.DebCredInValue == 0)
+                            {
+                                t.TrsValue = km.KMValue;
+                            } else
+                            {
+                                t.TrsValue = t.DebCredInValue;
+                            }
+                            t.TrsCode = km.KMTitle;
+                            t.TrsDateTime = DateTime.UtcNow;
+                            
+                            t.TrsNote = "Movimento fisso - " + t.TrsCode;
+                        }
+                    }
+                }
+                else if (t.DebCredChoice.StartsWith("SCD"))
+                {
+                    Expiration ExpirationToDelete = new();
+                    foreach (var exp in Expirations)
+                    {
+                        if (exp.ExpDateTime.Month == DateTime.Today.Month)
+                        {
+                            if (t.DebCredChoice == exp.ExpTitle)
+                            {
+                                t.TrsDateTimeExp = exp.ExpDateTime;
+                                t.ExpColorLabel = exp.ColorLabel;
+                                t.TrsTitle = "Scadenza";
+                                if (t.DebCredInValue == 0)
+                                {
+                                    t.TrsValue = exp.ExpValue;
+                                }
+                                else
+                                {
+                                    t.TrsValue = t.DebCredInValue;
+                                }
+                                t.TrsCode = exp.ExpTitle;
+                                t.TrsDateTime = DateTime.UtcNow;
+                                t.TrsValue = exp.ExpValue;
+                                t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
+                                ExpirationToDelete = exp;
+                            }
+                        }
+                    }
+                    this.PersonalFinanceContext.Remove(ExpirationToDelete);
+                    _ = PersonalFinanceContext.SaveChanges() > 0;
+                }
             }
             if (t.DebCredInValue == 0 && t.DebCredChoice is not null)
             {
@@ -306,49 +358,6 @@ namespace PersonalFinance.Controllers
                     await Debit_Add_Service(model);
                     t.TrsCode = model.DebCode;
                 }
-                else if (t.DebCredChoice.StartsWith("MVF"))
-                {
-                    foreach (var km in KnownMovements)
-                    {
-                        if (t.DebCredChoice == km.KMTitle)
-                        {
-                            var expMvf = PersonalFinanceContext.Set<Expiration>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == km.Usr_OID).FirstOrDefault(x => x.ID == km.Exp_ID);
-                            t.TrsDateTimeExp = expMvf.ExpDateTime;
-                            t.ExpColorLabel = "orange";
-                            this.PersonalFinanceContext.Remove(expMvf);
-                            _ = PersonalFinanceContext.SaveChanges() > 0;
-
-                            t.TrsTitle = "Movimento fisso";
-                            t.TrsCode = km.KMTitle;
-                            t.TrsDateTime = DateTime.UtcNow;
-                            t.TrsValue = km.KMValue;
-                            t.TrsNote = "Movimento fisso - " + t.TrsCode;
-                        }
-                    }
-                }
-                else if (t.DebCredChoice.StartsWith("SCD"))
-                {
-                    Expiration ExpirationToDelete = new();
-                    foreach (var exp in Expirations)
-                    {
-                        if (exp.ExpDateTime.Month == DateTime.Today.Month)
-                        {
-                            if (t.DebCredChoice == exp.ExpTitle)
-                            {
-                                t.TrsDateTimeExp = exp.ExpDateTime;
-                                t.ExpColorLabel = exp.ColorLabel;
-                                t.TrsTitle = "Scadenza";
-                                t.TrsCode = exp.ExpTitle;
-                                t.TrsDateTime = DateTime.UtcNow;
-                                t.TrsValue = exp.ExpValue;
-                                t.TrsNote = t.TrsTitle + " - " + t.TrsCode;
-                                ExpirationToDelete = exp;
-                            }
-                        }
-                    }
-                    this.PersonalFinanceContext.Remove(ExpirationToDelete);
-                    _ = PersonalFinanceContext.SaveChanges() > 0;
-                }
             }
             return 1;
         }
@@ -364,6 +373,7 @@ namespace PersonalFinance.Controllers
                 .Select(x => x.First())
                 .ToList();
 
+            var Banks = PersonalFinanceContext.Set<Bank>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Credits = PersonalFinanceContext.Set<Credit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
             var Debits = PersonalFinanceContext.Set<Debit>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).Where(y => y.Hide == 0).ToList();
             var KnownMovements = PersonalFinanceContext.Set<KnownMovement>().AsNoTracking().AsQueryable().Where(x => x.Usr_OID == User_OID).ToList();
@@ -373,12 +383,12 @@ namespace PersonalFinance.Controllers
             List<Expiration> ExpToShow = new();
             List<Expiration> ExpToShowOnExp = new();
             List<Expiration> ExpToShowAll = new();
-            TransactionDetailsEdit APIData = new();
-
-
-            APIData.DebitsRat = Debits.Where(x => x.RtNum > 1).ToList();
-            APIData.DebitsMono = Debits.Where(x => x.RtNum == 1).ToList();
-            APIData.CreditsMono = Credits;
+            TransactionDetailsEdit APIData = new()
+            {
+                DebitsRat = Debits.Where(x => x.RtNum > 1).ToList(),
+                DebitsMono = Debits.Where(x => x.RtNum == 1).ToList(),
+                CreditsMono = Credits
+            };
             foreach (var exp in ExpirationList)
             {
                 if(exp.ExpDateTime.Month == DateTime.Today.Month)
@@ -386,7 +396,12 @@ namespace PersonalFinance.Controllers
                     ExpToShow.Add(new Expiration() { ExpTitle = exp.ExpTitle, ExpValue = exp.ExpValue, ColorLabel = exp.ColorLabel, ExpDescription = exp.ExpDescription });
                 }                
             }
-            
+
+            APIData.BankList = new();
+            foreach (var bank in Banks)
+            {
+                APIData.BankList.Add(bank.BankName);
+            }
 
             foreach (var km in KnownMovements)
             {
